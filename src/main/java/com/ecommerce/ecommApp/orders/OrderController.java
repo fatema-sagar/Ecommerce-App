@@ -4,7 +4,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/orders")
@@ -13,27 +16,39 @@ public class OrderController {
     @Autowired
     private OrderServices orderService;
 
-    @GetMapping("/")
-    public List<Orders> getAllOrdersofCustomer(){
+    @GetMapping("/{customerID}")
+    public List<Orders> getAllOrdersofCustomer(@PathVariable long customerID ){
+        List<Orders> orders =orderService.getAllOrder(customerID);
+        return orders;
     }
 
-    @PostMapping("/")
-    public void BookOrders() {
+    @PostMapping("/{customerID}")
+    public void BookOrders(@RequestBody List<Items> ProductsOrdered,@PathVariable long customerID) {
         //extract the body and pass the list
+        orderService.placeOrder(customerID,ProductsOrdered);
         //produce to kafka topic in order to place the Placed notification
 
     }
+    @GetMapping("/{orderID}/status")
+    public void updateStatus(@PathVariable UUID orderID ){
+        //Return the status of the object;
+        OrderStatus status = orderService.getOrderStatus(orderID);
 
-    @PostMapping("/{orderID}/status")
-    public void updateStatus(){
+    }
+    @PatchMapping("/{orderID}/status")
+    public void updateStatus(@RequestParam String status, @PathVariable UUID orderID){
+        orderService.updateOrderStatus(orderID,status);
         //write custom query to update the order status of that orderid
-        // Write the notification  for shipped and delivered
+        if ("Shipped".equals(status) || "Delivered".equals(status)) {
+            // Write the notification  for shipped and delivered
+        }
+
 
     }
 
     @GetMapping("/{orderID}")
-    public Orders getSpecificOrder(){
-        Orders order=new Orders();
+    public Orders getSpecificOrder(@PathVariable UUID orderID){
+        Orders order=orderService.getOrderbyUUID(orderID);
         return order;
     }
 
