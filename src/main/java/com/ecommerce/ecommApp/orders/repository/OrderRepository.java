@@ -1,5 +1,6 @@
-package com.ecommerce.ecommApp.orders;
+package com.ecommerce.ecommApp.orders.repository;
 
+import com.ecommerce.ecommApp.orders.Models.Orders;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -11,8 +12,8 @@ import java.util.UUID;
 @Repository
 public interface OrderRepository extends JpaRepository<Orders, UUID> {
     @Query(value="Select * from order where customerID=:customerID",nativeQuery = true)
-    List<Orders> allOrdersofCustomer(@Param("customerID") Integer customerID);
+    List<Orders> allOrdersofCustomer(@Param("customerID") Long customerID);
 
     @Query(value="Update order set status=:status where customerID=:customerID",nativeQuery = true)
-    List<Orders> updateOrderStatus(@Param("status") String status,@Param("customerID") Integer customerID);
+    List<Orders> updateOrderStatus(@Param("status") String status,@Param("customerID") Long customerID);
 }
