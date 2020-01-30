@@ -1,4 +1,4 @@
-package com.ecommerce.ecommApp.pojo.customer;
+package com.ecommerce.ecommApp.commons.pojo.customer;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;

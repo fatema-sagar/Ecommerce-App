@@ -1,7 +1,7 @@
 package com.ecommerce.ecommApp.notifications.services;
 
 import com.ecommerce.ecommApp.notifications.NotificationUtil;
-import com.ecommerce.ecommApp.pojo.notification.UserRegistered;
+import com.ecommerce.ecommApp.commons.pojo.notification.UserRegistered;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;

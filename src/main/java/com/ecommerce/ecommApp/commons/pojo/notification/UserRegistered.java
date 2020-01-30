@@ -1,6 +1,6 @@
-package com.ecommerce.ecommApp.pojo.notification;
+package com.ecommerce.ecommApp.commons.pojo.notification;
 
-import com.ecommerce.ecommApp.pojo.customer.Customer;
+import com.ecommerce.ecommApp.commons.pojo.customer.Customer;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
