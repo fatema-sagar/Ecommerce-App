@@ -1,6 +1,7 @@
 package com.ecommerce.ecommApp.notifications;
 
 import com.ecommerce.ecommApp.EcommAppApplication;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.serialization.StringDeserializer;
