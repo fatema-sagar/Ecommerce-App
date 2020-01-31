@@ -6,7 +6,7 @@ import javax.persistence.*;
 
 @Table
 public class Product {
-  @Getter @Id @Column(unique = true)
+  @Getter @Id @Column(unique = true) @ManyToOne
   long ProductID;
 
   public enum Gender {MALE, FEMALE};
@@ -14,12 +14,12 @@ public class Product {
   @Getter @Column
   Gender gender;
 
-  @Getter
+  @Getter @Column
   String type;
 
-  @Getter
-  int InventoryID;
+  @Getter @OneToMany(fetch = FetchType.LAZY, mappedBy = "inventoryID")
+  long InventoryID;
 
-  @Getter
+  @Getter @Column(updatable = false)
   float price;
 }
