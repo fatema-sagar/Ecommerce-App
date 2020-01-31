@@ -1,6 +1,8 @@
 package com.ecommerce.ecommApp.notifications.handlers;
 
 import com.ecommerce.ecommApp.EcommAppApplication;
+import com.ecommerce.ecommApp.commons.pojo.notification.OrderCancelled;
+import com.ecommerce.ecommApp.commons.pojo.notification.OrderPlaced;
 import com.ecommerce.ecommApp.commons.pojo.notification.UserRegistered;
 import com.ecommerce.ecommApp.notifications.NotificationType;
 import com.sendgrid.Method;
@@ -38,34 +40,34 @@ public class NotificationHandler implements Handler {
     public void createSmsNotification(String notifyingService,Object object,String message) {
         switch(notifyingService)
         {
-            case "UserRegisteredNS":
+            case "User Registered":
                 sendSmsNotification(((UserRegistered)(object)).getCustomer().getNumber(),message);
                 break;
-            case "OrderCancelledNS":
+            case "Order Cancelled":
+                sendSmsNotification(((OrderCancelled)(object)).getCustomer().getNumber(),message);
+                break;
+            case "Order Status":
                 sendSmsNotification(((UserRegistered)(object)).getCustomer().getNumber(),message);
                 break;
-            case "OrderStatusNS":
-                sendSmsNotification(((UserRegistered)(object)).getCustomer().getNumber(),message);
-                break;
-            case "OrderPlacedNS":
-                sendSmsNotification(((UserRegistered)(object)).getCustomer().getNumber(),message);
+            case "Order Placed":
+                sendSmsNotification(((OrderPlaced)(object)).getCustomer().getNumber(),message);
                 break;
         }
     }
 
     public void createEmailNotificaton(String notifyingService, Object object,String message) {
         switch (notifyingService) {
-            case "UserRegisteredNS":
+            case "User Registered":
                 sendEmailNotificaton(((UserRegistered) (object)).getCustomer().getEmail(), notifyingService, message);
                 break;
-            case "OrderCancelledNS":
+            case "Order Cancelled":
+                sendEmailNotificaton(((OrderCancelled) (object)).getCustomer().getEmail(), notifyingService, message);
+                break;
+            case "Order Status":
                 sendEmailNotificaton(((UserRegistered) (object)).getCustomer().getEmail(), notifyingService, message);
                 break;
-            case "OrderStatusNS":
-                sendEmailNotificaton(((UserRegistered) (object)).getCustomer().getEmail(), notifyingService, message);
-                break;
-            case "OrderPlacedNS":
-                sendEmailNotificaton(((UserRegistered) (object)).getCustomer().getEmail(), notifyingService, message);
+            case "Order Placed":
+                sendEmailNotificaton(((OrderPlaced) (object)).getCustomer().getEmail(), notifyingService, message);
                 break;
         }
     }

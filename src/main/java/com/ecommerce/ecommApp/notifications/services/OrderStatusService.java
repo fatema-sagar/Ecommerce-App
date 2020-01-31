@@ -33,9 +33,7 @@ public class OrderStatusService extends Thread
             consumerRecords.forEach(record -> {
                 // TODO use the twilio sdk
                 final String payload=record.value();
-
             });
         }
     }
-
 }

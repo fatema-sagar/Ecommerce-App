@@ -56,9 +56,9 @@ public class NotificationUtil {
         public final static String USER_REGISTERED_MESSAGE = "Your Account with Customer ID %s on " + getApplicationProperty("application.name")
                 + " is successfully registered";
 
-        public final static String ORDER_PLACED_MESSAGE = "Your order for %s Quandity %S Product is successfully placed having a Order Id %s ";
+        public final static String ORDER_PLACED_MESSAGE = "Your order for %s %S Product is successfully placed having a Order Id %s ";
 
-        public final static String ORDER_CANCELLED_MESSAGE = "Your order for %s Quandity %S Product is CANCELLED having a Order Id %s ";
+        public final static String ORDER_CANCELLED_MESSAGE = "Your order for %s  %S Product is CANCELLED having a Order Id %s ";
 
         public final static String ORDER_STATUS_MESSAGE = "Your order status for %s Quandity %S Product is now %s ";
     }

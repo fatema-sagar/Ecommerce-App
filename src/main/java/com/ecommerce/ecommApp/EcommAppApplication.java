@@ -36,13 +36,13 @@ public class EcommAppApplication {
 		Thread orderPlacedThread = new OrderPlacedService(environment.getRequiredProperty(NotificationUtil.NOTIFICATION_ORDER_PLACED_TOPIC));
 		Thread orderStatusThread = new OrderStatusService(environment.getRequiredProperty(NotificationUtil.NOTIFICATION_ORDER_STATUS_TOPIC));
 		Thread orderCancelThread = new OrderCancelledService(environment.getRequiredProperty(NotificationUtil.NOTIFICATION_ORDER_CANCEL_TOPIC));
-		userRegisteredThread.setName("UserRegisteredNS");
+		userRegisteredThread.setName("User Registered");
 		userRegisteredThread.start();
-		orderPlacedThread.setName("OrderPlacedNS");
+		orderPlacedThread.setName("Order Placed");
 		orderPlacedThread.start();
-		orderCancelThread.setName("OrderCancelledNS");
+		orderCancelThread.setName("Order Cancelled");
 		orderCancelThread.start();
-		orderStatusThread.setName("OrderStatusNS");
+		orderStatusThread.setName("Order Status");
 		orderStatusThread.start();
 	}
 }
