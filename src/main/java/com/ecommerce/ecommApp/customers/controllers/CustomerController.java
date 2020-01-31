@@ -20,8 +20,8 @@ public class CustomerController {
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody @Valid RegistrationDto registrationDetails) {
 
-        customerService.register(registrationDetails);
-
+        //customerService.register(registrationDetails);
+        return null;
     }
 
 
