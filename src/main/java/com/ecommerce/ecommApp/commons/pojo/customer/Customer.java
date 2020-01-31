@@ -11,10 +11,9 @@ public class Customer {
     @JsonProperty("name")
     private String name;
     @JsonProperty("number")
-    private Integer number;
+    private Long number;
     @JsonProperty("email")
     private String email;
     @JsonProperty("whatsapp")
-    private Integer whatsapp;
-
+    private Long whatsapp;
 }

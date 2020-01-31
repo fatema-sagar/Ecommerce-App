@@ -1,7 +1,9 @@
 package com.ecommerce.ecommApp.notifications.services;
 
-import com.ecommerce.ecommApp.notifications.NotificationUtil;
+import com.ecommerce.ecommApp.commons.pojo.customer.Customer;
 import com.ecommerce.ecommApp.commons.pojo.notification.UserRegistered;
+import com.ecommerce.ecommApp.notifications.NotificationUtil;
+import com.ecommerce.ecommApp.notifications.handlers.Handler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -20,6 +22,7 @@ public class UserRegisteredService extends Thread {
     KafkaConsumer kafkaConsumer;
 
     ObjectMapper objectMapper;
+    Handler notificationHandler;
 
     public UserRegisteredService(String kafkaTopicName) {
         super();
@@ -32,8 +35,9 @@ public class UserRegisteredService extends Thread {
         props = NotificationUtil.getConsumerConfigs();
         kafkaConsumer = NotificationUtil.createConsumer(props, kafkaTopicName);
         objectMapper = new ObjectMapper();
-        ;
+        notificationHandler = NotificationUtil.getNotificationHandler();
         log.info("User Registered Notification service is started");
+
         while (true) {
             final ConsumerRecords<Long, String> consumerRecords =
                     kafkaConsumer.poll(100);
@@ -42,7 +46,9 @@ public class UserRegisteredService extends Thread {
                         final String json = record.value();
                         try {
                             UserRegistered userRegistered = objectMapper.readValue(json, UserRegistered.class);
-                            System.out.println("record found : "+ userRegistered.toString());
+                            System.out.println("record found : " + userRegistered.toString());
+                            String message = formatMessage(userRegistered);
+                            notificationHandler.sendNotification(getName(), userRegistered.getMode(), userRegistered, message);
                         } catch (IOException ex) {
                             log.error("error in processing json record in : " + getName());
                         }
@@ -50,4 +56,12 @@ public class UserRegisteredService extends Thread {
             );
         }
     }
+
+    public String formatMessage(UserRegistered userRegistered) {
+        Customer customer = userRegistered.getCustomer();
+        return String.format(NotificationUtil.MessageTemplate.USER_REGISTERED_MESSAGE, customer.getId());
+    }
 }
+
+
+//example : {"mode":["Text_SMS","EMAIL","WHATSAPP"],"customer":{"id":"ox1","name":"abc","number":1234567890,"email":"abc@gmail.com","whatsapp":1234567890}}
