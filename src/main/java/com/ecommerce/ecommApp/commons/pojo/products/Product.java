@@ -1,4 +1,4 @@
-package com.ecommerce.ecommApp.products.models;
+package com.ecommerce.ecommApp.commons.pojo.products;
 
 import lombok.Getter;
 
@@ -7,7 +7,7 @@ import javax.persistence.*;
 @Table
 public class Product {
   @Getter @Id @Column(unique = true)
-  int ProductID;
+  long ProductID;
 
   public enum Gender {MALE, FEMALE};
 
@@ -19,4 +19,7 @@ public class Product {
 
   @Getter
   int InventoryID;
+
+  @Getter
+  float price;
 }
