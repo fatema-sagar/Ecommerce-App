@@ -4,7 +4,7 @@ import com.ecommerce.ecommApp.EcommAppApplication;
 import com.ecommerce.ecommApp.commons.pojo.notification.OrderCancelled;
 import com.ecommerce.ecommApp.commons.pojo.notification.OrderPlaced;
 import com.ecommerce.ecommApp.commons.pojo.notification.UserRegistered;
-import com.ecommerce.ecommApp.notifications.NotificationType;
+import com.ecommerce.ecommApp.commons.enums.NotificationType;
 import com.sendgrid.Method;
 import com.sendgrid.Request;
 import com.sendgrid.Response;

@@ -9,13 +9,10 @@ import com.ecommerce.ecommApp.commons.pojo.notification.UserRegistered;
 import com.ecommerce.ecommApp.customers.dto.RegistrationDto;
 import com.ecommerce.ecommApp.customers.exceptions.EmailExistsException;
 import com.ecommerce.ecommApp.customers.repository.CustomerRepository;
-import com.ecommerce.ecommApp.notifications.NotificationType;
+import com.ecommerce.ecommApp.commons.enums.NotificationType;
 import com.ecommerce.ecommApp.notifications.NotificationUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
