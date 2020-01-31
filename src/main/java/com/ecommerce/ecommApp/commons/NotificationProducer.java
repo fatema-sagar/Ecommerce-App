@@ -18,13 +18,15 @@ public class NotificationProducer
         KafkaProducer<String, String> kafkaProducer=new KafkaProducer<String, String>(props);
         ProducerRecord record=new ProducerRecord<>(kafkaTopicName, null, json);
         kafkaProducer.send(record);
+        kafkaProducer.flush();
+        kafkaProducer.close();
     }
 
     public Properties getProducerConfigs()
     {
         Properties props=new Properties();
         props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, EcommAppApplication.environment.getRequiredProperty(NotificationUtil.KAFKA_BOOTSTRAP_SERVERS));
-        props.put(ProducerConfig.CLIENT_ID_CONFIG, "id");
+        props.put(ProducerConfig.CLIENT_ID_CONFIG, "id : "+System.currentTimeMillis());
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         return props;
