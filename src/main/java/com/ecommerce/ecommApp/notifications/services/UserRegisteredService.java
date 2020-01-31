@@ -64,4 +64,4 @@ public class UserRegisteredService extends Thread {
 }
 
 
-//example : {"mode":["Text_SMS","EMAIL","WHATSAPP"],"customer":{"id":"ox1","name":"abc","number":1234567890,"email":"abc@gmail.com","whatsapp":1234567890}}
+//example : {"mode":["Text_SMS","EMAIL","WHATSAPP"],"customer":{"id":"ox1","name":"abc","number":8851530831,"email":"sagarbindal992@gmail.com","whatsapp":1234567890}}
