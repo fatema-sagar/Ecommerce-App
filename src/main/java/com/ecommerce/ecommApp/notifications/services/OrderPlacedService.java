@@ -1,6 +1,6 @@
 package com.ecommerce.ecommApp.notifications.services;
 
-import com.ecommerce.ecommApp.commons.pojo.customer.Customer;
+import com.ecommerce.ecommApp.commons.pojo.customer.CustomerDto;
 import com.ecommerce.ecommApp.commons.pojo.notification.OrderPlaced;
 import com.ecommerce.ecommApp.notifications.NotificationUtil;
 import com.ecommerce.ecommApp.notifications.handlers.NotificationHandler;
@@ -51,7 +51,7 @@ public class OrderPlacedService extends Thread {
     }
 
     private String formatMessage(OrderPlaced orderPlaced) {
-        Customer customer = orderPlaced.getCustomer();
+        CustomerDto customerDto = orderPlaced.getCustomerDto();
         return String.format(NotificationUtil.MessageTemplate.ORDER_PLACED_MESSAGE, orderPlaced.getQuandity(), orderPlaced.getProductName(), orderPlaced.getOrderID());
     }
 

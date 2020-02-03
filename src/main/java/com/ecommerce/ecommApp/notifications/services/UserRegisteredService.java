@@ -1,6 +1,6 @@
 package com.ecommerce.ecommApp.notifications.services;
 
-import com.ecommerce.ecommApp.commons.pojo.customer.Customer;
+import com.ecommerce.ecommApp.commons.pojo.customer.CustomerDto;
 import com.ecommerce.ecommApp.commons.pojo.notification.UserRegistered;
 import com.ecommerce.ecommApp.notifications.NotificationUtil;
 import com.ecommerce.ecommApp.notifications.handlers.Handler;
@@ -58,10 +58,10 @@ public class UserRegisteredService extends Thread {
     }
 
     public String formatMessage(UserRegistered userRegistered) {
-        Customer customer = userRegistered.getCustomer();
-        return String.format(NotificationUtil.MessageTemplate.USER_REGISTERED_MESSAGE, customer.getId());
+        CustomerDto customerDto = userRegistered.getCustomerDto();
+        return String.format(NotificationUtil.MessageTemplate.USER_REGISTERED_MESSAGE, customerDto.getId());
     }
 }
 
 
-//example : {"mode":["Text_SMS","EMAIL","WHATSAPP"],"customer":{"id":"ox1","name":"abc","number":8851530831,"email":"sagarbindal992@gmail.com","whatsapp":1234567890}}
+//example : {"mode":["Text_SMS","EMAIL","WHATSAPP"],"customerDto":{"id":"ox1","name":"abc","number":8851530831,"email":"sagarbindal992@gmail.com","whatsapp":1234567890}}

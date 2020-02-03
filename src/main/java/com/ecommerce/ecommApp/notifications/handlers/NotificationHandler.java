@@ -41,16 +41,16 @@ public class NotificationHandler implements Handler {
         switch(notifyingService)
         {
             case "User Registered":
-                sendSmsNotification(((UserRegistered)(object)).getCustomer().getNumber(),message);
+                sendSmsNotification(((UserRegistered)(object)).getCustomerDto().getNumber(),message);
                 break;
             case "Order Cancelled":
-                sendSmsNotification(((OrderCancelled)(object)).getCustomer().getNumber(),message);
+                sendSmsNotification(((OrderCancelled)(object)).getCustomerDto().getNumber(),message);
                 break;
             case "Order Status":
-                sendSmsNotification(((UserRegistered)(object)).getCustomer().getNumber(),message);
+                sendSmsNotification(((UserRegistered)(object)).getCustomerDto().getNumber(),message);
                 break;
             case "Order Placed":
-                sendSmsNotification(((OrderPlaced)(object)).getCustomer().getNumber(),message);
+                sendSmsNotification(((OrderPlaced)(object)).getCustomerDto().getNumber(),message);
                 break;
         }
     }
@@ -58,16 +58,16 @@ public class NotificationHandler implements Handler {
     public void createEmailNotificaton(String notifyingService, Object object,String message) {
         switch (notifyingService) {
             case "User Registered":
-                sendEmailNotificaton(((UserRegistered) (object)).getCustomer().getEmail(), notifyingService, message);
+                sendEmailNotificaton(((UserRegistered) (object)).getCustomerDto().getEmail(), notifyingService, message);
                 break;
             case "Order Cancelled":
-                sendEmailNotificaton(((OrderCancelled) (object)).getCustomer().getEmail(), notifyingService, message);
+                sendEmailNotificaton(((OrderCancelled) (object)).getCustomerDto().getEmail(), notifyingService, message);
                 break;
             case "Order Status":
-                sendEmailNotificaton(((UserRegistered) (object)).getCustomer().getEmail(), notifyingService, message);
+                sendEmailNotificaton(((UserRegistered) (object)).getCustomerDto().getEmail(), notifyingService, message);
                 break;
             case "Order Placed":
-                sendEmailNotificaton(((OrderPlaced) (object)).getCustomer().getEmail(), notifyingService, message);
+                sendEmailNotificaton(((OrderPlaced) (object)).getCustomerDto().getEmail(), notifyingService, message);
                 break;
         }
     }
