@@ -31,7 +31,7 @@ public class EcommAppApplication {
 		environment = context.getBean(Environment.class);
 		//System.out.println("Required bean  password : "+context.getBean(PasswordEncoder.class));
 		log.trace("starting Notification services");
-		startNotificationServices();
+//		startNotificationServices();
 	}
 
 	public static void startNotificationServices() {

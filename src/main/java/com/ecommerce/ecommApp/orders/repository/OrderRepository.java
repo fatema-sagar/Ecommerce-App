@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Repository
-public interface OrderRepository extends JpaRepository<Orders, UUID> {
+public interface OrderRepository extends JpaRepository<Orders, Integer> {
     @Query(value="Select * from order where customerID=:customerID",nativeQuery = true)
     List<Orders> allOrdersofCustomer(@Param("customerID") Long customerID);
 
