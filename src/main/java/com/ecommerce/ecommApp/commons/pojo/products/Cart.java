@@ -18,4 +18,9 @@ public class Cart {
   @JsonProperty
   @Column(name = "quantity")
   int quantity;
+
+  @JsonProperty
+  @Column(name = "Availability")
+  Boolean availability;
+
 }
