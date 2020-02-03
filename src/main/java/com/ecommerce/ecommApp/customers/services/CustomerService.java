@@ -5,6 +5,7 @@ import com.ecommerce.ecommApp.commons.NotificationProducer;
 import com.ecommerce.ecommApp.commons.Util.CommonsUtil;
 import com.ecommerce.ecommApp.commons.pojo.customer.CustomerDto;
 import com.ecommerce.ecommApp.commons.pojo.notification.UserRegistered;
+import com.ecommerce.ecommApp.customers.dto.LoginDto;
 import com.ecommerce.ecommApp.customers.dto.RegistrationDto;
 import com.ecommerce.ecommApp.customers.exceptions.EmailExistsException;
 import com.ecommerce.ecommApp.customers.models.Customer;
@@ -13,6 +14,7 @@ import com.ecommerce.ecommApp.commons.enums.NotificationType;
 import com.ecommerce.ecommApp.customers.utils.CustomerUtil;
 import com.ecommerce.ecommApp.notifications.NotificationUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -22,7 +24,6 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 
 @Service
 public class CustomerService {
@@ -38,7 +39,7 @@ public class CustomerService {
     NotificationProducer notificationProducer;
     CustomerUtil customerUtil = new CustomerUtil();
 
-    public CompletableFuture<Customer> register(RegistrationDto registrationDetails) throws EmailExistsException {
+    public void register(RegistrationDto registrationDetails) throws EmailExistsException {
 
         if (emailExists(registrationDetails.getEmail())) {
             throw new EmailExistsException(
@@ -56,7 +57,28 @@ public class CustomerService {
 
         CustomerDto customerDto = customerUtil.convertToPojo(customer);
         sendRegistrationNotification(customerDto);
-        return CompletableFuture.completedFuture(customer);
+    }
+
+    public CustomerDto loginCustomer(LoginDto loginDetails) throws NotFoundException {
+
+        Optional<Customer> loggedInCustomer = customerRepository.findByEmail(loginDetails.getEmail());
+        if (loggedInCustomer.isPresent() && passwordEncoder().matches(loginDetails.getPassword(),
+                loggedInCustomer.get().getPassword())) {
+            CustomerDto customerDetails = customerUtil.convertToPojo(loggedInCustomer.get());
+            return customerDetails;
+        } else {
+            throw new NotFoundException("Customer Does not Exist");
+        }
+    }
+
+    public CustomerDto getCustomerDetails(Long customerId) throws NotFoundException {
+        Optional<Customer> loggedInCustomer = customerRepository.findById(customerId);
+        if(loggedInCustomer.isPresent()){
+            CustomerDto customerDetails = customerUtil.convertToPojo(loggedInCustomer.get());
+            return customerDetails;
+        } else{
+            throw new NotFoundException("Wrong Customer Id");
+        }
     }
 
     private void sendRegistrationNotification(CustomerDto customerDto) {
