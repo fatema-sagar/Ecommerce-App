@@ -1,14 +1,21 @@
 package com.ecommerce.ecommApp.commons.pojo.products;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import javax.persistence.*;
+import java.util.List;
 
 @Table
 public class Cart {
 
-  @Id @Column(unique = true)
-  long cart_id;
+  @JsonProperty
+  private long customer_id;
 
-  @OneToMany(fetch = FetchType.LAZY, targetEntity = Product.class, mappedBy = "ProductID")
-  long product_id;
+  @JsonProperty
+  @OneToMany(fetch = FetchType.EAGER, targetEntity = Product.class, mappedBy = "ProductID")
+  private List<Product> products;
 
+  @JsonProperty
+  @Column(name = "quantity")
+  int quantity;
 }
