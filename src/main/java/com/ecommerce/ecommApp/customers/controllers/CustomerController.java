@@ -25,7 +25,7 @@ public class CustomerController {
             return new ResponseEntity("User Registered Successfully", HttpStatus.OK);
         }
         catch (EmailExistsException exception){
-            return new ResponseEntity("Registration unsuccessful", HttpStatus.OK);
+            return new ResponseEntity("Registration unsuccessful."+exception.getMessage(), HttpStatus.OK);
         }
     }
 

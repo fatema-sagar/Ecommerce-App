@@ -1,4 +1,4 @@
-package com.ecommerce.ecommApp.notifications;
+package com.ecommerce.ecommApp.commons.enums;
 
 public enum NotificationType {
     Text_SMS,
