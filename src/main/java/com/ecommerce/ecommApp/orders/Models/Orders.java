@@ -1,6 +1,6 @@
 package com.ecommerce.ecommApp.orders.Models;
 
-import com.ecommerce.ecommApp.orders.enums.OrderStatus;
+import com.ecommerce.ecommApp.commons.enums.OrderStatus;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.annotation.Id;

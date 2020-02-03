@@ -1,4 +1,4 @@
-package com.ecommerce.ecommApp.orders.enums;
+package com.ecommerce.ecommApp.commons.enums;
 
 public enum OrderStatus {
     Placed,

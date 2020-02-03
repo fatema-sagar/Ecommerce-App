@@ -2,7 +2,7 @@ package com.ecommerce.ecommApp.orders.services;
 
 import com.ecommerce.ecommApp.orders.Models.Items;
 import com.ecommerce.ecommApp.orders.Models.Orders;
-import com.ecommerce.ecommApp.orders.enums.OrderStatus;
+import com.ecommerce.ecommApp.commons.enums.OrderStatus;
 import com.ecommerce.ecommApp.orders.repository.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

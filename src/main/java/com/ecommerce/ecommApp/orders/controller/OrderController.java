@@ -3,7 +3,7 @@ import ch.qos.logback.classic.Logger;
 import com.ecommerce.ecommApp.orders.Models.Items;
 import com.ecommerce.ecommApp.orders.Models.Orders;
 import com.ecommerce.ecommApp.orders.services.OrderServices;
-import com.ecommerce.ecommApp.orders.enums.OrderStatus;
+import com.ecommerce.ecommApp.commons.enums.OrderStatus;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
