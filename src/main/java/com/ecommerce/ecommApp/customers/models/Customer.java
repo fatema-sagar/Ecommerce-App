@@ -1,16 +1,15 @@
-package com.ecommerce.ecommApp.commons.pojo.customer;
+package com.ecommerce.ecommApp.customers.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.springframework.stereotype.Component;
+
 import javax.persistence.*;
 
 @Component
 @Entity
-@Table(name = "customer")
+@Table(name = "customerDto")
 @Data
 @NoArgsConstructor
 public class Customer
