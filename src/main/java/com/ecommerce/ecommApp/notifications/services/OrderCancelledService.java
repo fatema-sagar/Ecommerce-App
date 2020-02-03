@@ -1,8 +1,7 @@
 package com.ecommerce.ecommApp.notifications.services;
 
-import com.ecommerce.ecommApp.commons.pojo.customer.Customer;
+import com.ecommerce.ecommApp.commons.pojo.customer.CustomerDto;
 import com.ecommerce.ecommApp.commons.pojo.notification.OrderCancelled;
-import com.ecommerce.ecommApp.commons.pojo.notification.OrderPlaced;
 import com.ecommerce.ecommApp.notifications.NotificationUtil;
 import com.ecommerce.ecommApp.notifications.handlers.NotificationHandler;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -56,7 +55,7 @@ public class OrderCancelledService extends Thread {
     }
 
     private String formatMessage(OrderCancelled orderPlaced) {
-        Customer customer = orderPlaced.getCustomer();
+        CustomerDto customerDto = orderPlaced.getCustomerDto();
         return String.format(NotificationUtil.MessageTemplate.ORDER_CANCELLED_MESSAGE, orderPlaced.getQuandity(), orderPlaced.getProductName(), orderPlaced.getOrderID());
     }
 }
