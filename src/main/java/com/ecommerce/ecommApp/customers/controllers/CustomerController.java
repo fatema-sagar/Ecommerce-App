@@ -1,7 +1,11 @@
 package com.ecommerce.ecommApp.customers.controllers;
 
+import com.ecommerce.ecommApp.commons.pojo.customer.CustomerDto;
+import com.ecommerce.ecommApp.customers.customAnnotations.ValidEmail;
+import com.ecommerce.ecommApp.customers.dto.LoginDto;
 import com.ecommerce.ecommApp.customers.dto.RegistrationDto;
 import com.ecommerce.ecommApp.customers.exceptions.EmailExistsException;
+import com.ecommerce.ecommApp.customers.models.Customer;
 import com.ecommerce.ecommApp.customers.services.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,7 +22,7 @@ public class CustomerController {
     CustomerService customerService;
 
     @PostMapping("/register")
-    public ResponseEntity<?> registerUser(@RequestBody @Valid RegistrationDto registrationDetails){
+    public ResponseEntity<String> registerUser(@RequestBody @Valid RegistrationDto registrationDetails){
 
         try {
             customerService.register(registrationDetails);
@@ -28,6 +32,18 @@ public class CustomerController {
             return new ResponseEntity("Registration unsuccessful."+exception.getMessage(), HttpStatus.OK);
         }
     }
+
+//    @PostMapping("/login")
+//    public ResponseEntity<CustomerDto> login(@RequestBody @Valid LoginDto loginDetails){
+//
+//        try{
+//            CustomerDto customerDetails = customerService.loginCustomer(loginDetails);
+//            return new ResponseEntity<CustomerDto>(customerDetails,HttpStatus.OK);
+//        }
+//        catch (){
+//
+//        }
+//    }
 
 
 }

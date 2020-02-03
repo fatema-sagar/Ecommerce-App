@@ -38,7 +38,6 @@ public class CustomerService {
     NotificationProducer notificationProducer;
     CustomerUtil customerUtil = new CustomerUtil();
 
-    //@Async("threadPoolTaskExecutor")
     public CompletableFuture<Customer> register(RegistrationDto registrationDetails) throws EmailExistsException {
 
         if (emailExists(registrationDetails.getEmail())) {
@@ -55,8 +54,8 @@ public class CustomerService {
         customer.setGender(registrationDetails.getGender());
         customerRepository.save(customer);
 
-        CustomerDto pojoCustomerDto = customerUtil.convertToPojo(customer);
-        sendRegistrationNotification(pojoCustomerDto);
+        CustomerDto customerDto = customerUtil.convertToPojo(customer);
+        sendRegistrationNotification(customerDto);
         return CompletableFuture.completedFuture(customer);
     }
 
