@@ -15,7 +15,7 @@ public class UserRegistered {
 
     public String toString()
     {
-        return mode+" : "+customer.getName();
+        return mode+" : " + customer.getName();
     }
 
 }
