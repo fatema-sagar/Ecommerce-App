@@ -16,34 +16,34 @@ import java.util.UUID;
 @Component
 @Entity
 @Data
-@Table(name ="order")
+@Table(name ="orders")
 public class Orders {
-//    @Id
-//    @GeneratedValue(generator ="UUID")
-//    @GenericGenerator(
-//            name = "UUID",
-//            strategy = "org.hibernate.id.UUIDGenerator")
-//    @Column(updatable = false, nullable = false,unique = true)
-//    private UUID orderID;
-//    private long customerID;
-//    private long productID;
-//    private long quantity;
-//    private long cost;
-//    @Enumerated
-//    private OrderStatus status;
-
     @Id
-    @GeneratedValue
-    @Column(name="orderId")
-    private Integer orderID;
-    @Column(name="customerId")
-    private Long customerID;
-    @Column(name="productId")
-    private Long productID;
-    @Column(name="quantity")
-    private Long quantity;
-    @Column(name="cost")
-    private Long cost;
-    @Column(name="status")
+    @GeneratedValue(generator ="UUID")
+    @GenericGenerator(
+            name = "UUID",
+            strategy = "org.hibernate.id.UUIDGenerator")
+    @Column(updatable = false, nullable = false,unique = true)
+    private UUID orderID;
+    private long customerID;
+    private long productID;
+    private long quantity;
+    private long cost;
+    @Enumerated
     private OrderStatus status;
+
+//    @Id
+//    @GeneratedValue
+//    @Column(name="orderId")
+//    private Integer orderID;
+//    @Column(name="customerId")
+//    private Long customerID;
+//    @Column(name="productId")
+//    private Long productID;
+//    @Column(name="quantity")
+//    private Long quantity;
+//    @Column(name="cost")
+//    private Long cost;
+//    @Column(name="status")
+//    private OrderStatus status;
 }
