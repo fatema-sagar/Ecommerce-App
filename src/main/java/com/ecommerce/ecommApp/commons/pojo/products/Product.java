@@ -5,11 +5,12 @@ import lombok.Getter;
 
 import javax.persistence.*;
 
+@Entity
 @Table(name = "Product")
 public class Product {
 
   @JsonProperty
-  @Getter @Id @Column(unique = true) @ManyToOne
+  @Getter @Id @Column(unique = true) @GeneratedValue(strategy = GenerationType.AUTO)
   long ProductID;
 
   public enum Gender {MALE, FEMALE};
@@ -18,10 +19,12 @@ public class Product {
   @Getter @Column
   Gender gender;
 
+  @JsonProperty
   @Getter @Column
   String category;
 
-  @Getter @OneToMany(fetch = FetchType.LAZY, mappedBy = "inventoryID")
+  @JsonProperty
+  @Getter
   long InventoryID;
 
 }

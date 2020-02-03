@@ -21,7 +21,7 @@ public class ProductController {
 
   @RequestMapping(value = "/products", method = RequestMethod.GET)
   private List<Product> getAllProducts() {
-    List<Product> allProducts = new ArrayList<>();
+    List<Product> allProducts;
     allProducts = productService.getProductsList();
     return allProducts;
   }
