@@ -11,9 +11,6 @@ import java.util.UUID;
 
 @Repository
 public interface OrderRepository extends JpaRepository<Orders, UUID> {
-    @Query(value="Select * from order where customerID=:customerID",nativeQuery = true)
-    List<Orders> allOrdersofCustomer(@Param("customerID") Long customerID);
-
-    @Query(value="Update order set status=:status where customerID=:customerID",nativeQuery = true)
-    List<Orders> updateOrderStatus(@Param("status") String status,@Param("customerID") Long customerID);
+    @Query(value = "Select * from orders where customerID=:customerID", nativeQuery = true)
+    List<Orders> getOrdersByCustomerId(@Param("customerID") Long customerID);
 }

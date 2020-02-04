@@ -1,6 +1,7 @@
 package com.ecommerce.ecommApp.orders.Models;
 
 import com.ecommerce.ecommApp.commons.enums.OrderStatus;
+import lombok.Builder;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.stereotype.Component;
@@ -19,31 +20,28 @@ import java.util.UUID;
 @Table(name ="orders")
 public class Orders {
     @Id
-    @GeneratedValue(generator ="UUID")
-    @GenericGenerator(
-            name = "UUID",
-            strategy = "org.hibernate.id.UUIDGenerator")
+//    @GeneratedValue(generator ="UUID")
+//    @GenericGenerator(
+//            name = "UUID",
+//            strategy = "org.hibernate.id.UUIDGenerator")
     @Column(updatable = false, nullable = false,unique = true)
     private UUID orderID;
-    private long customerID;
-    private long productID;
-    private long quantity;
-    private long cost;
+    private Long customerID;
+    private Long productID;
+    private Integer quantity;
+    private Integer cost;
     @Enumerated
     private OrderStatus status;
 
-//    @Id
-//    @GeneratedValue
-//    @Column(name="orderId")
-//    private Integer orderID;
-//    @Column(name="customerId")
-//    private Long customerID;
-//    @Column(name="productId")
-//    private Long productID;
-//    @Column(name="quantity")
-//    private Long quantity;
-//    @Column(name="cost")
-//    private Long cost;
-//    @Column(name="status")
-//    private OrderStatus status;
+    public Orders(Long cId, Long pId, Integer quant, Integer cost, OrderStatus orderStatus)
+    {
+        super();
+        this.orderID=UUID.randomUUID();
+        this.customerID=cId;
+        this.productID=pId;
+        this.quantity=quant;
+        this.cost=cost;
+        this.status=orderStatus;
+    }
+
 }

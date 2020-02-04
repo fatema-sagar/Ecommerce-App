@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 public class Items {
-    private long productID;
-    private long quantity;
-    private long cost;
+    private Long productID;
+    private Integer quantity;
+    private Integer cost;
 }

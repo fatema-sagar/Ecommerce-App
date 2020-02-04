@@ -11,12 +11,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
-//@PropertySource("classpath:abc.properties")
 @SpringBootApplication
 public class EcommAppApplication {
 
@@ -29,7 +25,6 @@ public class EcommAppApplication {
 		context = SpringApplication.run(EcommAppApplication.class, args);
 		log.info("E-Comm application is started");
 		environment = context.getBean(Environment.class);
-		//System.out.println("Required bean  password : "+context.getBean(PasswordEncoder.class));
 		log.trace("starting Notification services");
 //		startNotificationServices();
 	}
@@ -49,6 +44,4 @@ public class EcommAppApplication {
 		orderStatusThread.setName("Order Status");
 		orderStatusThread.start();
 	}
-
-
 }
