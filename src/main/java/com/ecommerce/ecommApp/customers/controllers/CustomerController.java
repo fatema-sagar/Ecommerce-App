@@ -12,10 +12,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.util.NoSuchElementException;
 
 @RestController
 public class CustomerController {
@@ -55,7 +57,19 @@ public class CustomerController {
             return new ResponseEntity<>(customerDetails,HttpStatus.OK);
 
         } catch (NotFoundException exception) {
-            return new ResponseEntity<Object>("Login Unsuccessful. "+exception.getMessage(), HttpStatus.FORBIDDEN);
+            return new ResponseEntity<Object>("User Not Found with ID. "+exception.getMessage(), HttpStatus.FORBIDDEN);
+        }
+    }
+
+    @PutMapping("/customer")
+    ResponseEntity<?> updateCustomerDetails(@RequestBody @Valid CustomerDto customerDetails){
+
+        try{
+            CustomerDto updatedCustomerDetails = customerService.updateCustomerDetails(customerDetails);
+            return new ResponseEntity<>(updatedCustomerDetails,HttpStatus.OK);
+        } catch(NoSuchElementException exception){
+            return new ResponseEntity<Object>("Update Unsuccessful. "+exception.getMessage(),
+                    HttpStatus.FORBIDDEN);
         }
     }
 }
