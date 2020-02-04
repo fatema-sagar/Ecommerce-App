@@ -1,6 +1,6 @@
 package com.ecommerce.ecommApp.commons.pojo.notification;
 
-import com.ecommerce.ecommApp.commons.pojo.customer.Customer;
+import com.ecommerce.ecommApp.commons.pojo.customer.CustomerDto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
@@ -24,12 +24,12 @@ public class OrderCancelled
     @JsonProperty("total_cost")
     private Integer totalCost;
 
-    @JsonProperty("customer")
-    private Customer customer;
+    @JsonProperty("customerDto")
+    private CustomerDto customerDto;
 
     public String toString()
     {
-        return String.format("order %s for %s %s with Customer Id %s is successfully cancelled ",getOrderID(),getQuandity(),getProductName(),getCustomer().getId());
+        return String.format("order %s for %s %s with CustomerDto Id %s is successfully cancelled ",getOrderID(),getQuandity(),getProductName(), getCustomerDto().getId());
     }
 
 }
