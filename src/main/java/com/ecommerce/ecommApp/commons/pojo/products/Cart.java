@@ -5,7 +5,9 @@ import lombok.Getter;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table
@@ -25,5 +27,14 @@ public class Cart {
   @JsonProperty
   @Column(name = "Availability")
   Boolean availability;
+
+
+  @ManyToMany(fetch = FetchType.LAZY,
+          cascade = {
+                  CascadeType.PERSIST,
+                  CascadeType.MERGE
+          },
+          mappedBy = "cart")
+  private Set<Inventory> inventories = new HashSet<>();
 
 }
