@@ -1,21 +1,24 @@
 package com.ecommerce.ecommApp.commons.pojo.products;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Getter;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
+@Entity
 @Table
 public class Cart {
 
   @JsonProperty
+  @Id @Getter @NotNull
   private long customer_id;
 
-  @JsonProperty
-  @OneToMany(fetch = FetchType.EAGER, targetEntity = Product.class, mappedBy = "ProductID")
-  private List<Product> products;
+  @JsonProperty @NotNull
+  private long product_id;
 
-  @JsonProperty
+  @JsonProperty @NotNull
   @Column(name = "quantity")
   int quantity;
 }
