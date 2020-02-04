@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Entity
@@ -11,13 +12,13 @@ import java.util.List;
 public class Cart {
 
   @JsonProperty
-  @Id @Getter
+  @Id @Getter @NotNull
   private long customer_id;
 
-  @JsonProperty
+  @JsonProperty @NotNull
   private long product_id;
 
-  @JsonProperty
+  @JsonProperty @NotNull
   @Column(name = "quantity")
   int quantity;
 }

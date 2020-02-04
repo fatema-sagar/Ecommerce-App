@@ -10,8 +10,8 @@ import javax.persistence.*;
 public class Inventory {
 
   @Id @Column(unique = true)
-  @Getter @GeneratedValue(strategy = GenerationType.AUTO)
-  long inventoryID;
+  @Getter @GeneratedValue(strategy = GenerationType.SEQUENCE)
+  long inventoryid;
 
   public enum Size {XS, S, M, L, XL};
   @Getter @Column
