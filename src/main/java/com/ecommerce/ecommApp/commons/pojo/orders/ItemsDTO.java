@@ -8,7 +8,7 @@ public class ItemsDTO {
     @JsonProperty("productID")
     private long productID;
     @JsonProperty("quantity")
-    private long quantity;
+    private int quantity;
     @JsonProperty("cost")
-    private long cost;
+    private int cost;
 }

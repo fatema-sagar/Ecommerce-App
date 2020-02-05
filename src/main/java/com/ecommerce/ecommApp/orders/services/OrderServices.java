@@ -1,6 +1,13 @@
 package com.ecommerce.ecommApp.orders.services;
 
+import com.ecommerce.ecommApp.EcommAppApplication;
+import com.ecommerce.ecommApp.commons.NotificationProducer;
+import com.ecommerce.ecommApp.commons.Util.CommonsUtil;
+import com.ecommerce.ecommApp.commons.Util.Communication;
+import com.ecommerce.ecommApp.commons.enums.NotificationType;
 import com.ecommerce.ecommApp.commons.enums.OrderStatus;
+import com.ecommerce.ecommApp.commons.pojo.customer.CustomerDto;
+import com.ecommerce.ecommApp.commons.pojo.notification.OrderPlaced;
 import com.ecommerce.ecommApp.commons.pojo.orders.ItemsDTO;
 import com.ecommerce.ecommApp.orders.Models.Orders;
 import com.ecommerce.ecommApp.orders.repository.OrderRepository;
@@ -8,6 +15,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -17,52 +25,27 @@ public class OrderServices {
     private OrderRepository orderRepository;
 
     public List<Orders> getAllOrder(long customerID) {
-        List<Orders> allOrders = orderRepository.getOrdersByCustomerId(customerID);
-        return allOrders;
+        return orderRepository.getOrdersByCustomerId(customerID);
     }
 
-    public void placeOrder(long customerID, List<ItemsDTO> productsOrdered) {
-
+    public void placeOrder(Long customerID, List<ItemsDTO> productsOrdered) throws Exception {
         for (ItemsDTO item : productsOrdered) {
-            Orders orders = new Orders();
-            orders.setCustomerID(customerID);
-            orders.setProductID(item.getProductID());
-            orders.setQuantity(item.getQuantity());
-            orders.setCost(item.getCost());
-            orders.setStatus(OrderStatus.Placed);
+            Orders orders = getOrderInstance(customerID, item);
             orderRepository.save(orders);
-            ObjectMapper objectMapper = new ObjectMapper();
-            //notification
-//            OrderPlaced orderPlaced = new OrderPlaced();
-//            //to be replaced by api to get customer
-//            CustomerDto customer = new CustomerDto();
-//            List<String> modes = new ArrayList<>();
-//            modes.add(Text_SMS.toString());
-//            modes.add(EMAIL.toString());
-//            Long l = 9899889988L;
-//            customer.setId(customerID);
-//            customer.setName("Sample User");
-//            customer.setEmail("sampleemail@mail.com");
-//            customer.setNumber(l);
-//            customer.setGender("Gender");
-//            customer.setWhatsapp(l);
-//            orderPlaced.setCustomer(customer);
-//            orderPlaced.setMode(modes);
-//            orderPlaced.setOrderID(orders.getOrderID().toString());
-//            //to be replaced by product Api
-//            orderPlaced.setProductName("SampleProduct");
-//            orderPlaced.setQuandity((int) orders.getQuantity());
-//            orderPlaced.setTotalCost((int) orders.getCost());
-
-//            NotificationProducer notificationProducer = CommonsUtil.getNotificationProducer();
-//            try {
-////                notificationProducer.producerNotification(objectMapper.writeValueAsString(orderPlaced),
-////                        EcommAppApplication.environment.getRequiredProperty(NotificationUtil.NOTIFICATION_ORDER_PLACED_TOPIC));
-//            } catch (IOException ex) {
-//
-//            }
+            notifyUser(Arrays.asList(NotificationType.Text_SMS.toString(), NotificationType.EMAIL.toString()), orders);
         }
     }
+
+    private Orders getOrderInstance(Long customerId, ItemsDTO item) {
+        Orders orders = new Orders();
+        orders.setCustomerID(customerId);
+        orders.setProductID(item.getProductID());
+        orders.setCost(item.getCost());
+        orders.setQuantity(item.getQuantity());
+        orders.setStatus(OrderStatus.Placed);
+        return orders;
+    }
+
 
     public OrderStatus getOrderStatus(UUID orderID) {
         Orders order = orderRepository.getOne(orderID);
@@ -77,5 +60,26 @@ public class OrderServices {
 
     public Orders getOrderbyUUID(UUID orderID) {
         return orderRepository.getOne(orderID);
+    }
+
+    private void notifyUser(List<String> modes, Orders order) throws Exception {
+        ObjectMapper objectMapper = new ObjectMapper();
+        CustomerDto customer = objectMapper.readValue(Communication.sendGetRequest("https://localhost:/customer/" + order.getCustomerID())
+                , CustomerDto.class);
+        OrderPlaced orderPlaced = createOrderPlacedInstance(modes, order, customer);
+        NotificationProducer notificationProducer = CommonsUtil.getNotificationProducer();
+        notificationProducer.producerNotification(objectMapper.writeValueAsString(orderPlaced),
+                EcommAppApplication.environment.getRequiredProperty("notification.order.placed.topic"));
+    }
+
+    private OrderPlaced createOrderPlacedInstance(List<String> modes, Orders order, CustomerDto customer) {
+        OrderPlaced orderPlaced = new OrderPlaced();
+        orderPlaced.setMode(modes);
+        orderPlaced.setCustomerDto(customer);
+        orderPlaced.setOrderID(order.getOrderID().toString());
+        orderPlaced.setProductName("ABC Product");
+        orderPlaced.setQuandity(orderPlaced.getQuandity());
+        orderPlaced.setTotalCost(orderPlaced.getTotalCost());
+        return orderPlaced;
     }
 }

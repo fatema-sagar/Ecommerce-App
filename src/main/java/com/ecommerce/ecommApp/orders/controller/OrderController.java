@@ -2,7 +2,6 @@ package com.ecommerce.ecommApp.orders.controller;
 
 import com.ecommerce.ecommApp.commons.enums.OrderStatus;
 import com.ecommerce.ecommApp.commons.pojo.orders.ItemsDTO;
-import com.ecommerce.ecommApp.orders.Models.Items;
 import com.ecommerce.ecommApp.orders.Models.Orders;
 import com.ecommerce.ecommApp.orders.services.OrderServices;
 import org.slf4j.Logger;
@@ -21,13 +20,15 @@ public class OrderController {
     @Autowired
     private OrderServices orderService;
 
+    //get order by customer id api
     @GetMapping("/{customerID}")
     public List<Orders> getOrderByCustomerId(@PathVariable long customerID) {
         return orderService.getAllOrder(customerID);
     }
 
+    // place order api
     @PostMapping("/{customerID}")
-    public void placeOrder(@RequestBody List<ItemsDTO> productsOrdered, @PathVariable long customerID) {
+    public void placeOrder(@RequestBody List<ItemsDTO> productsOrdered, @PathVariable long customerID) throws Exception{
         //extract the body and pass the list
         orderService.placeOrder(customerID, productsOrdered);
         //produce to kafka topic in order to place the Placed notification
@@ -38,7 +39,6 @@ public class OrderController {
     public void getOrderStatus(@PathVariable UUID orderID) {
         //Return the status of the object;
         OrderStatus status = orderService.getOrderStatus(orderID);
-
     }
 
     @PatchMapping("/{orderID}/status")
