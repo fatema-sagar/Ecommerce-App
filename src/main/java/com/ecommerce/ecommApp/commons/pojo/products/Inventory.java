@@ -14,7 +14,7 @@ import java.util.Set;
 @Table(name = "inventory")
 //@Getter
 //@Setter
-//@NoArgsConstructor
+@NoArgsConstructor
 public class Inventory {
 
   @Id @Column(unique = true)
@@ -82,8 +82,8 @@ public class Inventory {
     this.cart = cart;
   }
 
-  public Inventory(){
-
-  }
+//  public Inventory(){
+//
+//  }
 
 }

@@ -18,7 +18,7 @@ import java.util.Set;
 @Table(name = "cart")
 //@Getter
 //@Setter
-//@NoArgsConstructor
+@NoArgsConstructor
 public class Cart {
 
   @Id
@@ -30,7 +30,7 @@ public class Cart {
 //  @JsonProperty
 //  @Id @Getter @NotNull
 //  private long customer_id;
-
+//
 //  @JsonProperty @NotNull
 //  private long product_id;
 
@@ -85,9 +85,7 @@ private Set<Inventory> inventory = new HashSet<>();
   public void setInventory(Set<Inventory> inventory) {
     this.inventory = inventory;
   }
-  public Cart(){
 
-  }
 
 
 }
