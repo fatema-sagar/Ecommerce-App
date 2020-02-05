@@ -11,7 +11,7 @@ public class Inventory {
 
   @Id @Column(unique = true)
   @Getter @GeneratedValue(strategy = GenerationType.SEQUENCE)
-  int inventoryid;
+  long inventoryid;
 
   public enum Size {XS, S, M, L, XL};
   @Getter @Column

@@ -21,7 +21,7 @@ public class InventoryService {
     return inventoryRepository.save(inventory);
   }
 
-  public void deleteFromInventory(int inventoryId) throws InventoryElementNotFoundException {
+  public void deleteFromInventory(long inventoryId) throws InventoryElementNotFoundException {
     if (inventoryRepository.existsById(inventoryId)) {
       logger.info("Deleting product from id {}", inventoryId);
       inventoryRepository.deleteById(inventoryId);

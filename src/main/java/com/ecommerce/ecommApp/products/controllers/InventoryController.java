@@ -29,7 +29,7 @@ public class InventoryController {
   }
 
   @RequestMapping(value = "/inventory/deleteInventory/{inventoryid}", method = RequestMethod.DELETE)
-  public ResponseEntity deleteProductFromInventory(@PathVariable int inventoryid) {
+  public ResponseEntity deleteProductFromInventory(@PathVariable long inventoryid) {
     try {
       inventoryService.deleteFromInventory(inventoryid);
       return new ResponseEntity<>( HttpStatus.OK);
