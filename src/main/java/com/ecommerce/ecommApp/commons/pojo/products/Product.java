@@ -14,7 +14,7 @@ public class Product {
 
   @JsonProperty
   @Getter @Id @Column(unique = true) @GeneratedValue(strategy = GenerationType.AUTO)
-  long productid;
+  int productid;
 
   public enum Gender {MALE, FEMALE};
 
@@ -28,6 +28,6 @@ public class Product {
 
   @JsonProperty
   @Getter @NotNull
-  long inventoryid;
+  int inventoryid;
 
 }
