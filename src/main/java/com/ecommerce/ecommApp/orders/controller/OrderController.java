@@ -1,6 +1,7 @@
 package com.ecommerce.ecommApp.orders.controller;
 
 import com.ecommerce.ecommApp.commons.pojo.orders.ItemsDTO;
+import com.ecommerce.ecommApp.commons.pojo.orders.OrdersDTO;
 import com.ecommerce.ecommApp.orders.Models.Orders;
 import com.ecommerce.ecommApp.orders.services.OrderServices;
 import org.slf4j.Logger;
@@ -33,19 +34,14 @@ public class OrderController {
     }
 
     @GetMapping("/status/{orderID}")
-    public ResponseEntity<String> getOrderStatus(@PathVariable String orderID) {
-        String status = orderService.getOrderStatus(orderID);
-        return new ResponseEntity(status, HttpStatus.OK);
+    public ResponseEntity<OrdersDTO> getOrderDetail(@PathVariable String orderID) {
+        OrdersDTO ordersDTO=orderService.getOrderDetails(orderID);
+        return new ResponseEntity(ordersDTO, HttpStatus.OK);
     }
 
 //    @PatchMapping("/update/{orderID}")
 //    public void updateStatus(@RequestParam OrderStatus status, @PathVariable UUID orderID) {
 //        orderService.updateOrderStatus(orderID, status);
-//    }
-
-//    @GetMapping("specific/{orderID}")
-//    public Orders getSpecificOrder(@PathVariable UUID orderID) {
-//        return orderService.getOrderbyUUID(orderID);
 //    }
 
 }

@@ -9,6 +9,7 @@ import com.ecommerce.ecommApp.commons.enums.OrderStatus;
 import com.ecommerce.ecommApp.commons.pojo.customer.CustomerDto;
 import com.ecommerce.ecommApp.commons.pojo.notification.OrderPlaced;
 import com.ecommerce.ecommApp.commons.pojo.orders.ItemsDTO;
+import com.ecommerce.ecommApp.commons.pojo.orders.OrdersDTO;
 import com.ecommerce.ecommApp.orders.Models.Orders;
 import com.ecommerce.ecommApp.orders.repository.OrderRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -74,6 +75,22 @@ public class OrderServices {
         Orders order=orderRepository.findById(orderID).get();
         return order.getOrderStatus();
        }
+
+    public OrdersDTO getOrderDetails(String orderId) {
+        OrdersDTO ordersDTO=createOrderDtoInstance(orderRepository.findById(orderId).get());
+        return ordersDTO;
+    }
+
+    private OrdersDTO createOrderDtoInstance(Orders orders) {
+        OrdersDTO ordersDTO=new OrdersDTO();
+        ordersDTO.setOrderID(orders.getOrderID());
+        ordersDTO.setCustomerID(orders.getCustomerID());
+        ordersDTO.setProductID(orders.getProductID());
+        ordersDTO.setQuantity(orders.getQuantity());
+        ordersDTO.setCost(orders.getTotalCost());
+        ordersDTO.setStatus(orders.getOrderStatus());
+        return ordersDTO;
+    }
 
 //    public void updateOrderStatus(String orderID, OrderStatus status) {
 //        Orders order = orderRepository.getOne(orderID);

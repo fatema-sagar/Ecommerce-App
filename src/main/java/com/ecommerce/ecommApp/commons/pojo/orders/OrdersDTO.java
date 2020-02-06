@@ -10,7 +10,7 @@ import java.util.UUID;
 public class OrdersDTO {
 
     @JsonProperty("order_id")
-    private UUID orderID;
+    private String orderID;
 
     @JsonProperty("customer_id")
     private long customerID;
@@ -25,5 +25,5 @@ public class OrdersDTO {
     private int cost;
 
     @JsonProperty("status")
-    private OrderStatus status;
+    private String status;
 }
