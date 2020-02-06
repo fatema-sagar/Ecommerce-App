@@ -1,22 +1,17 @@
 package com.ecommerce.ecommApp.notifications.services;
 
-import com.ecommerce.ecommApp.commons.pojo.customer.CustomerDto;
+import com.ecommerce.ecommApp.commons.Util.CommonsUtil;
 import com.ecommerce.ecommApp.commons.pojo.notification.OrderCancelled;
 import com.ecommerce.ecommApp.notifications.NotificationUtil;
 import com.ecommerce.ecommApp.notifications.handlers.NotificationHandler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
-import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.Properties;
 
 public class OrderCancelledService extends Thread {
-    @Autowired
-    Environment environment;
 
     String kafkaTopicName;
     Properties props;
@@ -34,7 +29,7 @@ public class OrderCancelledService extends Thread {
         super.run();
         props = NotificationUtil.getConsumerConfigs();
         kafkaConsumer = NotificationUtil.createConsumer(props, kafkaTopicName);
-        objectMapper = new ObjectMapper();
+        objectMapper = CommonsUtil.getObjectMapper();
         notificationHandler = new NotificationHandler();
 
         while (true) {
@@ -56,7 +51,6 @@ public class OrderCancelledService extends Thread {
     }
 
     private String formatMessage(OrderCancelled orderPlaced) {
-        CustomerDto customerDto = orderPlaced.getCustomerDto();
         return String.format(NotificationUtil.MessageTemplate.ORDER_CANCELLED_MESSAGE, orderPlaced.getQuandity(), orderPlaced.getProductName(), orderPlaced.getOrderID());
     }
 }

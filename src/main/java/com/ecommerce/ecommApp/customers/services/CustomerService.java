@@ -92,7 +92,7 @@ public class CustomerService {
         notificationProducer = CommonsUtil.getNotificationProducer();
         try {
             notificationProducer.producerNotification(objectMapper.writeValueAsString(userRegistered),
-                    EcommAppApplication.environment.getRequiredProperty(NotificationUtil.NOTIFICATION_REGISTERED_TOPIC));
+                    EcommAppApplication.environment.getRequiredProperty(CommonsUtil.NOTIFICATION_REGISTERED_TOPIC));
         } catch (IOException ex) {
 
         }
