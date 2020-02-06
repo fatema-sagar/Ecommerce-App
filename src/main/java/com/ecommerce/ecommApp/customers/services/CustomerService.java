@@ -40,6 +40,7 @@ public class CustomerService {
     NotificationProducer notificationProducer;
     CustomerUtil customerUtil = new CustomerUtil();
 
+
     public void register(RegistrationDto registrationDetails) throws EmailExistsException {
 
         if (emailExists(registrationDetails.getEmail())) {
@@ -51,7 +52,8 @@ public class CustomerService {
         customer.setName(registrationDetails.getName());
         customer.setEmail(registrationDetails.getEmail());
         customer.setNumber(registrationDetails.getNumber());
-        customer.setPassword(passwordEncoder().encode(registrationDetails.getPassword()));
+        customer.setPassword(EcommAppApplication.context.getBean(BCryptPasswordEncoder.class).
+                encode(registrationDetails.getPassword()));
         customer.setWhatsapp(registrationDetails.getWhatsapp());
         customer.setGender(registrationDetails.getGender());
         customerRepository.save(customer);
