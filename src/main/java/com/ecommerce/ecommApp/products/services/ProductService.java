@@ -20,9 +20,7 @@ public class ProductService {
   ProductRepository productRepository;
 
   public List<Product> getProductsList() {
-    List<Product> productList;
-    productList = productRepository.findAll();
-    return productList;
+    return productRepository.findAll();
   }
 
   public Product createProduct(Product product) {

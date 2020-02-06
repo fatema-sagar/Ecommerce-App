@@ -51,7 +51,17 @@ public class ProductController {
     return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
   }
 
-  @RequestMapping(value = "/inventory/deductInventory", method = RequestMethod.PUT)
+  @RequestMapping(value = "/product/display", method = RequestMethod.GET)
+  private ResponseEntity displayAllProducts() {
+    try {
+      return new ResponseEntity(productService.getProductsList(), HttpStatus.OK);
+    } catch (Exception e) {
+      e.getMessage();
+    }
+    return new ResponseEntity(HttpStatus.BAD_REQUEST);
+  }
+
+  @RequestMapping(value = "/product/deductInventory", method = RequestMethod.PUT)
   public ResponseEntity deductFromInventory(@RequestBody Product[] products) {
     try {
       logger.info("fetching elements to deduct {}", products);

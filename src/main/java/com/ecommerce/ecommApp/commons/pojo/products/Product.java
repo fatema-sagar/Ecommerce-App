@@ -33,7 +33,7 @@ public class Product {
   @Column
   private float price;
 
-  @ManyToMany(fetch = FetchType.LAZY,
+  @ManyToMany(fetch = FetchType.EAGER,
           cascade = {
                   CascadeType.PERSIST,
                   CascadeType.MERGE
