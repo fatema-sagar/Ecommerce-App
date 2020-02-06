@@ -10,6 +10,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
+import java.util.List;
+
 @RestController
 public class InventoryController {
 
@@ -57,6 +60,18 @@ public class InventoryController {
       e.getMessage();
     }
     return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+  }
+
+  @RequestMapping(value = "/inventory/deductInventory", method = RequestMethod.PUT)
+  public ResponseEntity deductFromInventory(@RequestBody Inventory[] inventory) {
+    try {
+      logger.info("fetching elements to deduct {}", inventory);
+      inventoryService.deductInventory(Arrays.asList(inventory));
+      return new ResponseEntity(HttpStatus.OK);
+    } catch (Exception e) {
+      e.getMessage();
+    }
+    return new ResponseEntity(HttpStatus.BAD_REQUEST);
   }
 
 }
