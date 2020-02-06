@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 public class OrderServices {
@@ -30,9 +29,9 @@ public class OrderServices {
 
     public void placeOrder(Long customerID, List<ItemsDTO> productsOrdered) throws Exception {
         for (ItemsDTO item : productsOrdered) {
-            Orders orders = getOrderInstance(customerID, item);
-            orderRepository.save(orders);
-            notifyUser(Arrays.asList(NotificationType.Text_SMS.toString(), NotificationType.EMAIL.toString()), orders);
+            Orders order = getOrderInstance(customerID, item);
+            orderRepository.save(order);
+            notifyUser(Arrays.asList(NotificationType.Text_SMS.toString(), NotificationType.EMAIL.toString()), order);
         }
     }
 
@@ -40,31 +39,15 @@ public class OrderServices {
         Orders orders = new Orders();
         orders.setCustomerID(customerId);
         orders.setProductID(item.getProductID());
-        orders.setCost(item.getCost());
+        orders.setTotalCost(item.getCost());
         orders.setQuantity(item.getQuantity());
-        orders.setStatus(OrderStatus.Placed.toString());
+        orders.setOrderStatus(OrderStatus.Placed.toString());
         return orders;
-    }
-
-
-    public String getOrderStatus(String orderID) {
-        Orders order = orderRepository.getOne(orderID);
-        return order.getStatus();
-    }
-
-    public void updateOrderStatus(String orderID, OrderStatus status) {
-        Orders order = orderRepository.getOne(orderID);
-        order.setStatus(status.toString());
-        orderRepository.save(order);
-    }
-
-    public Orders getOrderbyUUID(UUID orderID) {
-        return orderRepository.getOne(orderID.toString());
     }
 
     private void notifyUser(List<String> modes, Orders order) throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
-        CustomerDto customer = objectMapper.readValue(Communication.sendGetRequest("http://localhost:3000/customer/"+order.getCustomerID())
+        CustomerDto customer = objectMapper.readValue(Communication.sendGetRequest("http://localhost:3000/customer/" + order.getCustomerID())
                 , CustomerDto.class);
         OrderPlaced orderPlaced = createOrderPlacedInstance(modes, order, customer);
         NotificationProducer notificationProducer = CommonsUtil.getNotificationProducer();
@@ -72,14 +55,34 @@ public class OrderServices {
                 EcommAppApplication.environment.getRequiredProperty("notification.order.placed.topic"));
     }
 
+
     private OrderPlaced createOrderPlacedInstance(List<String> modes, Orders order, CustomerDto customer) {
         OrderPlaced orderPlaced = new OrderPlaced();
         orderPlaced.setMode(modes);
         orderPlaced.setCustomerDto(customer);
-        orderPlaced.setOrderID(order.getOrderID().toString());
-        orderPlaced.setProductName("ABC Product");
+        orderPlaced.setOrderID(order.getOrderID());
+        orderPlaced.setProductName("Dommy Name Given");
         orderPlaced.setQuandity(order.getQuantity());
-        orderPlaced.setTotalCost(order.getCost());
+        orderPlaced.setTotalCost(order.getTotalCost());
         return orderPlaced;
     }
+
+    public String getOrderStatus(String orderID) {
+//        Orders order = orderRepository.getOne(orderID);
+//        System.out.println(orderRepository.getOne(orderID));
+//        return order.getOrderStatus();
+        Orders order=orderRepository.findById(orderID).get();
+        return order.getOrderStatus();
+       }
+
+//    public void updateOrderStatus(String orderID, OrderStatus status) {
+//        Orders order = orderRepository.getOne(orderID);
+//        order.setStatus(status.toString());
+//        orderRepository.save(order);
+//    }
+//
+//    public Orders getOrderbyUUID(UUID orderID) {
+//        return orderRepository.getOne(orderID.toString());
+//    }
+
 }
