@@ -27,12 +27,13 @@ public class Cart {
   private Long cart_id;
 
 
-//  @JsonProperty
-//  @Id @Getter @NotNull
-//  private long customer_id;
-//
-//  @JsonProperty @NotNull
-//  private long product_id;
+  @JsonProperty
+//  @Getter
+  @NotNull
+  private long customer_id;
+
+  @JsonProperty @NotNull
+  private long product_id;
 
   @JsonProperty @NotNull
   @Column(name = "quantity")
@@ -47,11 +48,12 @@ public class Cart {
         cascade = {
                 CascadeType.PERSIST,
                 CascadeType.MERGE
-        })
-@JoinTable(name = "cart_inventory",
-        joinColumns = { @JoinColumn(name = "cart_id") },
-        inverseJoinColumns = { @JoinColumn(name = "inventoryid") })
-private Set<Inventory> inventory = new HashSet<>();
+        },
+          mappedBy = "cart")
+//@JoinTable(name = "cart_product",
+//        joinColumns = { @JoinColumn(name = "cart_id") },
+//        inverseJoinColumns = { @JoinColumn(name = "productid") })
+private Set<Product> product = new HashSet<>();
 
 
   public Long getCart_id() {
@@ -78,14 +80,21 @@ private Set<Inventory> inventory = new HashSet<>();
     this.availability = availability;
   }
 
-  public Set<Inventory> getInventory() {
-    return inventory;
+  public long getCustomer_id() {
+    return customer_id;
   }
 
-  public void setInventory(Set<Inventory> inventory) {
-    this.inventory = inventory;
+  public void setCustomer_id(long customer_id) {
+    this.customer_id = customer_id;
   }
 
+  public Set<Product> getProduct() {
+    return product;
+  }
+
+  public void setProduct(Set<Product> product) {
+    this.product = product;
+  }
 
 
 }

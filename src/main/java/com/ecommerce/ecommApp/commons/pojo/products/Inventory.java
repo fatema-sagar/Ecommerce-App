@@ -66,21 +66,21 @@ public class Inventory {
     this.price = price;
   }
 
-  @ManyToMany(fetch = FetchType.LAZY,
-          cascade = {
-                  CascadeType.PERSIST,
-                  CascadeType.MERGE
-          },
-          mappedBy = "inventory")
-  private Set<Cart> cart = new HashSet<>();
-
-  public Set<Cart> getCart() {
-    return cart;
-  }
-
-  public void setCart(Set<Cart> cart) {
-    this.cart = cart;
-  }
+//  @ManyToMany(fetch = FetchType.LAZY,
+//          cascade = {
+//                  CascadeType.PERSIST,
+//                  CascadeType.MERGE
+//          },
+//          mappedBy = "inventory")
+//  private Set<Cart> cart = new HashSet<>();
+//
+//  public Set<Cart> getCart() {
+//    return cart;
+//  }
+//
+//  public void setCart(Set<Cart> cart) {
+//    this.cart = cart;
+//  }
 
 //  public Inventory(){
 //
