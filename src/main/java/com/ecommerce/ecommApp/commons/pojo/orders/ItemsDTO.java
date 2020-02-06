@@ -5,10 +5,13 @@ import lombok.Data;
 
 @Data
 public class ItemsDTO {
-    @JsonProperty("productID")
+
+    @JsonProperty("product_id")
     private long productID;
+
     @JsonProperty("quantity")
     private int quantity;
-    @JsonProperty("cost")
+
+    @JsonProperty("total_cost")
     private int cost;
 }

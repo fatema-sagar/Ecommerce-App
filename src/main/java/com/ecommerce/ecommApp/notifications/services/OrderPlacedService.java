@@ -1,13 +1,12 @@
 package com.ecommerce.ecommApp.notifications.services;
 
-import com.ecommerce.ecommApp.commons.pojo.customer.CustomerDto;
+import com.ecommerce.ecommApp.commons.Util.CommonsUtil;
 import com.ecommerce.ecommApp.commons.pojo.notification.OrderPlaced;
 import com.ecommerce.ecommApp.notifications.NotificationUtil;
 import com.ecommerce.ecommApp.notifications.handlers.NotificationHandler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.Properties;
@@ -30,7 +29,7 @@ public class OrderPlacedService extends Thread {
         super.run();
         props = NotificationUtil.getConsumerConfigs();
         kafkaConsumer = NotificationUtil.createConsumer(props, kafkaTopicName);
-        objectMapper = new ObjectMapper();
+        objectMapper = CommonsUtil.getObjectMapper();
         notificationHandler = NotificationUtil.getNotificationHandler();
 
         while (true) {
@@ -52,8 +51,6 @@ public class OrderPlacedService extends Thread {
     }
 
     private String formatMessage(OrderPlaced orderPlaced) {
-        CustomerDto customerDto = orderPlaced.getCustomerDto();
         return String.format(NotificationUtil.MessageTemplate.ORDER_PLACED_MESSAGE, orderPlaced.getQuandity(), orderPlaced.getProductName(), orderPlaced.getOrderID());
     }
-
 }

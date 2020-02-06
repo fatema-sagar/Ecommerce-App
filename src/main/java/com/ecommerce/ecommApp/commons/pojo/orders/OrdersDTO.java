@@ -9,21 +9,21 @@ import java.util.UUID;
 @Data
 public class OrdersDTO {
 
-    @JsonProperty("orderID")
-    private UUID orderID;
+    @JsonProperty("order_id")
+    private String orderID;
 
-    @JsonProperty("customerID")
+    @JsonProperty("customer_id")
     private long customerID;
 
-    @JsonProperty("productID")
+    @JsonProperty("product_id")
     private long productID;
 
-    @JsonProperty("quantity")
+    @JsonProperty("quandity")
     private int quantity;
 
-    @JsonProperty("cost")
+    @JsonProperty("total_cost")
     private int cost;
 
     @JsonProperty("status")
-    private OrderStatus status;
+    private String status;
 }

@@ -1,16 +1,17 @@
 package com.ecommerce.ecommApp.orders.controller;
 
-import com.ecommerce.ecommApp.commons.enums.OrderStatus;
 import com.ecommerce.ecommApp.commons.pojo.orders.ItemsDTO;
+import com.ecommerce.ecommApp.commons.pojo.orders.OrdersDTO;
 import com.ecommerce.ecommApp.orders.Models.Orders;
 import com.ecommerce.ecommApp.orders.services.OrderServices;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/orders")
@@ -26,30 +27,21 @@ public class OrderController {
         return orderService.getAllOrder(customerID);
     }
 
-    // place order api
-    @PostMapping("/{customerID}")
-    public void placeOrder(@RequestBody List<ItemsDTO> productsOrdered, @PathVariable long customerID) throws Exception{
-        //extract the body and pass the list
-        orderService.placeOrder(customerID, productsOrdered);
-        //produce to kafka topic in order to place the Placed notification
+    @RequestMapping(path = "/{customerID}", method = RequestMethod.POST)
+    public ResponseEntity<String> placeOrder(@RequestBody List<ItemsDTO> orderedProducts, @PathVariable long customerID) throws Exception {
+        orderService.placeOrder(customerID, orderedProducts);
+        return new ResponseEntity<String>("Success order placed", HttpStatus.OK);
     }
 
-    //check mapping
-    @GetMapping("/{orderID}/status")
-    public void getOrderStatus(@PathVariable UUID orderID) {
-        //Return the status of the object;
-        OrderStatus status = orderService.getOrderStatus(orderID);
+    @GetMapping("/status/{orderID}")
+    public ResponseEntity<OrdersDTO> getOrderDetail(@PathVariable String orderID) {
+        OrdersDTO ordersDTO=orderService.getOrderDetails(orderID);
+        return new ResponseEntity(ordersDTO, HttpStatus.OK);
     }
 
-    @PatchMapping("/{orderID}/status")
-    public void updateStatus(@RequestParam OrderStatus status, @PathVariable UUID orderID) {
-        orderService.updateOrderStatus(orderID, status);
-    }
-
-    @GetMapping("/{orderID}")
-    public Orders getSpecificOrder(@PathVariable UUID orderID) {
-        return orderService.getOrderbyUUID(orderID);
-    }
-
+//    @PatchMapping("/update/{orderID}")
+//    public void updateStatus(@RequestParam OrderStatus status, @PathVariable UUID orderID) {
+//        orderService.updateOrderStatus(orderID, status);
+//    }
 
 }
