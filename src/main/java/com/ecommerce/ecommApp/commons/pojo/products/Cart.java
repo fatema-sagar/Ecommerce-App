@@ -16,8 +16,8 @@ import java.util.Set;
 
 @Entity
 @Table(name = "cart")
-//@Getter
-//@Setter
+@Getter
+@Setter
 @NoArgsConstructor
 public class Cart {
 
@@ -28,7 +28,6 @@ public class Cart {
 
 
   @JsonProperty
-//  @Getter
   @NotNull
   private long customer_id;
 
@@ -50,51 +49,10 @@ public class Cart {
                 CascadeType.MERGE
         },
           mappedBy = "cart")
-//@JoinTable(name = "cart_product",
-//        joinColumns = { @JoinColumn(name = "cart_id") },
-//        inverseJoinColumns = { @JoinColumn(name = "productid") })
+
 private Set<Product> product = new HashSet<>();
 
 
-  public Long getCart_id() {
-    return cart_id;
-  }
-
-  public void setCart_id(Long cart_id) {
-    this.cart_id = cart_id;
-  }
-
-  public int getQuantity() {
-    return quantity;
-  }
-
-  public void setQuantity(int quantity) {
-    this.quantity = quantity;
-  }
-
-  public Boolean getAvailability() {
-    return availability;
-  }
-
-  public void setAvailability(Boolean availability) {
-    this.availability = availability;
-  }
-
-  public long getCustomer_id() {
-    return customer_id;
-  }
-
-  public void setCustomer_id(long customer_id) {
-    this.customer_id = customer_id;
-  }
-
-  public Set<Product> getProduct() {
-    return product;
-  }
-
-  public void setProduct(Set<Product> product) {
-    this.product = product;
-  }
 
 
 }
