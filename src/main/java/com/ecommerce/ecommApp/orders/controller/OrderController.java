@@ -7,6 +7,8 @@ import com.ecommerce.ecommApp.orders.services.OrderServices;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,13 +22,13 @@ public class OrderController {
     @Autowired
     private OrderServices orderService;
 
-    //get order by customer id api
+    //get order by customer id api //tested
     @GetMapping("/{customerID}")
     public List<Orders> getOrderByCustomerId(@PathVariable long customerID) {
         return orderService.getAllOrder(customerID);
     }
 
-    // place order api
+    // place order api //tested
     @PostMapping("/{customerID}")
     public void placeOrder(@RequestBody List<ItemsDTO> productsOrdered, @PathVariable long customerID) throws Exception{
         //extract the body and pass the list
@@ -36,9 +38,10 @@ public class OrderController {
 
     //check mapping
     @GetMapping("/{orderID}/status")
-    public void getOrderStatus(@PathVariable UUID orderID) {
+    public ResponseEntity<String> getOrderStatus(@PathVariable String orderID) {
         //Return the status of the object;
-        OrderStatus status = orderService.getOrderStatus(orderID);
+        String status = orderService.getOrderStatus(orderID);
+        return new ResponseEntity(status,HttpStatus.OK);
     }
 
     @PatchMapping("/{orderID}/status")
@@ -46,7 +49,7 @@ public class OrderController {
         orderService.updateOrderStatus(orderID, status);
     }
 
-    @GetMapping("/{orderID}")
+    @GetMapping("specific/{orderID}")
     public Orders getSpecificOrder(@PathVariable UUID orderID) {
         return orderService.getOrderbyUUID(orderID);
     }

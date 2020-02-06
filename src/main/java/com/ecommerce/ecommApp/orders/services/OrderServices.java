@@ -42,29 +42,29 @@ public class OrderServices {
         orders.setProductID(item.getProductID());
         orders.setCost(item.getCost());
         orders.setQuantity(item.getQuantity());
-        orders.setStatus(OrderStatus.Placed);
+        orders.setStatus(OrderStatus.Placed.toString());
         return orders;
     }
 
 
-    public OrderStatus getOrderStatus(UUID orderID) {
+    public String getOrderStatus(String orderID) {
         Orders order = orderRepository.getOne(orderID);
         return order.getStatus();
     }
 
-    public void updateOrderStatus(UUID orderID, OrderStatus status) {
+    public void updateOrderStatus(String orderID, OrderStatus status) {
         Orders order = orderRepository.getOne(orderID);
-        order.setStatus(status);
+        order.setStatus(status.toString());
         orderRepository.save(order);
     }
 
     public Orders getOrderbyUUID(UUID orderID) {
-        return orderRepository.getOne(orderID);
+        return orderRepository.getOne(orderID.toString());
     }
 
     private void notifyUser(List<String> modes, Orders order) throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
-        CustomerDto customer = objectMapper.readValue(Communication.sendGetRequest("https://localhost:/customer/" + order.getCustomerID())
+        CustomerDto customer = objectMapper.readValue(Communication.sendGetRequest("http://localhost:3000/customer/"+order.getCustomerID())
                 , CustomerDto.class);
         OrderPlaced orderPlaced = createOrderPlacedInstance(modes, order, customer);
         NotificationProducer notificationProducer = CommonsUtil.getNotificationProducer();
@@ -78,8 +78,8 @@ public class OrderServices {
         orderPlaced.setCustomerDto(customer);
         orderPlaced.setOrderID(order.getOrderID().toString());
         orderPlaced.setProductName("ABC Product");
-        orderPlaced.setQuandity(orderPlaced.getQuandity());
-        orderPlaced.setTotalCost(orderPlaced.getTotalCost());
+        orderPlaced.setQuandity(order.getQuantity());
+        orderPlaced.setTotalCost(order.getCost());
         return orderPlaced;
     }
 }

@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.util.Properties;
 
-@Service
 public class UserRegisteredService extends Thread {
 
     private static final Logger log = LoggerFactory.getLogger(UserRegisteredService.class);
@@ -66,4 +65,19 @@ public class UserRegisteredService extends Thread {
 }
 
 
-//example : {"mode":["Text_SMS","EMAIL","WHATSAPP"],"customerDto":{"id":"ox1","name":"abc","number":8851530831,"email":"sagarbindal992@gmail.com","whatsapp":1234567890}}
+//example :
+// {"mode":["Text_SMS","EMAIL","WHATSAPP"],"customerDto":{"id":"ox1","name":"abc","number":8851530831,"email":"sagarbindal992@gmail.com","whatsapp":1234567890}}
+//  {
+//        "mode": [
+//        "Text_SMS",
+//        "EMAIL"
+//        ],
+//        "customer": {
+//        "id": 3,
+//        "name": "root2",
+//        "email": "sagar2@gmail.com",
+//        "number": 8851530831,
+//        "whatsapp": 9454941017,
+//        "gender": "MALE"
+//        }
+//        }

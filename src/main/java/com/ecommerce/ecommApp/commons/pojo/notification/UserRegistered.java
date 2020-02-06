@@ -10,12 +10,11 @@ import java.util.List;
 public class UserRegistered {
     @JsonProperty("mode")
     private List<String> mode;
-    @JsonProperty("customerDto")
+    @JsonProperty("customer")
     private CustomerDto customerDto;
 
     public String toString()
     {
         return mode+" : "+ customerDto.getName();
     }
-
 }

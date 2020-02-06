@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.util.Properties;
 
-@Service
 public class OrderPlacedService extends Thread {
 
     String kafkaTopicName;
