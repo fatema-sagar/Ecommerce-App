@@ -1,10 +1,11 @@
 package com.ecommerce.ecommApp.notifications.handlers;
 
 import com.ecommerce.ecommApp.EcommAppApplication;
+import com.ecommerce.ecommApp.commons.Util.CommonsUtil;
+import com.ecommerce.ecommApp.commons.enums.NotificationType;
 import com.ecommerce.ecommApp.commons.pojo.notification.OrderCancelled;
 import com.ecommerce.ecommApp.commons.pojo.notification.OrderPlaced;
 import com.ecommerce.ecommApp.commons.pojo.notification.UserRegistered;
-import com.ecommerce.ecommApp.commons.enums.NotificationType;
 import com.sendgrid.Method;
 import com.sendgrid.Request;
 import com.sendgrid.Response;
@@ -34,22 +35,21 @@ public class NotificationHandler implements Handler {
 
         if (modes.contains(NotificationType.Text_WHATSAPP.toString()))
             createWhatsappNotification(notifyingService, object, message);
-
     }
 
     public void createSmsNotification(String notifyingService,Object object,String message) {
         switch(notifyingService)
         {
-            case "User Registered":
+            case CommonsUtil.NOTIFICATION_USER_REGISTERED_SERVICE:
                 sendSmsNotification(((UserRegistered)(object)).getCustomerDto().getNumber(),message);
                 break;
-            case "Order Cancelled":
+            case CommonsUtil.NOTIFICATION_ORDER_CANCELLED_SERVICE:
                 sendSmsNotification(((OrderCancelled)(object)).getCustomerDto().getNumber(),message);
                 break;
-            case "Order Status":
+            case CommonsUtil.NOTIFICATION_ORDER_STATUS_SERVICE:
                 sendSmsNotification(((UserRegistered)(object)).getCustomerDto().getNumber(),message);
                 break;
-            case "Order Placed":
+            case CommonsUtil.NOTIFICATION_ORDER_PLACED_SERVICE:
                 sendSmsNotification(((OrderPlaced)(object)).getCustomerDto().getNumber(),message);
                 break;
         }
@@ -57,23 +57,23 @@ public class NotificationHandler implements Handler {
 
     public void createEmailNotificaton(String notifyingService, Object object,String message) {
         switch (notifyingService) {
-            case "User Registered":
+            case CommonsUtil.NOTIFICATION_USER_REGISTERED_SERVICE:
                 sendEmailNotificaton(((UserRegistered) (object)).getCustomerDto().getEmail(), notifyingService, message);
                 break;
-            case "Order Cancelled":
+            case CommonsUtil.NOTIFICATION_ORDER_CANCELLED_SERVICE:
                 sendEmailNotificaton(((OrderCancelled) (object)).getCustomerDto().getEmail(), notifyingService, message);
                 break;
-            case "Order Status":
+            case CommonsUtil.NOTIFICATION_ORDER_STATUS_SERVICE:
                 sendEmailNotificaton(((UserRegistered) (object)).getCustomerDto().getEmail(), notifyingService, message);
                 break;
-            case "Order Placed":
+            case CommonsUtil.NOTIFICATION_ORDER_PLACED_SERVICE:
                 sendEmailNotificaton(((OrderPlaced) (object)).getCustomerDto().getEmail(), notifyingService, message);
                 break;
         }
     }
 
     public void createWhatsappNotification(String notifyingService, Object object,String message) {
-
+        // TODO : integrate the whatsapp.
     }
 
     public void sendSmsNotification(Long number, String message) {
@@ -82,11 +82,11 @@ public class NotificationHandler implements Handler {
 
         try {
             Message sms = Message.creator(new PhoneNumber("+91" + number),
-                    new PhoneNumber(EcommAppApplication.environment.getRequiredProperty("twilio.number")),
+                    new PhoneNumber(EcommAppApplication.environment.getRequiredProperty(CommonsUtil.TWILIO_ASSIGNED_NUMBER)),
                     message).create();
             System.out.println("notification status : for " + number + " : is " + sms.getStatus());
         } catch (ApiException ex) {
-            System.out.println("error from api side");
+            System.out.println("error from twilio api side");
         }
     }
 
@@ -95,11 +95,11 @@ public class NotificationHandler implements Handler {
         if (email.trim().equals(""))
             return;
 
-        Email from = new Email(EcommAppApplication.environment.getRequiredProperty("sendgrid.email.from"));
+        Email from = new Email(EcommAppApplication.environment.getRequiredProperty(CommonsUtil.SENDGRID_FROM_EMAIL));
         Email to = new Email(email);
         Content content = new Content("text/plain", message);
-        Mail mail = new Mail(from, subject, to, content);
 
+        Mail mail = new Mail(from, subject, to, content);
         SendGrid sg = new SendGrid(EcommAppApplication.environment.getProperty("sendgrid.access.token"));
         Request request = new Request();
 
@@ -110,14 +110,13 @@ public class NotificationHandler implements Handler {
             Response response = sg.api(request);
             System.out.println("email : " + to + " : " + response.getStatusCode());
         } catch (Exception ex) {
-            System.out.println("Exception : " + ex);
+            System.out.println("Error in sending Email notification : " + ex);
         }
     }
 
     public void sendWhatsappNotification(Long number, String message) {
         if (number == null)
             return;
-
-
+        // TODO Integrate suitable whatsapp notification SDK
     }
 }
