@@ -100,7 +100,7 @@ public class NotificationHandler implements Handler {
         Content content = new Content("text/plain", message);
 
         Mail mail = new Mail(from, subject, to, content);
-        SendGrid sg = new SendGrid(EcommAppApplication.environment.getProperty("sendgrid.access.token"));
+        SendGrid sg = new SendGrid(CommonsUtil.SENDGRID_ACCESS_TOKEN);
         Request request = new Request();
 
         try {

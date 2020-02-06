@@ -13,12 +13,14 @@ public class CommonsUtil {
     public static final String NOTIFICATION_ORDER_CANCELLED_SERVICE = "Order Cancelled";
     public static final String TWILIO_ASSIGNED_NUMBER = "twilio.number";
     public static final String SENDGRID_FROM_EMAIL = "sendgrid.email.from";
-    public static String KAFKA_BOOTSTRAP_SERVERS = "kafka.bootstrap.server";
+    public static final String SENDGRID_ACCESS_TOKEN="sendgrid.access.token";
+    public static final String KAFKA_BOOTSTRAP_SERVERS = "kafka.bootstrap.server";
 
-    public static String NOTIFICATION_REGISTERED_TOPIC = "notification.registered.topic";
-    public static String NOTIFICATION_ORDER_PLACED_TOPIC = "notification.order.placed.topic";
-    public static String NOTIFICATION_ORDER_STATUS_TOPIC = "notification.order.status.topic";
-    public static String NOTIFICATION_ORDER_CANCEL_TOPIC = "notification.order.cancel.topic";
+    public static final String NOTIFICATION_REGISTERED_TOPIC = "notification.registered.topic";
+    public static final String NOTIFICATION_ORDER_PLACED_TOPIC = "notification.order.placed.topic";
+    public static final String NOTIFICATION_ORDER_STATUS_TOPIC = "notification.order.status.topic";
+    public static final String NOTIFICATION_ORDER_CANCEL_TOPIC = "notification.order.cancel.topic";
+
 
 
     static {
