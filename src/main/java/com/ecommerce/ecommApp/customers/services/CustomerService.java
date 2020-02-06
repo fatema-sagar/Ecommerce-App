@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -79,6 +80,22 @@ public class CustomerService {
             return customerDetails;
         } else{
             throw new NotFoundException("Wrong Customer Id");
+        }
+    }
+
+    public CustomerDto updateCustomerDetails(CustomerDto customerDetails) {
+        Customer customer = customerRepository.findById(customerDetails.getId()).get();
+        if(null!=customer){
+
+            customer.setEmail(customerDetails.getEmail());
+            customer.setName(customerDetails.getName());
+            customer.setGender(customerDetails.getGender());
+            customer.setNumber(customerDetails.getNumber());
+            customer.setWhatsapp(customerDetails.getWhatsapp());
+            customerRepository.save(customer);
+            return customerUtil.convertToPojo(customer);
+        } else{
+            throw new NoSuchElementException("Customer Not Found");
         }
     }
 
