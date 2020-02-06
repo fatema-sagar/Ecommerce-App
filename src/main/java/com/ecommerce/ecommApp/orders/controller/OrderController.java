@@ -39,9 +39,10 @@ public class OrderController {
         return new ResponseEntity(ordersDTO, HttpStatus.OK);
     }
 
-//    @PatchMapping("/update/{orderID}")
-//    public void updateStatus(@RequestParam OrderStatus status, @PathVariable UUID orderID) {
-//        orderService.updateOrderStatus(orderID, status);
-//    }
+    @PutMapping("/update/{orderID}")
+    public ResponseEntity<String> updateStatus(@RequestBody OrdersDTO updateOrder,@PathVariable String orderID) {
+        String message=orderService.updateOrderStatus(orderID, updateOrder);
+        return new ResponseEntity(message,HttpStatus.OK);
+    }
 
 }

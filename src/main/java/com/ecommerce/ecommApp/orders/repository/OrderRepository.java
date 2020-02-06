@@ -13,6 +13,6 @@ import java.util.UUID;
 @Transactional
 @Repository
 public interface OrderRepository extends JpaRepository<Orders, String> {
-    @Query(value = "Select * from orders where customerID=:customerID", nativeQuery = true)
+    @Query(value = "Select * from orders where customer_id=:customerID", nativeQuery = true)
     List<Orders> getOrdersByCustomerId(@Param("customerID") Long customerID);
 }
