@@ -1,6 +1,7 @@
 package com.ecommerce.ecommApp.products.controllers;
 
 import com.ecommerce.ecommApp.commons.pojo.products.Product;
+import com.ecommerce.ecommApp.products.exceptions.ElementNotFoundException;
 import com.ecommerce.ecommApp.products.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -30,6 +31,16 @@ public class ProductController {
     try{
       return new ResponseEntity<>(productService.createProduct(product), HttpStatus.OK);
     } catch (Exception e) {
+      e.getMessage();
+    }
+    return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+  }
+
+  @RequestMapping(value = "/product/update", method = RequestMethod.PUT)
+  private ResponseEntity<Product> updateProduct(@RequestBody Product product) {
+    try {
+      return new ResponseEntity<>(productService.updateProduct(product), HttpStatus.OK);
+    } catch (ElementNotFoundException e) {
       e.getMessage();
     }
     return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

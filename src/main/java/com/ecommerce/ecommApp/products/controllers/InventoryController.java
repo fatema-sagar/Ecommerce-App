@@ -1,7 +1,7 @@
 package com.ecommerce.ecommApp.products.controllers;
 
 import com.ecommerce.ecommApp.commons.pojo.products.Inventory;
-import com.ecommerce.ecommApp.products.exceptions.InventoryElementNotFoundException;
+import com.ecommerce.ecommApp.products.exceptions.ElementNotFoundException;
 import com.ecommerce.ecommApp.products.services.InventoryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +32,7 @@ public class InventoryController {
   public ResponseEntity selectAllInventory() {
     try {
       return new ResponseEntity(inventoryService.getAllElements(), HttpStatus.OK);
-    } catch (InventoryElementNotFoundException e) {
+    } catch (ElementNotFoundException e) {
       e.getMessage();
     }
     return new ResponseEntity(HttpStatus.BAD_REQUEST);
@@ -42,7 +42,7 @@ public class InventoryController {
   public ResponseEntity<Inventory> updateProductInInventory(@RequestBody Inventory inventory) {
     try {
       return new ResponseEntity<>(inventoryService.updateInventoryElement(inventory), HttpStatus.OK);
-    } catch (InventoryElementNotFoundException e) {
+    } catch (ElementNotFoundException e) {
       e.getMessage();
     }
     return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -53,7 +53,7 @@ public class InventoryController {
     try {
       inventoryService.deleteFromInventory(inventoryid);
       return new ResponseEntity<>( HttpStatus.OK);
-    } catch (InventoryElementNotFoundException e) {
+    } catch (ElementNotFoundException e) {
       e.getMessage();
     }
     return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
