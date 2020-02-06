@@ -1,31 +1,32 @@
 package com.ecommerce.ecommApp.commons.pojo.products;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Data;
 import lombok.Getter;
+import org.apache.kafka.common.protocol.types.Field;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "Product")
+@Data
 public class Product {
 
   @JsonProperty
-  @Getter @Id @Column(unique = true) @GeneratedValue(strategy = GenerationType.AUTO)
-  long productid;
-
-  public enum Gender {MALE, FEMALE};
+  @Id @Column(unique = true) @GeneratedValue(strategy = GenerationType.AUTO)
+  private long productid;
 
   @JsonProperty @NotNull
-  @Getter @Column
-  Gender gender;
+  @Column
+  private String gender;
 
   @JsonProperty @NotNull
-  @Getter @Column
-  String category;
+  @Column
+  private String category;
 
   @JsonProperty
-  @Getter @NotNull
-  long inventoryid;
+  @NotNull
+  private long inventoryid;
 
 }

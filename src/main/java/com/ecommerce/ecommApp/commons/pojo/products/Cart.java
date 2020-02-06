@@ -1,6 +1,7 @@
 package com.ecommerce.ecommApp.commons.pojo.products;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Data;
 import lombok.Getter;
 
 import javax.persistence.*;
@@ -9,10 +10,11 @@ import java.util.List;
 
 @Entity
 @Table
+@Data
 public class Cart {
 
   @JsonProperty
-  @Id @Getter @NotNull
+  @Id @NotNull
   private long customer_id;
 
   @JsonProperty @NotNull
@@ -20,5 +22,5 @@ public class Cart {
 
   @JsonProperty @NotNull
   @Column(name = "quantity")
-  int quantity;
+  private int quantity;
 }

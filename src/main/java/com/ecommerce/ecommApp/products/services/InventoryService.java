@@ -1,5 +1,6 @@
 package com.ecommerce.ecommApp.products.services;
 
+import com.ecommerce.ecommApp.commons.enums.Size;
 import com.ecommerce.ecommApp.commons.pojo.products.Inventory;
 import com.ecommerce.ecommApp.products.exceptions.InventoryElementNotFoundException;
 import com.ecommerce.ecommApp.products.repositories.InventoryRepository;
@@ -19,6 +20,8 @@ public class InventoryService {
   InventoryRepository inventoryRepository;
 
   public Inventory addToInventory(Inventory inventory) {
+    String size = inventory.getSize();
+    inventory.setSize(String.valueOf(Size.valueOf(size)));
     logger.info("Adding Inventory Item {} to the db..", inventory);
     return inventoryRepository.save(inventory);
   }
