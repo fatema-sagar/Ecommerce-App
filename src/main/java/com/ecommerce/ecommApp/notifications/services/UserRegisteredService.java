@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.util.Properties;
 
-@Service
 public class UserRegisteredService extends Thread {
 
     private static final Logger log = LoggerFactory.getLogger(UserRegisteredService.class);

@@ -28,6 +28,16 @@ public class InventoryController {
     return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
   }
 
+  @RequestMapping(value = "/inventory/updateInventory", method = RequestMethod.PUT)
+  public ResponseEntity<Inventory> updateProductInInventory(@RequestBody Inventory inventory) {
+    try {
+      return new ResponseEntity<>(inventoryService.updateInventoryElement(inventory), HttpStatus.OK);
+    } catch (InventoryElementNotFoundException e) {
+      e.getMessage();
+    }
+    return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+  }
+
   @RequestMapping(value = "/inventory/deleteInventory/{inventoryid}", method = RequestMethod.DELETE)
   public ResponseEntity deleteProductFromInventory(@PathVariable long inventoryid) {
     try {

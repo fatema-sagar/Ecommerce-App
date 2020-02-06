@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.Properties;
 
-@Service
 public class OrderStatusService extends Thread
 {
 
