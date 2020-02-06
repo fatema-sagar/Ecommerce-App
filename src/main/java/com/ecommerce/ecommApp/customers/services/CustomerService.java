@@ -55,7 +55,6 @@ public class CustomerService {
         customer.setWhatsapp(registrationDetails.getWhatsapp());
         customer.setGender(registrationDetails.getGender());
         customerRepository.save(customer);
-
         CustomerDto customerDto = customerUtil.convertToPojo(customer);
         sendRegistrationNotification(customerDto);
     }
