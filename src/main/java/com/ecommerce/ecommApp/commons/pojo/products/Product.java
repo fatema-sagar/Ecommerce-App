@@ -2,31 +2,45 @@ package com.ecommerce.ecommApp.commons.pojo.products;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
-import lombok.Getter;
-import org.apache.kafka.common.protocol.types.Field;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
-@Table(name = "Product")
+@Table(name = "product")
 @Data
 public class Product {
 
   @JsonProperty
-  @Id @Column(unique = true) @GeneratedValue(strategy = GenerationType.AUTO)
+  @Id @Column(unique = true) @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long productid;
-
-  @JsonProperty @NotNull
-  @Column
-  private String gender;
 
   @JsonProperty @NotNull
   @Column
   private String category;
 
-  @JsonProperty
-  @NotNull
-  private long inventoryid;
+  @Column
+  private String productDescription;
 
+  @Column
+  private String size;
+
+  @Column
+  private int quantity;
+
+  @Column
+  private float price;
+
+  @ManyToMany(fetch = FetchType.LAZY,
+          cascade = {
+                  CascadeType.PERSIST,
+                  CascadeType.MERGE
+          })
+  @JoinTable(name = "product_cart",
+          joinColumns = { @JoinColumn(name = "productid") },
+          inverseJoinColumns = { @JoinColumn(name = "cart_id") })
+
+  private Set<Cart> cart = new HashSet<>();
 }
