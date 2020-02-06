@@ -20,7 +20,7 @@ public class NotificationProducer {
         kafkaProducer.close();
     }
 
-    public Properties getProducerConfigs() {
+    private Properties getProducerConfigs() {
         Properties props = new Properties();
         props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, EcommAppApplication.environment.getRequiredProperty(NotificationUtil.KAFKA_BOOTSTRAP_SERVERS));
         props.put(ProducerConfig.CLIENT_ID_CONFIG, "id : " + System.currentTimeMillis());

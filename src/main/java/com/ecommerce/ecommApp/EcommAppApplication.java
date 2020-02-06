@@ -26,7 +26,7 @@ public class EcommAppApplication {
 		log.info("E-Comm application is started");
 		environment = context.getBean(Environment.class);
 		log.trace("starting Notification services");
-		startNotificationServices();
+//		startNotificationServices();
 	}
 
 	public static void startNotificationServices() {

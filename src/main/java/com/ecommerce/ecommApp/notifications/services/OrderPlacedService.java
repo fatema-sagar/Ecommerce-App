@@ -7,10 +7,12 @@ import com.ecommerce.ecommApp.notifications.handlers.NotificationHandler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.Properties;
 
+@Service
 public class OrderPlacedService extends Thread {
 
     String kafkaTopicName;
