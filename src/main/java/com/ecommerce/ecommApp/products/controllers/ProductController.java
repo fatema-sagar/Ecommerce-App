@@ -61,6 +61,16 @@ public class ProductController {
     return new ResponseEntity(HttpStatus.BAD_REQUEST);
   }
 
+  @RequestMapping(value = "/product/increaseProduct", method = RequestMethod.PUT)
+  public ResponseEntity addToAvailableProducts(@RequestBody Product product) {
+    try {
+      return new ResponseEntity(productService.increaseProductCount(product), HttpStatus.OK);
+    } catch (ElementNotFoundException e) {
+      e.getMessage();
+    }
+    return new ResponseEntity("Unable to increase the quantity of existing product.", HttpStatus.BAD_REQUEST);
+  }
+
   @RequestMapping(value = "/product/deductInventory", method = RequestMethod.PUT)
   public ResponseEntity deductFromInventory(@RequestBody Product[] products) {
     try {

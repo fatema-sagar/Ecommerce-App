@@ -6,5 +6,14 @@ public enum Size {
   M,
   L,
   XL,
-  XXL
+  XXL,
+  shoe_37,
+  shoe_38,
+  shoe_39,
+  shoe_40,
+  shoe_41,
+  meter_2,
+  meter_3,
+  meter_4,
+  meter_5
 }

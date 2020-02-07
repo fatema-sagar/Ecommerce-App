@@ -54,4 +54,14 @@ public class ProductService {
       }
     }
   }
+
+  public Product increaseProductCount(Product product) throws ElementNotFoundException {
+    if (productRepository.existsById(product.getProductid())) {
+      Product existingProduct = productRepository.findById(product.getProductid()).get();
+      existingProduct.setQuantity(existingProduct.getQuantity() + product.getQuantity());
+      return productRepository.save(existingProduct);
+    } else {
+      throw new ElementNotFoundException("Unable to update the quantity for the product, as it is not available with the database.");
+    }
+  }
 }
