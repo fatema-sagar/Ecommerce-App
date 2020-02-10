@@ -27,7 +27,7 @@ public class CartController {
 
 
     @PostMapping(value = "/carts")
-    public ResponseEntity<Object> addToCart(@Valid @RequestBody Long pid) {
+    public ResponseEntity<Object> addToCart(@Valid @RequestBody Long pid,@Valid @RequestBody int quantity) {
      Cart cart = new Cart();
         return ResponseEntity.ok(cart);
     }

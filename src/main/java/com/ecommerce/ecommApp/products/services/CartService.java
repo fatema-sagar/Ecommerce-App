@@ -23,12 +23,15 @@ public class CartService {
     @Autowired
     private CartController cartController;
 
-    public Cart addToCart(Long pid){
+    public Cart addToCart(Long pid,int quantity){
         Cart cart = new Cart();
-        Optional<Product> pdct = productRepository.findById(new Integer(pid+""));
+        Optional<Product> pdct = productRepository.findById(pid);
         Product product = pdct.get();
-        cart.getProduct().add(product);
-        product.getCart().add(cart);
+//        cart.getProduct().add(product);
+//        product.getCart().add(cart);
+        cart.setQuantity(quantity);
+        cartRepository.save(cart);
+
 
         return cart;
 
