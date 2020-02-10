@@ -29,7 +29,7 @@ public class ProductService {
     }
 
     public Product updateProduct(Product product) throws ElementNotFoundException {
-        if (productRepository.existsById(product.getProductid())) {
+        if (productRepository.existsById(product.getProductId())) {
             logger.info("Updated Product: {}", product);
             return productRepository.save(product);
         } else {
@@ -37,31 +37,31 @@ public class ProductService {
         }
     }
 
-    public void deductProducts(List<ItemsDTO> product) throws ElementNotFoundException, NotEnoughQuantityException {
-        for (ItemsDTO element : product) {
-            if (productRepository.existsById(element.getProductID())) {
-                Product invent = productRepository.findById(element.getProductID()).get();
-                if (invent.getQuantity() >= element.getQuantity()) {
-                    invent.setQuantity(invent.getQuantity() - element.getQuantity());
-                    productRepository.save(invent);
-                } else {
-                    throw new NotEnoughQuantityException("The product you are trying to update does not enough quantity");
-                }
-            } else {
-                throw new ElementNotFoundException("Element does not exist");
-            }
-        }
-    }
+//    public void deductProducts(List<ItemsDTO> product) throws ElementNotFoundException, NotEnoughQuantityException {
+//        for (ItemsDTO element : product) {
+//            if (productRepository.existsById(element.getProductID())) {
+//                Product invent = productRepository.findById(element.getProductID()).get();
+//                if (invent.getQuantity() >= element.getQuantity()) {
+//                    invent.setQuantity(invent.getQuantity() - element.getQuantity());
+//                    productRepository.save(invent);
+//                } else {
+//                    throw new NotEnoughQuantityException("The product you are trying to update does not enough quantity");
+//                }
+//            } else {
+//                throw new ElementNotFoundException("Element does not exist");
+//            }
+//        }
+//    }
 
-    public Product increaseProductCount(Product product) throws ElementNotFoundException {
-        if (productRepository.existsById(product.getProductid())) {
-            Product existingProduct = productRepository.findById(product.getProductid()).get();
-            existingProduct.setQuantity(existingProduct.getQuantity() + product.getQuantity());
-            return productRepository.save(existingProduct);
-        } else {
-            throw new ElementNotFoundException("Unable to update the quantity for the product, as it is not available with the database.");
-        }
-    }
+//    public Product increaseProductCount(Product product) throws ElementNotFoundException {
+//        if (productRepository.existsById(product.getProductid())) {
+//            Product existingProduct = productRepository.findById(product.getProductid()).get();
+//            existingProduct.setQuantity(existingProduct.getQuantity() + product.getQuantity());
+//            return productRepository.save(existingProduct);
+//        } else {
+//            throw new ElementNotFoundException("Unable to update the quantity for the product, as it is not available with the database.");
+//        }
+//    }
 
     public List<String> getAllCategories() {
         return productRepository.getCategory();

@@ -48,15 +48,15 @@ public class ProductController {
             return new ResponseEntity("Unable to update the product details" + e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
-
-    @RequestMapping(path = "/increaseProduct", method = RequestMethod.PUT)
-    public ResponseEntity<Object> addToAvailableProducts(@RequestBody Product product) {
-        try {
-            return new ResponseEntity<>(productService.increaseProductCount(product), HttpStatus.OK);
-        } catch (ElementNotFoundException e) {
-            return new ResponseEntity<>("Unable to increase the quantity of existing product." + e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
-    }
+//
+//    @RequestMapping(path = "/increaseProduct", method = RequestMethod.PUT)
+//    public ResponseEntity<Object> addToAvailableProducts(@RequestBody Product product) {
+//        try {
+//            return new ResponseEntity<>(productService.increaseProductCount(product), HttpStatus.OK);
+//        } catch (ElementNotFoundException e) {
+//            return new ResponseEntity<>("Unable to increase the quantity of existing product." + e.getMessage(), HttpStatus.BAD_REQUEST);
+//        }
+//    }
 
     @RequestMapping(path = "/category", method = RequestMethod.GET)
     public ResponseEntity<Object> displayCategory() {
@@ -68,14 +68,14 @@ public class ProductController {
         }
     }
 
-    @RequestMapping(path = "/deductInventory", method = RequestMethod.PUT)
-    public ResponseEntity<Object> deductFromInventory(@RequestBody List<ItemsDTO> products) {
-        try {
-            logger.info("fetching elements to deduct {}", products);
-            productService.deductProducts(products);
-            return new ResponseEntity<>(HttpStatus.OK);
-        }catch (NotEnoughQuantityException | ElementNotFoundException e){
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
-    }
+//    @RequestMapping(path = "/deductInventory", method = RequestMethod.PUT)
+//    public ResponseEntity<Object> deductFromInventory(@RequestBody List<ItemsDTO> products) {
+//        try {
+//            logger.info("fetching elements to deduct {}", products);
+//            productService.deductProducts(products);
+//            return new ResponseEntity<>(HttpStatus.OK);
+//        }catch (NotEnoughQuantityException | ElementNotFoundException e){
+//            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+//        }
+//    }
 }

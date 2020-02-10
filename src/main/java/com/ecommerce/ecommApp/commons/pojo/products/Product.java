@@ -15,23 +15,17 @@ public class Product {
 
   @JsonProperty
   @Id @Column(unique = true) @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private long productid;
+  private long productId;
 
   @JsonProperty @NotNull
   @Column
-  private String category;
+  private String productName;
 
-  @Column
+  @JsonProperty
   private String productDescription;
 
-  @Column
-  private String size;
-
-  @Column
-  private int quantity;
-
-  @Column
-  private float price;
+  @JsonProperty
+  private String image;
 
   @ManyToMany(fetch = FetchType.EAGER,
           cascade = {
@@ -39,7 +33,7 @@ public class Product {
                   CascadeType.MERGE
           })
   @JoinTable(name = "product_cart",
-          joinColumns = { @JoinColumn(name = "productid") },
+          joinColumns = { @JoinColumn(name = "productId") },
           inverseJoinColumns = { @JoinColumn(name = "cart_id") })
 
   private Set<Cart> cart = new HashSet<>();
