@@ -95,3 +95,102 @@ GET /_cat/nodes?v
 
 Listing Indices
 GET /_cat/indices?v
+
+create a new index name pages:
+PUT /pages
+DELETE /pages
+
+//create index with some configs :
+PUT /products
+{
+    "settings":{
+        "number_of_shards":2,
+        "number_of_replicas":2
+    }
+}
+//by default we have 1 shard and 1 replication factor
+
+//adding a document
+POST /products/_doc
+{
+    "name":"ABC",
+    "price":64,
+    "in_stock":10
+}
+
+// if id is not specied in url then it will take a random generated value
+POST /products/_doc/123
+{
+    "name":"ABC",
+    "price":64,
+    "in_stock":10
+}
+
+
+//retrive document :
+GET /products/_doc/100
+
+//update documents :
+POST /products/_update/100
+{
+    "doc":{
+        "in_stock":3,  //this will be updated
+        "tags":["elastic_search"]  //this will be added
+    }
+}
+
+//scripted update:
+POST /products/_update/100
+{
+    "script":{
+        "source":"ctx._source.in_stock--"
+    }
+}
+
+//scripted update:
+POST /products/_update/100
+{
+    "script":{
+        "source":"ctx._source.in_stock = 10"
+    }
+}
+
+//scripted update: with parameter
+POST /products/_update/100
+{
+    "script":{
+        "source":"ctx._source.in_stock -= params.quandity"
+    }
+    "params":{
+        "quandity":4
+    }
+}
+
+//to replace document use the PUT Command with new attributes
+old attritubes will be delited
+
+// query update
+
+POST /products/_update_by_query
+{
+    "script":{
+        "source":"ctx._source.in_stock--"
+    }
+    "query":{
+        "match_all":{ }
+    }
+}
+
+
+//delete by query
+
+POST /products/_delete_by_query
+{
+    "conflicts":"proceed"
+    "query":{
+        "match_all":{}
+    }
+}
+
+
+
