@@ -1,5 +1,6 @@
 package com.ecommerce.ecommApp.products.services;
 
+import com.ecommerce.ecommApp.commons.pojo.orders.ItemsDTO;
 import com.ecommerce.ecommApp.commons.pojo.products.Product;
 import com.ecommerce.ecommApp.products.exceptions.ElementNotFoundException;
 import com.ecommerce.ecommApp.products.exceptions.NotEnoughQuantityException;
@@ -36,17 +37,17 @@ public class ProductService {
     }
   }
 
-  public void deductProducts(List<Product> inventory) throws ElementNotFoundException, NotEnoughQuantityException {
-    Iterator iterator = inventory.iterator();
+  public void deductProducts(List<ItemsDTO> product) throws ElementNotFoundException, NotEnoughQuantityException {
+    Iterator iterator = product.iterator();
     while (iterator.hasNext()) {
       Product element = (Product) iterator.next();
       if (productRepository.existsById(element.getProductid())) {
         Product invent = productRepository.findById(element.getProductid()).get();
-        if (invent.getQuantity() > element.getQuantity()){
+        if (invent.getQuantity() >= element.getQuantity()){
           element.setQuantity(invent.getQuantity() - element.getQuantity());
           productRepository.save(element);
         } else {
-          throw new NotEnoughQuantityException("The inventory you are trying to update does not enough quantity");
+          throw new NotEnoughQuantityException("The product you are trying to update does not enough quantity");
         }
       } else {
         throw new ElementNotFoundException("Element does not exist");
@@ -64,11 +65,8 @@ public class ProductService {
     }
   }
 
-  public Set<String> getAllCategories() {
-    List<String> categories = new ArrayList<>();
-    categories = productRepository.getCategory();
-    Set<String> uniqueCategory = new HashSet<>(categories);
-    System.out.println(uniqueCategory);
-    return uniqueCategory;
+  public List<String> getAllCategories() {
+    List<String> categories = productRepository.getCategory();
+    return categories;
   }
 }
