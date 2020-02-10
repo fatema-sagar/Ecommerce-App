@@ -193,4 +193,270 @@ POST /products/_delete_by_query
 }
 
 
+--------------------MApping ---------------
 
+GET /products/default/_mapping
+
+---------------update mapping for a index ---------
+PUT /product/default/_mapping
+{
+    "properties":{
+        "discount":{
+            "type":"double"
+        }
+    }
+}
+
+
+//change existing mapping
+
+delete index first and add the mapping again
+DELETE /product
+PUT /product
+{
+    "mappings":{
+        "default":{
+            "dynamic":false,
+            "properties":{
+                "in_stock":{
+                    "type":"integer"
+                },
+                "A":{
+                    "type":"integer"
+                }
+            }
+        }
+    }
+}
+
+
+// search queries run against the Inverted Index's which are anylysed by the analyser before
+
+Analyser : stub, synonym
+|    -> Character Filter
+|   -> Tokenizer
+|    -> Token Filter : stub, synonym
+
+----------Analyse API-----------------
+Standard  tokenizer
+
+POST _analyze
+{
+    "tokenizer":"standard",
+    "text":"i m in the class"
+}
+
+POST _analyze
+{
+    "filter":["lowercase"],
+    "text":"i m in the class"
+}
+
+// Character Filter
+    -> HTML Strip Character Filter == html_strip
+    -> Mapping Character Filter == mapping : it replaces values based on a map of keys and value
+    -> Pattern Replace Filter == pattern_replace : it uses a regex pattern to replace values
+
+// Tokenizers
+    -> Word Oriented Tokenizers == full text is splitted in different words
+        -> Letter Tokenizers : letter
+        -> Lowercase Tokenizer : lowercase
+        -> whitespace Tokenizer : split via space
+        -> UAX URL Email Tokenizer : preserve email and url as single token
+    -> Partial Word Tokenizers
+        -> N-Gram Tokenizer = ngram :  it make different anagrams of word
+        -> Edge N-Gram Tokenizer = edge_ngram : make anagrams from the starting of words only
+    -> Strcutured Text Tokenizers : ussed for email address
+        -> Keyword
+        -> Pattern Tokenizer :
+        -> Path Tokenizer :
+
+// Token filter
+    -> Standard
+    -> Lowercase
+    -> uppercase
+    -> ngram
+    -> stop
+    -> a lot more
+
+---------------Analyzers------------
+-> Standard Analyzer
+-> Simple Analyzer
+-> Stop Analyzer
+-> Language Analyzer
+-> Keyword Analyzer
+-> Pattern Analyzer
+-> Whitespace Analyzer
+
+
+-----------configure analyzer------------
+PUT /existing_analyzer_config
+{
+    "settings":{
+        "analysis":{
+            "analyzer":{
+                "english_stop":{
+                    "type":"standard",
+                    "stopwords":"_english_"
+                }
+            },
+            "filter":{
+                "my_stemmer":{
+                    "type":"stemmer",
+                    "name":"english"
+                }
+            }
+        }
+    }
+}
+
+// using the above analyzer
+POST /existing_analzer_config/_analyze
+{
+    "analyzer":"english_stop",
+    "text":"text is here"
+}
+
+-----------------------Searching data from Elastic Search----------------
+
+GET /product/default/_search
+{
+    "query":{
+        "match":{
+            "description":{
+                "value":"text to be search"
+            }
+        }
+    }
+}
+
+GET /product/default/_search
+{
+    "query":{
+        "match":{
+            "description":"text search to be"
+        }
+    }
+}
+
+// it will match everthing
+GET /product/default/_search?q=*
+
+GET /product/default/_search?q=name_of_field:Lobster
+
+GET /product/default/_search?q=tags:Meat AND name:Tuna
+GET /product/default/_search?q=tags:Meat OR name:Tuna
+
+Match Score Algorithm
+old : Okapi BM25
+new : BM25
+
+// term query search
+
+GET /product/default/_search
+{
+    "query":{
+        "term":{
+            "category":"Shoes"
+        }
+    }
+}
+
+
+// query for particular range
+GET /product/default/_search
+{
+    "query":{
+        "term":{
+            "price":{
+                "gte":200,
+                "lte":2000
+            }
+        }
+    }
+}
+ DGT and LCD : greater than and equal to , less than and equal to
+ if we are doing for the date then we need to provide the format as well;
+
+ // matching based on prefix :
+
+ GET /product/default/_search
+ {
+     "query":{
+         "prefix":{
+             "tags.keyword":"vege"
+         }
+     }
+ }
+
+ //dynamic term query
+ GET /product/default/_search
+  {
+      "query":{
+          "prefix":{
+              "tags.keyword":"veg*ble"
+          }
+      }
+  }
+
+* == wild card character
+? == only for one character
+
+// searching with Regex on term queries
+ GET /product/default/_search
+  {
+      "query":{
+          "regex":{
+              "tags.keyword":"veget[a-zA-Z]+ble"
+          }
+      }
+  }
+
+
+----------------------Full Text Search Queries--------------------
+#Finally
+
+GET /recipe/default/_search
+{
+    "query":{
+        "match":{
+            "title":"Recipes with pasta and spaghetti"
+        }
+    }
+}
+
+GET /recipe/default/_search
+{
+    "query":{
+        "match":{
+            "title":{
+                "query":"Recipes with pasta and spaghetti",
+                "operator":"and"
+            }
+        }
+    }
+}
+#it means all terms should be there in the results
+
+//search for exact phrase
+GET /recipe/default/_search
+{
+    "query":{
+        "match_phrase":{
+            "title":"A and B"
+        }
+    }
+}
+# mush be in the same order
+
+
+// multi match :::: Required
+GET /recipe/default/_search
+{
+    "query":{
+        "multi_match":{
+            "query":"pasta",
+            "fields":[ "title", "description" ]
+        }
+    }
+}
