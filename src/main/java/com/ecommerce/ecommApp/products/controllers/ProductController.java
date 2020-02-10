@@ -24,17 +24,17 @@ public class ProductController {
     @Autowired
     ProductService productService;
 
-    Logger logger = LoggerFactory.getLogger(ProductController.class);
+    private static final Logger logger = LoggerFactory.getLogger(ProductController.class);
 
     @RequestMapping(path = "/display", method = RequestMethod.GET)
     private List<Product> getAllProducts() {
-        return  productService.getProductsList();
+        return productService.getProductsList();
     }
 
     @RequestMapping(path = "/add", method = RequestMethod.POST)
     private ResponseEntity<Product> addProduct(@RequestBody Product product) {
         try {
-            return new ResponseEntity<>(productService.createProduct(product), HttpStatus.OK);
+            return new ResponseEntity<Product>(productService.createProduct(product), HttpStatus.OK);
         } catch (Exception e) {
             e.getMessage();
         }
@@ -42,14 +42,13 @@ public class ProductController {
     }
 
     @RequestMapping(path = "/update", method = RequestMethod.PUT)
-    private ResponseEntity<Object> updateProduct(@RequestBody Product product) {
+    private ResponseEntity<Product> updateProduct(@RequestBody Product product) {
         try {
             return new ResponseEntity<>(productService.updateProduct(product), HttpStatus.OK);
         } catch (ElementNotFoundException e) {
             e.getMessage();
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-//        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
     @RequestMapping(path = "/increaseProduct", method = RequestMethod.PUT)
@@ -58,8 +57,8 @@ public class ProductController {
             return new ResponseEntity<>(productService.increaseProductCount(product), HttpStatus.OK);
         } catch (ElementNotFoundException e) {
             e.getMessage();
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>("Unable to increase the quantity of existing product.", HttpStatus.BAD_REQUEST);
     }
 
     @RequestMapping(path = "/category", method = RequestMethod.GET)

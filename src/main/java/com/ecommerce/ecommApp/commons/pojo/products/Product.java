@@ -43,4 +43,5 @@ public class Product {
           inverseJoinColumns = { @JoinColumn(name = "cart_id") })
 
   private Set<Cart> cart = new HashSet<>();
+
 }

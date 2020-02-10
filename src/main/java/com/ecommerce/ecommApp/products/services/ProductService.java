@@ -15,7 +15,7 @@ import java.util.*;
 @Service
 public class ProductService {
 
-    Logger logger = LoggerFactory.getLogger(ProductService.class);
+    private static final Logger logger = LoggerFactory.getLogger(ProductService.class);
     @Autowired
     ProductRepository productRepository;
 
