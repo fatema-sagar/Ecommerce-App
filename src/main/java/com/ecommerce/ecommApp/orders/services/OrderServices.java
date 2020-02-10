@@ -100,9 +100,5 @@ public class OrderServices {
         orderRepository.save(order);
         return "Order status changed from "+initial+" to "+updateOrder.getStatus();
     }
-//
-//    public Orders getOrderbyUUID(UUID orderID) {
-//        return orderRepository.getOne(orderID.toString());
-//    }
 
 }
