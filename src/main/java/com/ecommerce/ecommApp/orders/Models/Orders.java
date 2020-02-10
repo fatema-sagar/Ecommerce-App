@@ -29,9 +29,50 @@ public class Orders {
     private Integer quantity;
 
     @Column(name = "total_cost")
-    private Integer totalCost;
+    private Float totalCost;
 
     @Column(name = "order_status")
     private String orderStatus;
 
 }
+/*
+    @GetMapping("/{customerID}")
+    http://localhost:3000/orders/1
+
+
+
+    @RequestMapping(path = "/{customerID}", method = RequestMethod.POST)
+    http://localhost:3000/orders/1
+    [
+        {
+             "product_id":1,
+             "quantity":2,
+             "total_cost":1
+        },
+        {
+             "product_id":1,
+             "quantity":2,
+             "total_cost":1
+        },
+        {
+             "product_id":1,
+             "quantity":2,
+             "total_cost":1
+        }
+    ]
+
+
+    @GetMapping("/status/{orderID}")
+    http://localhost:3000/orders/status/1a842a74-f6db-493f-907f-44e93df40372
+
+
+    @PutMapping("/update/{orderID}")
+    http://localhost:3000/orders/update/1a842a74-f6db-493f-907f-44e93df40372
+    {
+	"order_id": "1a842a74-f6db-493f-907f-44e93df40372",
+    "customer_id": 1,
+    "product_id": 1,
+    "quandity": 1,
+    "total_cost": 1,
+    "status": "Delivered"
+}*/
