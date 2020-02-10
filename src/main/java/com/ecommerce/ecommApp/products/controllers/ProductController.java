@@ -71,6 +71,17 @@ public class ProductController {
     return new ResponseEntity("Unable to increase the quantity of existing product.", HttpStatus.BAD_REQUEST);
   }
 
+  @RequestMapping(value = "/product/category", method = RequestMethod.GET)
+  public ResponseEntity displayCategory() {
+    try {
+      logger.info("fetching categories from the db...");
+      return new ResponseEntity(productService.getAllCategories(), HttpStatus.OK);
+    } catch (Exception e){
+      e.getMessage();
+    }
+    return new ResponseEntity("Unable to select categories", HttpStatus.BAD_REQUEST);
+  }
+
   @RequestMapping(value = "/product/deductInventory", method = RequestMethod.PUT)
   public ResponseEntity deductFromInventory(@RequestBody Product[] products) {
     try {
