@@ -17,70 +17,69 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
+@RequestMapping("/product")
 public class ProductController {
 
-  @Autowired
-  ProductService productService;
+    @Autowired
+    ProductService productService;
 
-  Logger logger = LoggerFactory.getLogger(ProductController.class);
+    Logger logger = LoggerFactory.getLogger(ProductController.class);
 
-  @RequestMapping(value = "/products", method = RequestMethod.GET)
-  private List<Product> getAllProducts() {
-    List<Product> allProducts;
-    allProducts = productService.getProductsList();
-    return allProducts;
-  }
-
-  @RequestMapping(value = "/product/add", method = RequestMethod.POST)
-  private ResponseEntity<Product> addProduct(@RequestBody Product product) {
-    try{
-      return new ResponseEntity<>(productService.createProduct(product), HttpStatus.OK);
-    } catch (Exception e) {
-      e.getMessage();
+    @RequestMapping(path = "/display", method = RequestMethod.GET)
+    private List<Product> getAllProducts() {
+        return  productService.getProductsList();
     }
-    return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-  }
 
-  @RequestMapping(value = "/product/update", method = RequestMethod.PUT)
-  private ResponseEntity<Product> updateProduct(@RequestBody Product product) {
-    try {
-      return new ResponseEntity<>(productService.updateProduct(product), HttpStatus.OK);
-    } catch (ElementNotFoundException e) {
-      e.getMessage();
+    @RequestMapping(path = "/add", method = RequestMethod.POST)
+    private ResponseEntity<Product> addProduct(@RequestBody Product product) {
+        try {
+            return new ResponseEntity<>(productService.createProduct(product), HttpStatus.OK);
+        } catch (Exception e) {
+            e.getMessage();
+        }
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
-    return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-  }
 
-  @RequestMapping(value = "/product/increaseProduct", method = RequestMethod.PUT)
-  public ResponseEntity addToAvailableProducts(@RequestBody Product product) {
-    try {
-      return new ResponseEntity(productService.increaseProductCount(product), HttpStatus.OK);
-    } catch (ElementNotFoundException e) {
-      e.getMessage();
+    @RequestMapping(path = "/update", method = RequestMethod.PUT)
+    private ResponseEntity<Product> updateProduct(@RequestBody Product product) {
+        try {
+            return new ResponseEntity<>(productService.updateProduct(product), HttpStatus.OK);
+        } catch (ElementNotFoundException e) {
+            e.getMessage();
+        }
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
-    return new ResponseEntity("Unable to increase the quantity of existing product.", HttpStatus.BAD_REQUEST);
-  }
 
-  @RequestMapping(value = "/product/category", method = RequestMethod.GET)
-  public ResponseEntity displayCategory() {
-    try {
-      logger.info("fetching categories from the db...");
-      return new ResponseEntity(productService.getAllCategories(), HttpStatus.OK);
-    } catch (Exception e){
-      e.getMessage();
+    @RequestMapping(path = "/increaseProduct", method = RequestMethod.PUT)
+    public ResponseEntity addToAvailableProducts(@RequestBody Product product) {
+        try {
+            return new ResponseEntity<>(productService.increaseProductCount(product), HttpStatus.OK);
+        } catch (ElementNotFoundException e) {
+            e.getMessage();
+        }
+        return new ResponseEntity<>("Unable to increase the quantity of existing product.", HttpStatus.BAD_REQUEST);
     }
-    return new ResponseEntity("Unable to select categories", HttpStatus.BAD_REQUEST);
-  }
 
-  @RequestMapping(value = "/product/deductInventory", method = RequestMethod.PUT)
-  public ResponseEntity deductFromInventory(@RequestBody List<ItemsDTO> products) {
-    try {
-      logger.info("fetching elements to deduct {}", products);
-      productService.deductProducts(products);
-      return new ResponseEntity(HttpStatus.OK);
-    } catch (Exception e) {
-      e.getMessage();
+    @RequestMapping(path = "/category", method = RequestMethod.GET)
+    public ResponseEntity displayCategory() {
+        try {
+            logger.info("fetching categories from the db...");
+            return new ResponseEntity<>(productService.getAllCategories(), HttpStatus.OK);
+        } catch (Exception e) {
+            e.getMessage();
+        }
+        return new ResponseEntity<>("Unable to select categories", HttpStatus.BAD_REQUEST);
     }
-    return new ResponseEntity(HttpStatus.BAD_REQUEST);
-  }
+
+    @RequestMapping(path = "/deductInventory", method = RequestMethod.PUT)
+    public ResponseEntity deductFromInventory(@RequestBody List<ItemsDTO> products) {
+        try {
+            logger.info("fetching elements to deduct {}", products);
+            productService.deductProducts(products);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (Exception e) {
+            e.getMessage();
+        }
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
 }

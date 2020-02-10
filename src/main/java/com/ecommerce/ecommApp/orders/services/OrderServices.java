@@ -70,9 +70,6 @@ public class OrderServices {
     }
 
     public String getOrderStatus(String orderID) {
-//        Orders order = orderRepository.getOne(orderID);
-//        System.out.println(orderRepository.getOne(orderID));
-//        return order.getOrderStatus();
         Orders order=orderRepository.findById(orderID).get();
         return order.getOrderStatus();
        }
