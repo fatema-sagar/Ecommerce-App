@@ -20,46 +20,32 @@ public class CartService {
     @Autowired
     private ProductRepository productRepository;
 
-    @Autowired
-    private CartController cartController;
-
-    public Cart addToCart(Long pid,int quantity){
+    public Cart addToCart(Long pid, int quantity) {
         Cart cart = new Cart();
-        Optional<Product> pdct = productRepository.findById(pid);
-        Product product = pdct.get();
+        Product product = productRepository.findById(pid).get();
 //        cart.getProduct().add(product);
 //        product.getCart().add(cart);
         cart.setQuantity(quantity);
         cartRepository.save(cart);
-
-
         return cart;
 
     }
-    public  Cart deleteFromCart(Long cartId)
-    {
 
-        Optional<Cart> deletedC = cartRepository.findByCartId(cartId);
-        Cart deletedCart = deletedC.get();
-        cartRepository.delete(deletedCart);
-        return  deletedCart;
+    public Cart deleteFromCart(Long cartId) {
 
-    }
-
-    public Cart getCart(Long cartId){
-        Optional<Cart> cart = cartRepository.findByCartId(cartId);
-        Cart fetchedCart = new Cart();
-        if(cart.isPresent())
-         fetchedCart = cart.get();
-        return fetchedCart;
-
+        Cart deletedC = cartRepository.findByCartId(cartId).get();
+        cartRepository.delete(deletedC);
+        return deletedC;
 
     }
 
-    public  Cart updateCart(Long cartId,int quantity)  {
-        Optional<Cart> cart = cartRepository.findByCartId(cartId);
-        Cart updatedCart = new Cart();
-        updatedCart  = cart.get();
+    public Cart getCart(Long cartId) {
+        return  cartRepository.findByCartId(cartId).orElse(new Cart());
+
+    }
+
+    public Cart updateCart(Long cartId, int quantity) {
+        Cart updatedCart = cartRepository.findByCartId(cartId).get();
         updatedCart.setCart_id(cartId);
         updatedCart.setQuantity(quantity);
         cartRepository.save(updatedCart);
@@ -75,9 +61,7 @@ public class CartService {
 //                }).orElseThrow(()-> new ResourceNotFoundException("Cart not found with id " + cartId));
 
 
-
     }
-
 
 
 }

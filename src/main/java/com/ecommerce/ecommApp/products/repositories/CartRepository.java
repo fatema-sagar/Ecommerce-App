@@ -9,7 +9,7 @@ import java.util.Optional;
 
 @Repository
 public interface CartRepository extends JpaRepository<Cart, Integer> {
-@Query(nativeQuery = true, value = "select * from cart where cart_id=?1")
-Optional<Cart> findByCartId(Long cartId);
+    @Query(nativeQuery = true, value = "select * from cart where cart_id=?1")
+    Optional<Cart> findByCartId(Long cartId);
 
 }

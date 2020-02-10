@@ -16,25 +16,25 @@ import java.util.Set;
 @Table(name = "cart")
 @Data
 public class Cart {
-
-//    @JsonIgnore
-    @JsonProperty
-    @NotNull
-    @Column(name = "quantity")
-    int quantity;
-
-//    @JsonIgnore
-    @JsonProperty
-    @Column(name = "availability")
-    Boolean availability;
-
-//    @JsonIgnore
+    //    @JsonIgnore
     @Id
     @Column(name = "cart_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long cart_id;
 
-//    @JsonIgnore
+    //    @JsonIgnore
+    @JsonProperty
+    @NotNull
+    @Column(name = "quantity")
+    int quantity;
+
+    //    @JsonIgnore
+    @JsonProperty
+    @Column(name = "availability")
+    Boolean availability;
+
+
+    //    @JsonIgnore
     @JsonProperty
     @NotNull
     @Column(name = "customer_id")
@@ -57,8 +57,6 @@ public class Cart {
     @NotNull
     @Column(name = "product_id")
     private Long productId;
-
-
 
 
 }
