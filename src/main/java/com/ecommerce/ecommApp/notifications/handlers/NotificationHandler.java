@@ -24,7 +24,7 @@ import java.util.List;
 public class NotificationHandler implements Handler {
 
     private static final Logger log=LoggerFactory.getLogger(NotificationHandler.class);
-
+    // Replace all the SOP statements with loggers.
     @Override
     public void sendNotification(String notifyingService,List<String> modes, Object object, String message) {
         if (modes.contains(NotificationType.Text_SMS.toString()))
