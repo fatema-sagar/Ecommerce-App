@@ -6,13 +6,13 @@ import com.ecommerce.ecommApp.customers.models.Customer;
 public class CustomerUtil {
 
     public CustomerDto convertToPojo(Customer customer) {
-        CustomerDto.CustomerDtoBuilder builder = CustomerDto.builder();
-        builder.email(customer.getEmail())
-                .number(customer.getNumber())
-                .id(customer.getId())
-                .name(customer.getName())
-                .whatsapp(customer.getWhatsapp())
-                .gender(customer.getGender());
-        return builder.build();
+        CustomerDto customerDto=new CustomerDto();
+        customerDto.setName(customer.getName());
+        customerDto.setEmail(customer.getEmail());
+        customerDto.setGender(customer.getGender());
+        customerDto.setId(customer.getId());
+        customerDto.setNumber(customer.getNumber());
+        customerDto.setWhatsapp(customer.getWhatsapp());
+        return customerDto;
     }
 }

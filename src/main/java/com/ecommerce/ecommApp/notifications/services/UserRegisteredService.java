@@ -1,5 +1,6 @@
 package com.ecommerce.ecommApp.notifications.services;
 
+import com.ecommerce.ecommApp.commons.Util.CommonsUtil;
 import com.ecommerce.ecommApp.commons.pojo.customer.CustomerDto;
 import com.ecommerce.ecommApp.commons.pojo.notification.UserRegistered;
 import com.ecommerce.ecommApp.notifications.NotificationUtil;
@@ -9,6 +10,7 @@ import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.Properties;
@@ -34,7 +36,7 @@ public class UserRegisteredService extends Thread {
         super.run();
         props = NotificationUtil.getConsumerConfigs();
         kafkaConsumer = NotificationUtil.createConsumer(props, kafkaTopicName);
-        objectMapper = new ObjectMapper();
+        objectMapper = CommonsUtil.getObjectMapper();
         notificationHandler = NotificationUtil.getNotificationHandler();
         log.info("User Registered Notification service is started");
 
@@ -57,11 +59,8 @@ public class UserRegisteredService extends Thread {
         }
     }
 
-    public String formatMessage(UserRegistered userRegistered) {
+    private String formatMessage(UserRegistered userRegistered) {
         CustomerDto customerDto = userRegistered.getCustomerDto();
         return String.format(NotificationUtil.MessageTemplate.USER_REGISTERED_MESSAGE, customerDto.getId());
     }
 }
-
-
-//example : {"mode":["Text_SMS","EMAIL","WHATSAPP"],"customerDto":{"id":"ox1","name":"abc","number":8851530831,"email":"sagarbindal992@gmail.com","whatsapp":1234567890}}

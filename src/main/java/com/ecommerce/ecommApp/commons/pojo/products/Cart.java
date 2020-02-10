@@ -3,12 +3,14 @@ package com.ecommerce.ecommApp.commons.pojo.products;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
+
 @Table(name = "cart")
 @Data
 public class Cart {
@@ -39,6 +41,7 @@ public class Cart {
             mappedBy = "cart")
 
     private Set<Product> product = new HashSet<>();
+
 
 
 }

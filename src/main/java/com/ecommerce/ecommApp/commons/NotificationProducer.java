@@ -1,6 +1,7 @@
 package com.ecommerce.ecommApp.commons;
 
 import com.ecommerce.ecommApp.EcommAppApplication;
+import com.ecommerce.ecommApp.commons.Util.CommonsUtil;
 import com.ecommerce.ecommApp.notifications.NotificationUtil;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
@@ -20,9 +21,9 @@ public class NotificationProducer {
         kafkaProducer.close();
     }
 
-    public Properties getProducerConfigs() {
+    private Properties getProducerConfigs() {
         Properties props = new Properties();
-        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, EcommAppApplication.environment.getRequiredProperty(NotificationUtil.KAFKA_BOOTSTRAP_SERVERS));
+        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, EcommAppApplication.environment.getRequiredProperty(CommonsUtil.KAFKA_BOOTSTRAP_SERVERS));
         props.put(ProducerConfig.CLIENT_ID_CONFIG, "id : " + System.currentTimeMillis());
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());

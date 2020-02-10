@@ -1,5 +1,6 @@
 package com.ecommerce.ecommApp;
 
+import com.ecommerce.ecommApp.commons.Util.CommonsUtil;
 import com.ecommerce.ecommApp.notifications.NotificationUtil;
 import com.ecommerce.ecommApp.notifications.services.OrderCancelledService;
 import com.ecommerce.ecommApp.notifications.services.OrderPlacedService;
@@ -26,15 +27,15 @@ public class EcommAppApplication {
 		log.info("E-Comm application is started");
 		environment = context.getBean(Environment.class);
 		log.trace("starting Notification services");
-		startNotificationServices();
+//		startNotificationServices();
 	}
 
 	public static void startNotificationServices() {
 		Twilio.init(environment.getRequiredProperty("twilio.sid"),environment.getRequiredProperty("twilio.access.token"));
-		Thread userRegisteredThread = new UserRegisteredService(environment.getRequiredProperty(NotificationUtil.NOTIFICATION_REGISTERED_TOPIC));
-		Thread orderPlacedThread = new OrderPlacedService(environment.getRequiredProperty(NotificationUtil.NOTIFICATION_ORDER_PLACED_TOPIC));
-		Thread orderStatusThread = new OrderStatusService(environment.getRequiredProperty(NotificationUtil.NOTIFICATION_ORDER_STATUS_TOPIC));
-		Thread orderCancelThread = new OrderCancelledService(environment.getRequiredProperty(NotificationUtil.NOTIFICATION_ORDER_CANCEL_TOPIC));
+		Thread userRegisteredThread = new UserRegisteredService(environment.getRequiredProperty(CommonsUtil.NOTIFICATION_REGISTERED_TOPIC));
+		Thread orderPlacedThread = new OrderPlacedService(environment.getRequiredProperty(CommonsUtil.NOTIFICATION_ORDER_PLACED_TOPIC));
+		Thread orderStatusThread = new OrderStatusService(environment.getRequiredProperty(CommonsUtil.NOTIFICATION_ORDER_STATUS_TOPIC));
+		Thread orderCancelThread = new OrderCancelledService(environment.getRequiredProperty(CommonsUtil.NOTIFICATION_ORDER_CANCEL_TOPIC));
 		userRegisteredThread.setName("User Registered");
 		userRegisteredThread.start();
 		orderPlacedThread.setName("Order Placed");

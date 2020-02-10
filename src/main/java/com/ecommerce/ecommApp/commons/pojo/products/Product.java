@@ -1,54 +1,46 @@
 package com.ecommerce.ecommApp.commons.pojo.products;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
 @Table(name = "product")
-@Getter
-@Setter
+@Data
 public class Product {
 
   @JsonProperty
- @Id @Column(unique = true) @GeneratedValue(strategy = GenerationType.IDENTITY)
-  long productid;
-
-  public enum Gender {MALE, FEMALE};
+  @Id @Column(unique = true) @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private long productid;
 
   @JsonProperty @NotNull
   @Column
-  Gender gender;
+  private String category;
 
-  @JsonProperty @NotNull
   @Column
-  String category;
+  private String productDescription;
 
-  @JsonProperty
-//  @Getter
-  @NotNull
-  long inventoryid;
+  @Column
+  private String size;
 
-  @ManyToMany(fetch = FetchType.LAZY,
+  @Column
+  private int quantity;
+
+  @Column
+  private float price;
+
+  @ManyToMany(fetch = FetchType.EAGER,
           cascade = {
                   CascadeType.PERSIST,
                   CascadeType.MERGE
           })
-
-
   @JoinTable(name = "product_cart",
           joinColumns = { @JoinColumn(name = "productid") },
           inverseJoinColumns = { @JoinColumn(name = "cart_id") })
 
   private Set<Cart> cart = new HashSet<>();
-
-
-
 }

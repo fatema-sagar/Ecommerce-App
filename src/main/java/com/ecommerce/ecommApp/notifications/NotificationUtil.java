@@ -1,6 +1,7 @@
 package com.ecommerce.ecommApp.notifications;
 
 import com.ecommerce.ecommApp.EcommAppApplication;
+import com.ecommerce.ecommApp.commons.Util.CommonsUtil;
 import com.ecommerce.ecommApp.notifications.handlers.NotificationHandler;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -11,15 +12,8 @@ import java.util.Collections;
 import java.util.Properties;
 
 public class NotificationUtil {
+
     public static Environment environment = EcommAppApplication.environment;
-
-    public static String KAFKA_BOOTSTRAP_SERVERS = "kafka.bootstrap.server";
-
-    public static String NOTIFICATION_REGISTERED_TOPIC = "notification.registered.topic";
-    public static String NOTIFICATION_ORDER_PLACED_TOPIC = "notification.order.placed.topic";
-    public static String NOTIFICATION_ORDER_STATUS_TOPIC = "notification.order.status.topic";
-    public static String NOTIFICATION_ORDER_CANCEL_TOPIC = "notification.order.cancel.topic";
-
     private static NotificationHandler handler;
 
     static {
@@ -29,7 +23,7 @@ public class NotificationUtil {
     public static Properties getConsumerConfigs() {
         Properties props = new Properties();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, environment.getProperty
-                (KAFKA_BOOTSTRAP_SERVERS));
+                (CommonsUtil.KAFKA_BOOTSTRAP_SERVERS));
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG,
                 StringDeserializer.class.getName());
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG,

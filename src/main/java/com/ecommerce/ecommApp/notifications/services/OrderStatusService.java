@@ -3,14 +3,11 @@ package com.ecommerce.ecommApp.notifications.services;
 import com.ecommerce.ecommApp.notifications.NotificationUtil;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
 
 import java.util.Properties;
 
 public class OrderStatusService extends Thread
 {
-
     String kafkaTopicName;
     Properties props;
     KafkaConsumer kafkaConsumer;
