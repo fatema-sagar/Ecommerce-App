@@ -9,8 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class ProductService {
@@ -53,5 +52,23 @@ public class ProductService {
         throw new ElementNotFoundException("Element does not exist");
       }
     }
+  }
+
+  public Product increaseProductCount(Product product) throws ElementNotFoundException {
+    if (productRepository.existsById(product.getProductid())) {
+      Product existingProduct = productRepository.findById(product.getProductid()).get();
+      existingProduct.setQuantity(existingProduct.getQuantity() + product.getQuantity());
+      return productRepository.save(existingProduct);
+    } else {
+      throw new ElementNotFoundException("Unable to update the quantity for the product, as it is not available with the database.");
+    }
+  }
+
+  public Set<String> getAllCategories() {
+    List<String> categories = new ArrayList<>();
+    categories = productRepository.getCategory();
+    Set<String> uniqueCategory = new HashSet<>(categories);
+    System.out.println(uniqueCategory);
+    return uniqueCategory;
   }
 }
