@@ -83,8 +83,15 @@ https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-multi-get.h
 
 
 -------------------------------------------------------
-
 Filter
 
+-------------------------------------------------------
 
+Health of cluster
+GET /_cluster/health
 
+Listing Nodes
+GET /_cat/nodes?v
+
+Listing Indices
+GET /_cat/indices?v
