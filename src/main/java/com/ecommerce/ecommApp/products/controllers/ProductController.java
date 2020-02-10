@@ -32,22 +32,20 @@ public class ProductController {
     }
 
     @RequestMapping(path = "/add", method = RequestMethod.POST)
-    private ResponseEntity<Product> addProduct(@RequestBody Product product) {
+    private ResponseEntity<Object> addProduct(@RequestBody Product product) {
         try {
-            return new ResponseEntity<Product>(productService.createProduct(product), HttpStatus.OK);
+            return new ResponseEntity<Object>(productService.createProduct(product), HttpStatus.OK);
         } catch (Exception e) {
-            e.getMessage();
+            return new ResponseEntity<>("Unable to add product to the db.."+ e.getMessage(), HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
     @RequestMapping(path = "/update", method = RequestMethod.PUT)
-    private ResponseEntity<Product> updateProduct(@RequestBody Product product) {
+    private ResponseEntity<Object> updateProduct(@RequestBody Product product) {
         try {
             return new ResponseEntity<>(productService.updateProduct(product), HttpStatus.OK);
         } catch (ElementNotFoundException e) {
-            e.getMessage();
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity("Unable to update the product details" + e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -56,8 +54,7 @@ public class ProductController {
         try {
             return new ResponseEntity<>(productService.increaseProductCount(product), HttpStatus.OK);
         } catch (ElementNotFoundException e) {
-            e.getMessage();
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Unable to increase the quantity of existing product." + e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -67,9 +64,8 @@ public class ProductController {
             logger.info("fetching categories from the db...");
             return new ResponseEntity<>(productService.getAllCategories(), HttpStatus.OK);
         } catch (Exception e) {
-            e.getMessage();
+            return new ResponseEntity<>("Unable to select categories" + e.getMessage(), HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>("Unable to select categories", HttpStatus.BAD_REQUEST);
     }
 
     @RequestMapping(path = "/deductInventory", method = RequestMethod.PUT)
@@ -79,8 +75,7 @@ public class ProductController {
             productService.deductProducts(products);
             return new ResponseEntity<>(HttpStatus.OK);
         }catch (NotEnoughQuantityException | ElementNotFoundException e){
-            e.getMessage();
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 }
