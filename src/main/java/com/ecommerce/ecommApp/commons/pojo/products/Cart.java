@@ -24,7 +24,7 @@ public class Cart {
 
     //    @JsonIgnore
     @JsonProperty
-    @NotNull
+//    @NotNull
     @Column(name = "quantity")
     int quantity;
 
@@ -36,7 +36,7 @@ public class Cart {
 
     //    @JsonIgnore
     @JsonProperty
-    @NotNull
+//    @NotNull
     @Column(name = "customer_id")
     private long customerId;
 
@@ -53,7 +53,7 @@ public class Cart {
 //
 //    private Set<Product> product = new HashSet<>();
 
-    @JsonProperty
+    @JsonProperty("productId")
     @NotNull
     @Column(name = "product_id")
     private Long productId;

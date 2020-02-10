@@ -1,15 +1,12 @@
 package com.ecommerce.ecommApp.products.services;
 
 import com.ecommerce.ecommApp.commons.pojo.products.Cart;
-import com.ecommerce.ecommApp.commons.pojo.products.Product;
 //import com.ecommerce.ecommApp.exceptions.ResourceNotFoundException;
-import com.ecommerce.ecommApp.products.controllers.CartController;
+import com.ecommerce.ecommApp.payloads.CartsPayload;
 import com.ecommerce.ecommApp.products.repositories.CartRepository;
 import com.ecommerce.ecommApp.products.repositories.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 public class CartService {
@@ -20,15 +17,14 @@ public class CartService {
     @Autowired
     private ProductRepository productRepository;
 
-    public Cart addToCart(Long pid, int quantity) {
+    public Cart addToCart(CartsPayload payload) {
         Cart cart = new Cart();
-        Product product = productRepository.findById(pid).get();
-//        cart.getProduct().add(product);
-//        product.getCart().add(cart);
-        cart.setQuantity(quantity);
+//        Product product = productRepository.findById(productId).get();
+        cart.setProductId(payload.getProductId());
+        cart.setQuantity(payload.getQuantity());
+        cart.setCustomerId(payload.getCustomerId());
         cartRepository.save(cart);
         return cart;
-
     }
 
     public Cart deleteFromCart(Long cartId) {
