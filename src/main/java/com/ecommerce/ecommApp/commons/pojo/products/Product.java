@@ -33,15 +33,15 @@ public class Product {
   @Column
   private float price;
 
-  @ManyToMany(fetch = FetchType.EAGER,
-          cascade = {
-                  CascadeType.PERSIST,
-                  CascadeType.MERGE
-          })
-  @JoinTable(name = "product_cart",
-          joinColumns = { @JoinColumn(name = "productid") },
-          inverseJoinColumns = { @JoinColumn(name = "cart_id") })
+//  @ManyToMany(fetch = FetchType.EAGER,
+//          cascade = {
+//                  CascadeType.PERSIST,
+//                  CascadeType.MERGE
+//          })
+//  @JoinTable(name = "product_cart",
+//          joinColumns = { @JoinColumn(name = "productid") },
+//          inverseJoinColumns = { @JoinColumn(name = "cart_id") })
 
-  private Set<Cart> cart = new HashSet<>();
+//  private Set<Cart> cart = new HashSet<>();
 
 }

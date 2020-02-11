@@ -1,5 +1,6 @@
 package com.ecommerce.ecommApp.commons.pojo.products;
 
+import com.ecommerce.ecommApp.products.composite.CartIdentity;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
@@ -12,28 +13,28 @@ import javax.validation.constraints.NotNull;
 @Table(name = "cart")
 @Data
 public class Cart {
-    @Id
-    @Column(name = "cart_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long cart_id;
+//    @Id
+//    @Column(name = "cart_id")
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    private Long cart_id;
 
-    @JsonProperty
+
+    @EmbeddedId
+    private CartIdentity cartIdentity;
+
+    @JsonProperty("quantity")
     @Column(name = "quantity")
     int quantity;
 
-    @JsonProperty
-    @Column(name = "availability")
-    Boolean availability;
 
-
-    @JsonProperty
-    @Column(name = "customer_id")
-    private long customerId;
-
-    @JsonProperty("productId")
-    @NotNull
-    @Column(name = "product_id")
-    private Long productId;
+//    @JsonProperty("customerId")
+//    @Column(name = "customer_id")
+//    private long customerId;
+//
+//    @JsonProperty("productId")
+//    @NotNull
+//    @Column(name = "product_id")
+//    private Long productId;
 
 
 }
