@@ -6,11 +6,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface CartRepository extends JpaRepository<Cart, CartIdentity> {
-    @Query(nativeQuery = true, value = "select * from cart where cartIdentity=?1")
-    Optional<Cart> findByCartId(Long cartIdentity);
+    @Query(nativeQuery = true, value = "select * from cart where customerId=?1 ")
+    Optional<List<Cart>> findByCustomerId(Long customerId);
 
 }
