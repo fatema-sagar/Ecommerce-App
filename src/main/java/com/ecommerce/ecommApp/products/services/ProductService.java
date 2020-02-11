@@ -15,7 +15,7 @@ import java.util.*;
 @Service
 public class ProductService {
 
-    Logger logger = LoggerFactory.getLogger(ProductService.class);
+    private static final Logger logger = LoggerFactory.getLogger(ProductService.class);
     @Autowired
     ProductRepository productRepository;
 
@@ -65,5 +65,13 @@ public class ProductService {
 
     public List<String> getAllCategories() {
         return productRepository.getCategory();
+    }
+
+    public Product getProduct(long productId) throws ElementNotFoundException {
+        if (productRepository.existsById(productId)) {
+            return productRepository.findById(productId).get();
+        } else {
+            throw new ElementNotFoundException("ProductId not found");
+        }
     }
 }
