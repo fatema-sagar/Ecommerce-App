@@ -21,6 +21,10 @@ public class CommonsUtil {
     public static final String NOTIFICATION_ORDER_STATUS_TOPIC = "notification.order.status.topic";
     public static final String NOTIFICATION_ORDER_CANCEL_TOPIC = "notification.order.cancel.topic";
 
+    public static final String EMAIL_EXISTS = "There is an account with this email address:";
+    public static final String CUSTOMER_NOT_FOUND = "Customer Not Found";
+    public static final String WRONG_CUSTOMER_ID = "Wrong Customer Id";
+
 
 
     static {
