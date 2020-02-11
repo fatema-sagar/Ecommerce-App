@@ -34,11 +34,11 @@ public class CartIdentity implements Serializable {
         if (!(o instanceof CartIdentity)) return false;
         CartIdentity that = (CartIdentity) o;
         return getCustomerId().equals(that.getCustomerId()) &&
-                getProductid().equals(that.getProductid());
+                getProductId().equals(that.getProductId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getCustomerId(), getProductid());
+        return Objects.hash(getCustomerId(), getProductId());
     }
 }
