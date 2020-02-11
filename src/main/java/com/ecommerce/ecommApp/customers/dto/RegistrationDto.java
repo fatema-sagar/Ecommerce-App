@@ -2,13 +2,16 @@ package com.ecommerce.ecommApp.customers.dto;
 
 import com.ecommerce.ecommApp.customers.customAnnotations.PasswordMatches;
 import com.ecommerce.ecommApp.customers.customAnnotations.ValidEmail;
-import lombok.Getter;
-import lombok.Setter;
-
+import lombok.Data;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
-@Getter @Setter @PasswordMatches
+
+/**
+ * Data Transfer Object used at the time of registration.
+ */
+@Data
+@PasswordMatches
 public class RegistrationDto {
     @NotEmpty
     private String name;

@@ -12,7 +12,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @SpringBootApplication
 public class EcommAppApplication {
@@ -21,6 +23,12 @@ public class EcommAppApplication {
 
 	public static ConfigurableApplicationContext context;
 	public static Environment environment;
+
+	@Bean
+	BCryptPasswordEncoder passwordEncoder() {
+
+		return new BCryptPasswordEncoder();
+	}
 
 	public static void main(String[] args) {
 		context = SpringApplication.run(EcommAppApplication.class, args);
