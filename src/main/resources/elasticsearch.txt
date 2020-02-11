@@ -460,3 +460,31 @@ GET /recipe/default/_search
         }
     }
 }
+
+
+//Compound Query
+GET /recipe/default/_search
+{
+    "query":{
+        "bool":{
+            "must":[
+                {
+                    "match":{
+                        "ingredients.name":"parmessan"
+                    }
+                }
+            ],
+            "filter":[
+                {
+                    "range":{
+                        "preparation.time":{
+                            "lte":15
+                        }
+                    }
+                }
+            ]
+        }
+    }
+}
+
+// Compound Queries
