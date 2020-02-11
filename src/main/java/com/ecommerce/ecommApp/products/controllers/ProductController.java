@@ -50,7 +50,7 @@ public class ProductController {
     }
 
     @RequestMapping(path = "/increaseProduct", method = RequestMethod.PUT)
-    public ResponseEntity<Object> addToAvailableProducts(@RequestBody Product product) {
+    private ResponseEntity<Object> addToAvailableProducts(@RequestBody Product product) {
         try {
             return new ResponseEntity<>(productService.increaseProductCount(product), HttpStatus.OK);
         } catch (ElementNotFoundException e) {
@@ -59,7 +59,7 @@ public class ProductController {
     }
 
     @RequestMapping(path = "/category", method = RequestMethod.GET)
-    public ResponseEntity<Object> displayCategory() {
+    private ResponseEntity<Object> displayCategory() {
         try {
             logger.info("fetching categories from the db...");
             return new ResponseEntity<>(productService.getAllCategories(), HttpStatus.OK);
@@ -69,7 +69,7 @@ public class ProductController {
     }
 
     @RequestMapping(path = "/deductInventory", method = RequestMethod.PUT)
-    public ResponseEntity<Object> deductFromInventory(@RequestBody List<ItemsDTO> products) {
+    private ResponseEntity<Object> deductFromInventory(@RequestBody List<ItemsDTO> products) {
         try {
             logger.info("fetching elements to deduct {}", products);
             productService.deductProducts(products);
