@@ -4,8 +4,10 @@ import com.ecommerce.ecommApp.products.composite.CartIdentity;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
+import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
 @Entity
 
@@ -13,28 +15,15 @@ import javax.validation.constraints.NotNull;
 @Table(name = "cart")
 @Data
 public class Cart {
-//    @Id
-//    @Column(name = "cart_id")
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    private Long cart_id;
-
 
     @EmbeddedId
     private CartIdentity cartIdentity;
 
     @JsonProperty("quantity")
     @Column(name = "quantity")
-    int quantity;
+    private int quantity;
 
-
-//    @JsonProperty("customerId")
-//    @Column(name = "customer_id")
-//    private long customerId;
-//
-//    @JsonProperty("productId")
-//    @NotNull
-//    @Column(name = "product_id")
-//    private Long productId;
-
+    @JsonProperty("total_cost")
+    private float cost;
 
 }

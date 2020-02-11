@@ -5,7 +5,8 @@ import com.ecommerce.ecommApp.commons.pojo.products.Product;
 import com.ecommerce.ecommApp.products.exceptions.ElementNotFoundException;
 import com.ecommerce.ecommApp.products.exceptions.NotEnoughQuantityException;
 import com.ecommerce.ecommApp.products.services.ProductService;
-
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,7 +49,7 @@ public class ProductController {
     }
 
     @RequestMapping(path = "/increaseProduct", method = RequestMethod.PUT)
-    private ResponseEntity<Object> addToAvailableProducts(@RequestBody Product product) {
+    private ResponseEntity<Object> reStockProducts(@RequestBody Product product) {
         try {
             return new ResponseEntity<>(productService.increaseProductCount(product), HttpStatus.OK);
         } catch (ElementNotFoundException e) {
@@ -83,7 +84,7 @@ public class ProductController {
             logger.info("Fetching element {} from Products.", productId);
             return new ResponseEntity(productService.getProduct(productId), HttpStatus.OK);
         } catch (ElementNotFoundException e) {
-            return new ResponseEntity("ProductId not found"+e.getMessage(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity("ProductId not found" + e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 }

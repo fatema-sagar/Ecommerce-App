@@ -26,7 +26,6 @@ public class EcommAppApplication {
 
 	@Bean
 	BCryptPasswordEncoder passwordEncoder() {
-
 		return new BCryptPasswordEncoder();
 	}
 

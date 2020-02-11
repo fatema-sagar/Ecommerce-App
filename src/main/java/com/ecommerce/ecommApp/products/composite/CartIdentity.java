@@ -1,5 +1,7 @@
 package com.ecommerce.ecommApp.products.composite;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Embeddable;
@@ -7,34 +9,22 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Objects;
 
+@Data
 @Embeddable
 @NoArgsConstructor
 public class CartIdentity implements Serializable {
+
+    @JsonProperty("customer_id")
     @NotNull
     private Long customerId;
 
+    @JsonProperty("product_id")
     @NotNull
     private Long productid;
 
 
     public CartIdentity(@NotNull Long customerId, @NotNull Long productid) {
         this.customerId = customerId;
-        this.productid = productid;
-    }
-
-    public Long getCustomerId() {
-        return customerId;
-    }
-
-    public void setCustomerId(Long customerId) {
-        this.customerId = customerId;
-    }
-
-    public Long getProductid() {
-        return productid;
-    }
-
-    public void setProductid(Long productid) {
         this.productid = productid;
     }
 
