@@ -1,8 +1,5 @@
-package com.ecommerce.ecommApp.payloads;
-
+package com.ecommerce.ecommApp.products.payload;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
 @Data
 public class CartsPayload {
@@ -12,3 +9,4 @@ public class CartsPayload {
     private Long customerId;
 
 }
+

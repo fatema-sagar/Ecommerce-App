@@ -1,7 +1,8 @@
 package com.ecommerce.ecommApp.products.controllers;
 
 import com.ecommerce.ecommApp.commons.pojo.products.Cart;
-import com.ecommerce.ecommApp.payloads.CartsPayload;
+//import com.ecommerce.ecommApp.products.payload.CartsPayload;
+import com.ecommerce.ecommApp.products.payload.CartsPayload;
 import com.ecommerce.ecommApp.products.services.CartService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,13 +19,14 @@ public class CartController {
     private CartService cartService;
 
     @RequestMapping(value = "/carts", method = RequestMethod.POST)
-    public ResponseEntity<Object> addToCart(@Valid @RequestBody CartsPayload payload) {
-        Cart cart = cartService.addToCart(payload);
+    public ResponseEntity<Object> addToCart(@Valid @RequestBody CartsPayload cartsPayload) {
+        Cart cart = cartService.addToCart(cartsPayload);
         return new ResponseEntity(cart, HttpStatus.CREATED);
     }
 
     @RequestMapping(value = "/carts", method = RequestMethod.DELETE)
-    public ResponseEntity<Object> deleteFromCart(@RequestParam("cartId") Long cartId) {
+    public ResponseEntity<Object> deleteFromCart(@RequestParam("cartId") Long cartId)
+    {
         Cart cart = cartService.deleteFromCart(cartId);
         return ResponseEntity.ok(cart);
     }
