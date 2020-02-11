@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class OrderServices {
@@ -62,16 +63,13 @@ public class OrderServices {
         orderPlaced.setMode(modes);
         orderPlaced.setCustomerDto(customer);
         orderPlaced.setOrderID(order.getOrderID());
-        orderPlaced.setProductName("Dommy Name Given");
+        orderPlaced.setProductName("Dummy Name Given");
         orderPlaced.setQuandity(order.getQuantity());
         orderPlaced.setTotalCost(order.getTotalCost());
         return orderPlaced;
     }
 
     public String getOrderStatus(String orderID) {
-//        Orders order = orderRepository.getOne(orderID);
-//        System.out.println(orderRepository.getOne(orderID));
-//        return order.getOrderStatus();
         Orders order=orderRepository.findById(orderID).get();
         return order.getOrderStatus();
        }
@@ -92,14 +90,12 @@ public class OrderServices {
         return ordersDTO;
     }
 
-//    public void updateOrderStatus(String orderID, OrderStatus status) {
-//        Orders order = orderRepository.getOne(orderID);
-//        order.setStatus(status.toString());
-//        orderRepository.save(order);
-//    }
-//
-//    public Orders getOrderbyUUID(UUID orderID) {
-//        return orderRepository.getOne(orderID.toString());
-//    }
+    public String updateOrderStatus(String orderID, OrdersDTO updateOrder) {
+        Orders order = orderRepository.findById(orderID).get();
+        String initial=order.getOrderStatus();
+        order.setOrderStatus(updateOrder.getStatus());
+        orderRepository.save(order);
+        return "Order status changed from "+initial+" to "+updateOrder.getStatus();
+    }
 
 }

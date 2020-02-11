@@ -22,7 +22,7 @@ public class OrdersDTO {
     private int quantity;
 
     @JsonProperty("total_cost")
-    private int cost;
+    private float cost;
 
     @JsonProperty("status")
     private String status;

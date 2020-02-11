@@ -36,12 +36,13 @@ public class OrderController {
     @GetMapping("/status/{orderID}")
     public ResponseEntity<OrdersDTO> getOrderDetail(@PathVariable String orderID) {
         OrdersDTO ordersDTO=orderService.getOrderDetails(orderID);
-        return new ResponseEntity(ordersDTO, HttpStatus.OK);
+        return new ResponseEntity<OrdersDTO>(ordersDTO, HttpStatus.OK);
     }
 
-//    @PatchMapping("/update/{orderID}")
-//    public void updateStatus(@RequestParam OrderStatus status, @PathVariable UUID orderID) {
-//        orderService.updateOrderStatus(orderID, status);
-//    }
+    @PutMapping("/update/{orderID}")
+    public ResponseEntity<String> updateStatus(@RequestBody OrdersDTO updateOrder,@PathVariable String orderID) {
+        String message=orderService.updateOrderStatus(orderID, updateOrder);
+        return new ResponseEntity<String>(message,HttpStatus.OK);
+    }
 
 }
