@@ -22,6 +22,11 @@ public class Product {
   @Column
   private String category;
 
+  @JsonProperty("product_name")
+  @NotNull
+  @Column
+  private String name;
+
   @JsonProperty("product_description")
   @Column
   private String productDescription;

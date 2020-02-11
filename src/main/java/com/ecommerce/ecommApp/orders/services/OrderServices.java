@@ -10,8 +10,10 @@ import com.ecommerce.ecommApp.commons.pojo.customer.CustomerDto;
 import com.ecommerce.ecommApp.commons.pojo.notification.OrderPlaced;
 import com.ecommerce.ecommApp.commons.pojo.orders.ItemsDTO;
 import com.ecommerce.ecommApp.commons.pojo.orders.OrdersDTO;
+import com.ecommerce.ecommApp.commons.pojo.products.Product;
 import com.ecommerce.ecommApp.orders.Models.Orders;
 import com.ecommerce.ecommApp.orders.repository.OrderRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -48,7 +50,7 @@ public class OrderServices {
     }
 
     private void notifyUser(List<String> modes, Orders order) throws Exception {
-        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectMapper objectMapper = CommonsUtil.getObjectMapper();
         CustomerDto customer = objectMapper.readValue(Communication.sendGetRequest("http://localhost:3000/customer/" + order.getCustomerID())
                 , CustomerDto.class);
         OrderPlaced orderPlaced = createOrderPlacedInstance(modes, order, customer);
@@ -58,15 +60,23 @@ public class OrderServices {
     }
 
 
-    private OrderPlaced createOrderPlacedInstance(List<String> modes, Orders order, CustomerDto customer) {
+    private OrderPlaced createOrderPlacedInstance(List<String> modes, Orders order, CustomerDto customer) throws JsonProcessingException {
         OrderPlaced orderPlaced = new OrderPlaced();
         orderPlaced.setMode(modes);
         orderPlaced.setCustomerDto(customer);
         orderPlaced.setOrderID(order.getOrderID());
-        orderPlaced.setProductName("Dummy Name Given");
+        // TODO fetch product name from the products microservice
+        Product product=fetchProduct(order.getProductID());
+        orderPlaced.setProductName(product.getName());
         orderPlaced.setQuandity(order.getQuantity());
         orderPlaced.setTotalCost(order.getTotalCost());
         return orderPlaced;
+    }
+
+    private Product fetchProduct(Long productId) throws JsonProcessingException {
+        String data=Communication.sendGetRequest("localhost:3000/product/"+productId);
+        ObjectMapper objectMapper=CommonsUtil.getObjectMapper();
+        return objectMapper.readValue(data,Product.class);
     }
 
     public String getOrderStatus(String orderID) {
