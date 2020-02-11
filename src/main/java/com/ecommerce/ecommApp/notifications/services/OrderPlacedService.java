@@ -7,12 +7,15 @@ import com.ecommerce.ecommApp.notifications.handlers.NotificationHandler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.Properties;
 
 public class OrderPlacedService extends Thread {
 
+    private static final Logger log = LoggerFactory.getLogger(OrderPlacedService.class);
     String kafkaTopicName;
     Properties props;
     KafkaConsumer kafkaConsumer;
@@ -40,11 +43,11 @@ public class OrderPlacedService extends Thread {
                 final String json = record.value();
                 try {
                     OrderPlaced orderPlaced = objectMapper.readValue(json, OrderPlaced.class);
-                    System.out.println("record found : " + orderPlaced.toString());
+                    log.trace("Record Found : {}", orderPlaced.toString());
                     String message = formatMessage(orderPlaced);
                     notificationHandler.sendNotification(getName(), orderPlaced.getMode(), orderPlaced, message);
                 } catch (IOException ex) {
-
+                    log.error("Error in processing Record : {}", record);
                 }
             });
         }

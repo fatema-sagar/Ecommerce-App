@@ -10,7 +10,6 @@ import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.Properties;
@@ -48,11 +47,11 @@ public class UserRegisteredService extends Thread {
                         final String json = record.value();
                         try {
                             UserRegistered userRegistered = objectMapper.readValue(json, UserRegistered.class);
-                            System.out.println("record found : " + userRegistered.toString());
+                            log.trace("Record Found : {}", userRegistered.toString());
                             String message = formatMessage(userRegistered);
                             notificationHandler.sendNotification(getName(), userRegistered.getMode(), userRegistered, message);
                         } catch (IOException ex) {
-                            log.error("error in processing json record in : " + getName());
+                            log.error("error in processing record in : {} : {}" + getName(),record);
                         }
                     }
             );

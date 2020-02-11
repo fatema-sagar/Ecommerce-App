@@ -6,6 +6,8 @@ import com.ecommerce.ecommApp.notifications.handlers.NotificationHandler;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.serialization.StringDeserializer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
 
 import java.util.Collections;
@@ -13,6 +15,7 @@ import java.util.Properties;
 
 public class NotificationUtil {
 
+    private static final Logger log = LoggerFactory.getLogger(NotificationUtil.class);
     public static Environment environment = EcommAppApplication.environment;
     private static NotificationHandler handler;
 
@@ -21,6 +24,7 @@ public class NotificationUtil {
     }
 
     public static Properties getConsumerConfigs() {
+        log.trace("Preparing Consumer Configurations");
         Properties props = new Properties();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, environment.getProperty
                 (CommonsUtil.KAFKA_BOOTSTRAP_SERVERS));
@@ -29,12 +33,14 @@ public class NotificationUtil {
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG,
                 StringDeserializer.class.getName());
         props.put(ConsumerConfig.GROUP_ID_CONFIG, "KafkaNotificationService");
+        log.trace("Returning Consumer Configs");
         return props;
     }
 
     public static KafkaConsumer createConsumer(Properties props, String kafkaTopicName) {
         KafkaConsumer kafkaConsumer = new KafkaConsumer<Long, String>(props);
         kafkaConsumer.subscribe(Collections.singletonList(kafkaTopicName));
+        log.trace("Consumer Created for Topic {}",kafkaTopicName);
         return kafkaConsumer;
     }
 

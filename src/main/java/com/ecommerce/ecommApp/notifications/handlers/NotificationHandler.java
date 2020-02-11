@@ -24,7 +24,7 @@ import java.util.List;
 public class NotificationHandler implements Handler {
 
     private static final Logger log=LoggerFactory.getLogger(NotificationHandler.class);
-    // Replace all the SOP statements with loggers.
+
     @Override
     public void sendNotification(String notifyingService,List<String> modes, Object object, String message) {
         if (modes.contains(NotificationType.Text_SMS.toString()))
@@ -74,6 +74,7 @@ public class NotificationHandler implements Handler {
 
     public void createWhatsappNotification(String notifyingService, Object object,String message) {
         // TODO : integrate the whatsapp.
+        log.trace("Sending Whatapp Notification");
     }
 
     public void sendSmsNotification(Long number, String message) {
@@ -81,12 +82,13 @@ public class NotificationHandler implements Handler {
             return;
 
         try {
+            log.trace("Sending Sms Notification with {} message to {}", message, number);
             Message sms = Message.creator(new PhoneNumber("+91" + number),
                     new PhoneNumber(EcommAppApplication.environment.getRequiredProperty(CommonsUtil.TWILIO_ASSIGNED_NUMBER)),
                     message).create();
-            System.out.println("notification status : for " + number + " : is " + sms.getStatus());
+            log.info("Sms Notification Sent to {} ", number);
         } catch (ApiException ex) {
-            System.out.println("error from twilio api side");
+            log.error("Twilio API Exception : Error in sending message to {}", number);
         }
     }
 
@@ -94,7 +96,7 @@ public class NotificationHandler implements Handler {
 
         if (email.trim().equals(""))
             return;
-
+        log.trace("Sending Email Notification with {} message to {}", message, email);
         Email from = new Email(EcommAppApplication.environment.getRequiredProperty(CommonsUtil.SENDGRID_FROM_EMAIL));
         Email to = new Email(email);
         Content content = new Content("text/plain", message);
@@ -108,9 +110,9 @@ public class NotificationHandler implements Handler {
             request.setEndpoint("mail/send");
             request.setBody(mail.build());
             Response response = sg.api(request);
-            System.out.println("email : " + to + " : " + response.getStatusCode());
+            log.info("Email Notification Sent to {} ", email);
         } catch (Exception ex) {
-            System.out.println("Error in sending Email notification : " + ex);
+            log.error("SendGrid Exception : Error in sending email to {}", email);
         }
     }
 
