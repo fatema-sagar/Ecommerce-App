@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 
 @RestController
@@ -25,21 +26,21 @@ public class CartController {
     }
 
     @RequestMapping(value = "/carts", method = RequestMethod.DELETE)
-    public ResponseEntity<Object> deleteFromCart(@RequestParam("cartId") Long cartId)
+    public ResponseEntity<Object> deleteFromCart(@RequestParam("customerId") Long customerId,@RequestParam("productId") Long productId)
     {
-        Cart cart = cartService.deleteFromCart(cartId);
+        Cart cart = cartService.deleteFromCart(customerId,productId);
         return ResponseEntity.ok(cart);
     }
 
     @RequestMapping(value = "/carts", method = RequestMethod.GET)
-    public ResponseEntity<Object> getCustomerCart(@RequestParam("cartId") Long cartId) {
-        Cart cart = cartService.getCart(cartId);
-        return ResponseEntity.ok(cart);
+    public ResponseEntity<Object> getCustomerCart(@RequestParam("customerId") Long customerId) {
+       List<Cart> fetchedCart = cartService.getCart(customerId);
+        return ResponseEntity.ok(fetchedCart);
     }
 
     @RequestMapping(value = "/carts", method = RequestMethod.PUT)
-    public ResponseEntity<Object> updateCustomerCart(@RequestParam("cartId") Long cartId, @RequestParam("quantity") int quantity) {
-        Cart cart = cartService.updateCart(cartId, quantity);
+    public ResponseEntity<Object> updateCustomerCart(@RequestParam("customerId") Long customerId, @RequestParam("quantity") int quantity, @RequestParam("productId") Long productId) {
+        Cart cart = cartService.updateCart(customerId, quantity,productId);
         return ResponseEntity.ok(cart);
     }
 }
