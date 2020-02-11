@@ -20,12 +20,12 @@ public class CartIdentity implements Serializable {
 
     @JsonProperty("product_id")
     @NotNull
-    private Long productid;
+    private Long productId;
 
 
-    public CartIdentity(@NotNull Long customerId, @NotNull Long productid) {
+    public CartIdentity(@NotNull Long customerId, @NotNull Long productId) {
         this.customerId = customerId;
-        this.productid = productid;
+        this.productId = productId;
     }
 
     @Override

@@ -11,7 +11,7 @@ import java.util.Optional;
 
 @Repository
 public interface CartRepository extends JpaRepository<Cart, CartIdentity> {
-    @Query(nativeQuery = true, value = "select * from cart where customerId=?1 ")
+    @Query(nativeQuery = true, value = "select * from cart where customer_id=?1 ")
     Optional<List<Cart>> findByCustomerId(Long customerId);
 
 }

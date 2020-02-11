@@ -19,7 +19,7 @@ public class CartController {
     private CartService cartService;
 
     @RequestMapping(value = "/carts", method = RequestMethod.POST)
-    public ResponseEntity<Object> addToCart(@Valid @RequestBody CartItem cartItem) {
+    public ResponseEntity<Object> addToCart(@RequestBody CartItem cartItem) {
         Cart cart = cartService.addToCart(cartItem);
         return new ResponseEntity(cart, HttpStatus.CREATED);
     }
@@ -38,8 +38,8 @@ public class CartController {
     }
 
     @RequestMapping(value = "/carts", method = RequestMethod.PUT)
-    public ResponseEntity<Object> updateCustomerCart(@RequestParam("customerId") Long customerId, @RequestParam("quantity") int quantity, @RequestParam("productId") Long productId) {
-        Cart cart = cartService.updateCart(customerId, quantity,productId);
+    public ResponseEntity<Object> updateCustomerCart(@RequestBody CartItem updateCart) {
+        Cart cart = cartService.updateCart(updateCart);
         return ResponseEntity.ok(cart);
     }
 }

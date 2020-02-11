@@ -44,20 +44,11 @@ public class CartService {
         return fetchedCartItems;
     }
 
-    public Cart updateCart(Long customerId, int quantity, Long productId) {
-        List<Cart> updatedCart = cartRepository.findByCustomerId(customerId).get();
-        Cart cart = new Cart();
-//        updatedCart.setCart_id(cartId);
-        for(Cart fetchedCartItem : updatedCart){
-            if(fetchedCartItem.getCartIdentity().getProductid()==productId){
-                fetchedCartItem.setQuantity(quantity);
-                cartRepository.save(fetchedCartItem);
-            }
-        }
-//        updatedCart.setQuantity(quantity);
-//        cartRepository.save(updatedCart);
-        return cart;
-
+    public Cart updateCart(CartItem payload) {
+        Cart cart=cartRepository.findById(new CartIdentity(payload.getCustomerId(),payload.getProductId())).get();
+        cart.setCost(payload.getCost());
+        cart.setQuantity(payload.getQuantity());
+        return cartRepository.save(cart);
     }
 
 
