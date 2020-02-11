@@ -1,8 +1,9 @@
 package com.ecommerce.ecommApp.commons.pojo.products;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -10,39 +11,52 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table
+
+
+@Table(name = "cart")
 @Data
-@NoArgsConstructor
 public class Cart {
+    //    @JsonIgnore
+    @Id
+    @Column(name = "cart_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long cart_id;
 
-  @Id
-  @Column(name = "cart_id")
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long cart_id;
+    //    @JsonIgnore
+    @JsonProperty
+//    @NotNull
+    @Column(name = "quantity")
+    int quantity;
 
-  @JsonProperty
-  @NotNull
-  private long customer_id;
-
-  @JsonProperty @NotNull
-  private long product_id;
-
-  @JsonProperty @NotNull
-  @Column(name = "quantity")
-  private int quantity;
-
-  @JsonProperty
-  @Column(name = "Availability")
-  Boolean availability;
+    //    @JsonIgnore
+    @JsonProperty
+    @Column(name = "availability")
+    Boolean availability;
 
 
-  @ManyToMany(fetch = FetchType.EAGER,
-        cascade = {
-                CascadeType.PERSIST,
-                CascadeType.MERGE
-        },
-          mappedBy = "cart")
+    //    @JsonIgnore
+    @JsonProperty
+//    @NotNull
+    @Column(name = "customer_id")
+    private long customerId;
 
-  private Set<Product> product = new HashSet<>();
+//    @JsonIgnore
+//    @JsonProperty
+//    @NotNull
+//    private long product_id;
+//    @ManyToMany(fetch = FetchType.LAZY,
+//            cascade = {
+//                    CascadeType.PERSIST,
+//                    CascadeType.MERGE
+//            },
+//            mappedBy = "cart")
+//
+//    private Set<Product> product = new HashSet<>();
+
+    @JsonProperty("productId")
+    @NotNull
+    @Column(name = "product_id")
+    private Long productId;
+
 
 }
