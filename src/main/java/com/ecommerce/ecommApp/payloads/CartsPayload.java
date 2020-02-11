@@ -11,8 +11,4 @@ public class CartsPayload {
     private Integer quantity;
     private Long customerId;
 
-//    public CartsPayload(Long pid, Integer quantity, ) {
-//        this.pid = pid;
-//        this.quantity = quantity;
-//    }
 }
