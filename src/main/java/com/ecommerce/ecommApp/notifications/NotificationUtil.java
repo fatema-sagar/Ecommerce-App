@@ -75,7 +75,7 @@ public class NotificationUtil {
      * Nested Class which will contain the basic Message Template which we will send to the User.
      */
     public static class MessageTemplate {
-        public final static String USER_REGISTERED_MESSAGE = "Your Account with CustomerDto ID %s on " + getApplicationProperty("application.name")
+        public final static String USER_REGISTERED_MESSAGE = "Your Account with CustomerDto ID %s on " + getApplicationProperty("info.app.name")
                 + " is successfully registered";
 
         public final static String ORDER_PLACED_MESSAGE = "Your order for %s %S Product is successfully placed having a Order Id %s ";

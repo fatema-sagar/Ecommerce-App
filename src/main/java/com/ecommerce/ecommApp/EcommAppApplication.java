@@ -34,7 +34,7 @@ public class EcommAppApplication {
 		environment = context.getBean(Environment.class);
 		init();
 		log.trace("starting Notification services");
-		startNotificationServices();
+//		startNotificationServices();
 	}
 
 	public static void startNotificationServices() {
