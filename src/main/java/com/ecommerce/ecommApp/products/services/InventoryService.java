@@ -1,14 +1,18 @@
 package com.ecommerce.ecommApp.products.services;
 
 import com.ecommerce.ecommApp.commons.enums.ProductSize;
+import com.ecommerce.ecommApp.commons.pojo.orders.ItemsDTO;
 import com.ecommerce.ecommApp.commons.pojo.products.Inventory;
+import com.ecommerce.ecommApp.commons.pojo.products.Product;
 import com.ecommerce.ecommApp.products.exceptions.ElementNotFoundException;
+import com.ecommerce.ecommApp.products.exceptions.NotEnoughQuantityException;
 import com.ecommerce.ecommApp.products.repositories.InventoryRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.criteria.CriteriaBuilder;
 import java.util.List;
 
 @Service
@@ -51,6 +55,32 @@ public class InventoryService {
       return allElements;
     } else {
       throw new ElementNotFoundException("Inventory is Empty...");
+    }
+  }
+
+  public void deductProducts(List<ItemsDTO> product) throws ElementNotFoundException, NotEnoughQuantityException {
+    for (ItemsDTO element : product) {
+      if (inventoryRepository.existsById(element.getProductID())) {
+        Inventory invent = inventoryRepository.findById(element.getProductID()).get();
+        if (invent.getQuantity() >= element.getQuantity()) {
+          invent.setQuantity(invent.getQuantity() - element.getQuantity());
+          inventoryRepository.save(invent);
+        } else {
+          throw new NotEnoughQuantityException("The product you are trying to update does not enough quantity");
+        }
+      } else {
+        throw new ElementNotFoundException("Element does not exist");
+      }
+    }
+  }
+
+  public Inventory increaseProductCount(Inventory inventory) throws ElementNotFoundException {
+    if (inventoryRepository.existsById(inventory.getInventoryId())) {
+      Inventory existingInventory = inventoryRepository.findById(inventory.getInventoryId()).get();
+      existingInventory.setQuantity(existingInventory.getQuantity() + inventory.getQuantity());
+      return inventoryRepository.save(existingInventory);
+    } else {
+      throw new ElementNotFoundException("Unable to update the quantity for the product, as it is not available with the database.");
     }
   }
 }
