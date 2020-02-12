@@ -13,6 +13,11 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.Properties;
 
+/**
+ * This Thread will work as a Consumer for Topic Order_Placed.
+ * This will continously poll the data from the topic and process each record and send that
+ * Processed Object to the notification handler.
+ */
 public class OrderPlacedService extends Thread {
 
     private static final Logger log = LoggerFactory.getLogger(OrderPlacedService.class);
@@ -27,6 +32,9 @@ public class OrderPlacedService extends Thread {
         this.kafkaTopicName = kafkaTopicName;
     }
 
+    /**
+     * This Run method will work as a poll. This method will continously poll records from the Kafka topic
+     */
     @Override
     public void run() {
         super.run();
@@ -53,6 +61,9 @@ public class OrderPlacedService extends Thread {
         }
     }
 
+    /**
+     * @return : This Method will format the text Message which we will be sending to the User via different modes.
+     */
     private String formatMessage(OrderPlaced orderPlaced) {
         return String.format(NotificationUtil.MessageTemplate.ORDER_PLACED_MESSAGE, orderPlaced.getQuandity(), orderPlaced.getProductName(), orderPlaced.getOrderID());
     }

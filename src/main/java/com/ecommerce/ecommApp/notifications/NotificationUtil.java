@@ -13,6 +13,10 @@ import org.springframework.core.env.Environment;
 import java.util.Collections;
 import java.util.Properties;
 
+/**
+ * This class will work as a Utility Class for the Notification Package.
+ * Some of the most Important functions are added.
+ */
 public class NotificationUtil {
 
     private static final Logger log = LoggerFactory.getLogger(NotificationUtil.class);
@@ -23,6 +27,9 @@ public class NotificationUtil {
         handler = new NotificationHandler();
     }
 
+    /**
+     * @return : This Method will return Properties object which will contain wall the basic required configurations for the kafka topic consumer.
+     */
     public static Properties getConsumerConfigs() {
         log.trace("Preparing Consumer Configurations");
         Properties props = new Properties();
@@ -41,6 +48,11 @@ public class NotificationUtil {
         return props;
     }
 
+    /**
+     * This method will return a Kafka Comsumer Object
+     * @param props : Kafka Consumer Properties
+     * @param kafkaTopicName : Kafka Topic Name
+     */
     public static KafkaConsumer createConsumer(Properties props, String kafkaTopicName) {
         KafkaConsumer kafkaConsumer = new KafkaConsumer<Long, String>(props);
         kafkaConsumer.subscribe(Collections.singletonList(kafkaTopicName));
@@ -52,10 +64,16 @@ public class NotificationUtil {
         return environment.getRequiredProperty(key);
     }
 
+    /**
+     * @return : Notification Handler Object.
+     */
     public static NotificationHandler getNotificationHandler() {
         return handler;
     }
 
+    /**
+     * Nested Class which will contain the basic Message Template which we will send to the User.
+     */
     public static class MessageTemplate {
         public final static String USER_REGISTERED_MESSAGE = "Your Account with CustomerDto ID %s on " + getApplicationProperty("application.name")
                 + " is successfully registered";
