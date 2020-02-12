@@ -11,8 +11,10 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
-//import com.ecommerce.ecommApp.payloads.CartsPayload;
-
+/**
+ * @Author Krishna
+ * This class will work as a service classs for the CartController.
+ */
 @Service
 public class CartService {
 
