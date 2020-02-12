@@ -66,4 +66,12 @@ public class ProductService {
     public List<String> getAllCategories() {
         return productRepository.getCategory();
     }
+
+    public Product getProduct(long productId) throws ElementNotFoundException {
+        if (productRepository.existsById(productId)) {
+            return productRepository.findById(productId).get();
+        } else {
+            throw new ElementNotFoundException("ProductId not found");
+        }
+    }
 }
