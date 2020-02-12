@@ -15,6 +15,7 @@ import com.ecommerce.ecommApp.orders.Models.Orders;
 import com.ecommerce.ecommApp.orders.repository.OrderRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,8 +28,11 @@ public class OrderServices {
     @Autowired
     private OrderRepository orderRepository;
 
-    public List<Orders> getAllOrder(long customerID) {
-        return orderRepository.getOrdersByCustomerId(customerID);
+    public List<Orders> getAllOrder(long customerID) throws NotFoundException {
+        List<Orders>  orders= orderRepository.getOrdersByCustomerId(customerID);
+        if(orders.size()==0)
+            throw new NotFoundException("No order Found");
+        return orders;
     }
 
     public void placeOrder(Long customerID, List<ItemsDTO> productsOrdered) throws Exception {
@@ -85,8 +89,8 @@ public class OrderServices {
         return order.getOrderStatus();
        }
 
-    public OrdersDTO getOrderDetails(String orderId) {
-        OrdersDTO ordersDTO=createOrderDtoInstance(orderRepository.findById(orderId).get());
+    public OrdersDTO getOrderDetails(String orderId) throws NotFoundException {
+        OrdersDTO ordersDTO=createOrderDtoInstance(orderRepository.findById(orderId).orElseThrow(() -> new NotFoundException("Order Not found")));
         return ordersDTO;
     }
 
@@ -101,8 +105,8 @@ public class OrderServices {
         return ordersDTO;
     }
 
-    public String updateOrderStatus(String orderID, OrdersDTO updateOrder) {
-        Orders order = orderRepository.findById(orderID).get();
+    public String updateOrderStatus(String orderID, OrdersDTO updateOrder) throws NotFoundException{
+        Orders order = orderRepository.findById(orderID).orElseThrow(() -> new NotFoundException("order not found"));
         String initial=order.getOrderStatus();
         order.setOrderStatus(updateOrder.getStatus());
         orderRepository.save(order);
