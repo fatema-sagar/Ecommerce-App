@@ -5,42 +5,54 @@ import lombok.Data;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.util.HashSet;
-import java.util.Set;
 
 @Entity
 @Table(name = "product")
 @Data
 public class Product {
 
-  @JsonProperty
-  @Id @Column(unique = true) @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @JsonProperty("product_id")
+  @Id
+  @Column(unique = true, nullable = false)
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long productid;
 
-  @JsonProperty @NotNull
+  @JsonProperty("category")
+  @NotNull
   @Column
   private String category;
 
+  @JsonProperty("product_name")
+  @NotNull
+  @Column
+  private String name;
+
+  @JsonProperty("product_description")
   @Column
   private String productDescription;
 
+  @JsonProperty("size")
   @Column
   private String size;
 
+  @JsonProperty("quantity")
   @Column
   private int quantity;
 
+  @JsonProperty("price")
   @Column
   private float price;
 
-  @ManyToMany(fetch = FetchType.EAGER,
-          cascade = {
-                  CascadeType.PERSIST,
-                  CascadeType.MERGE
-          })
-  @JoinTable(name = "product_cart",
-          joinColumns = { @JoinColumn(name = "productid") },
-          inverseJoinColumns = { @JoinColumn(name = "cart_id") })
-
-  private Set<Cart> cart = new HashSet<>();
 }
+
+
+//  @ManyToMany(fetch = FetchType.EAGER,
+//          cascade = {
+//                  CascadeType.PERSIST,
+//                  CascadeType.MERGE
+//          })
+//  @JoinTable(name = "product_cart",
+//          joinColumns = { @JoinColumn(name = "productid") },
+//          inverseJoinColumns = { @JoinColumn(name = "cart_id") })
+
+//  private Set<Cart> cart = new HashSet<>();

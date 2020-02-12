@@ -1,5 +1,6 @@
 package com.ecommerce.ecommApp.commons.Util;
 
+import com.ecommerce.ecommApp.EcommAppApplication;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.io.BufferedReader;
@@ -7,7 +8,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.net.InetAddress;
 import java.net.URL;
+import java.net.UnknownHostException;
 
 public class Communication {
 
@@ -60,6 +63,16 @@ public class Communication {
 
         }
         return null;
+    }
+
+    public static String getApplicationAddress() throws Exception {
+        try {
+            InetAddress address = InetAddress.getLocalHost();
+            return address.getHostAddress() + ":" + EcommAppApplication.environment.
+                    getRequiredProperty(CommonsUtil.SERVER_PORT);
+        } catch (UnknownHostException ex) {
+            throw new Exception("Host is not available");
+        }
     }
 
 //    public static void main(String []g)
