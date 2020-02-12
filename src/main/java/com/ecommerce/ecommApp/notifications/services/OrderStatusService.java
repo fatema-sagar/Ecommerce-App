@@ -28,7 +28,7 @@ public class OrderStatusService extends Thread
             final ConsumerRecords<Long, String> consumerRecords =
                     kafkaConsumer.poll(100);
             consumerRecords.forEach(record -> {
-                // TODO use the twilio sdk
+                // TODO Integrate Order Status service
                 final String payload=record.value();
             });
         }

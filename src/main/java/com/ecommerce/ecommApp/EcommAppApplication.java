@@ -1,7 +1,6 @@
 package com.ecommerce.ecommApp;
 
 import com.ecommerce.ecommApp.commons.Util.CommonsUtil;
-import com.ecommerce.ecommApp.notifications.NotificationUtil;
 import com.ecommerce.ecommApp.notifications.services.OrderCancelledService;
 import com.ecommerce.ecommApp.notifications.services.OrderPlacedService;
 import com.ecommerce.ecommApp.notifications.services.OrderStatusService;
@@ -33,12 +32,12 @@ public class EcommAppApplication {
 		context = SpringApplication.run(EcommAppApplication.class, args);
 		log.info("E-Comm application is started");
 		environment = context.getBean(Environment.class);
+		init();
 		log.trace("starting Notification services");
-//		startNotificationServices();
+		startNotificationServices();
 	}
 
 	public static void startNotificationServices() {
-		Twilio.init(environment.getRequiredProperty("twilio.sid"),environment.getRequiredProperty("twilio.access.token"));
 		Thread userRegisteredThread = new UserRegisteredService(environment.getRequiredProperty(CommonsUtil.NOTIFICATION_REGISTERED_TOPIC));
 		Thread orderPlacedThread = new OrderPlacedService(environment.getRequiredProperty(CommonsUtil.NOTIFICATION_ORDER_PLACED_TOPIC));
 		Thread orderStatusThread = new OrderStatusService(environment.getRequiredProperty(CommonsUtil.NOTIFICATION_ORDER_STATUS_TOPIC));
@@ -51,5 +50,9 @@ public class EcommAppApplication {
 		orderCancelThread.start();
 		orderStatusThread.setName("Order Status");
 		orderStatusThread.start();
+	}
+
+	private static void init() {
+		Twilio.init(environment.getRequiredProperty("twilio.sid"),environment.getRequiredProperty("twilio.access.token"));
 	}
 }

@@ -26,14 +26,18 @@ public class NotificationUtil {
     public static Properties getConsumerConfigs() {
         log.trace("Preparing Consumer Configurations");
         Properties props = new Properties();
-        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, environment.getProperty
-                (CommonsUtil.KAFKA_BOOTSTRAP_SERVERS));
-        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG,
-                StringDeserializer.class.getName());
-        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG,
-                StringDeserializer.class.getName());
-        props.put(ConsumerConfig.GROUP_ID_CONFIG, "KafkaNotificationService");
-        log.trace("Returning Consumer Configs");
+        try {
+            props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, environment.getProperty
+                    (CommonsUtil.KAFKA_BOOTSTRAP_SERVERS));
+            props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG,
+                    StringDeserializer.class.getName());
+            props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG,
+                    StringDeserializer.class.getName());
+            props.put(ConsumerConfig.GROUP_ID_CONFIG, "KafkaNotificationService");
+            log.trace("Returning Consumer Configs");
+        } catch (Exception ex) {
+            log.error("Error in Creating Consumer Configurations");
+        }
         return props;
     }
 

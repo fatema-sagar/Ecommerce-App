@@ -59,6 +59,7 @@ public class UserRegisteredService extends Thread {
     }
 
     private String formatMessage(UserRegistered userRegistered) {
+        log.trace("Formatting message for {}", userRegistered.toString());
         CustomerDto customerDto = userRegistered.getCustomerDto();
         return String.format(NotificationUtil.MessageTemplate.USER_REGISTERED_MESSAGE, customerDto.getId());
     }

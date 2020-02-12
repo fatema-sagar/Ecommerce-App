@@ -51,7 +51,8 @@ public class OrderServices {
 
     private void notifyUser(List<String> modes, Orders order) throws Exception {
         ObjectMapper objectMapper = CommonsUtil.getObjectMapper();
-        CustomerDto customer = objectMapper.readValue(Communication.sendGetRequest("http://localhost:3000/customer/" + order.getCustomerID())
+        CustomerDto customer = objectMapper.readValue
+                (Communication.sendGetRequest("http://"+Communication.getApplicationAddress()+"/customer/" + order.getCustomerID())
                 , CustomerDto.class);
         OrderPlaced orderPlaced = createOrderPlacedInstance(modes, order, customer);
         NotificationProducer notificationProducer = CommonsUtil.getNotificationProducer();
@@ -60,7 +61,7 @@ public class OrderServices {
     }
 
 
-    private OrderPlaced createOrderPlacedInstance(List<String> modes, Orders order, CustomerDto customer) throws JsonProcessingException {
+    private OrderPlaced createOrderPlacedInstance(List<String> modes, Orders order, CustomerDto customer) throws Exception {
         OrderPlaced orderPlaced = new OrderPlaced();
         orderPlaced.setMode(modes);
         orderPlaced.setCustomerDto(customer);
@@ -73,8 +74,8 @@ public class OrderServices {
         return orderPlaced;
     }
 
-    private Product fetchProduct(Long productId) throws JsonProcessingException {
-        String data=Communication.sendGetRequest("localhost:3000/product/"+productId);
+    private Product fetchProduct(Long productId) throws Exception {
+        String data=Communication.sendGetRequest("http://"+Communication.getApplicationAddress()+"/product/"+productId);
         ObjectMapper objectMapper=CommonsUtil.getObjectMapper();
         return objectMapper.readValue(data,Product.class);
     }

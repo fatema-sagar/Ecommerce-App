@@ -112,7 +112,7 @@ public class NotificationHandler implements Handler {
             Response response = sg.api(request);
             log.info("Email Notification Sent to {} ", email);
         } catch (Exception ex) {
-            log.error("SendGrid Exception : Error in sending email to {}", email);
+            log.error("SendGrid Exception : Error in sending email to {} with mesasge {}", email,ex.getMessage());
         }
     }
 
