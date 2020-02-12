@@ -1,6 +1,6 @@
 package com.ecommerce.ecommApp.commons.enums;
 
-public enum Size {
+public enum ProductSize {
   XS,
   S,
   M,
