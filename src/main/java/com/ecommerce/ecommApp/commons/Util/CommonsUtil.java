@@ -26,8 +26,6 @@ public class CommonsUtil {
     public static final String CUSTOMER_NOT_FOUND = "Customer Not Found";
     public static final String WRONG_CUSTOMER_ID = "Wrong Customer Id";
 
-
-
     static {
         notificationProducer = new NotificationProducer();
         objectMapper = new ObjectMapper();

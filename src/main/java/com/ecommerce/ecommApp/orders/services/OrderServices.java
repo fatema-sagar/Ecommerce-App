@@ -70,7 +70,6 @@ public class OrderServices {
         orderPlaced.setMode(modes);
         orderPlaced.setCustomerDto(customer);
         orderPlaced.setOrderID(order.getOrderID());
-        // TODO fetch product name from the products microservice
         Product product=fetchProduct(order.getProductID());
         orderPlaced.setProductName(product.getName());
         orderPlaced.setQuandity(order.getQuantity());
