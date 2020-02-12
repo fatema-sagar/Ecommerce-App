@@ -7,9 +7,10 @@ public class CommonsUtil {
 
     private static final ObjectMapper objectMapper;
     private static final NotificationProducer notificationProducer;
+    public static final String SERVER_PORT="server.port";
     public static final String NOTIFICATION_USER_REGISTERED_SERVICE = "User Registered";
     public static final String NOTIFICATION_ORDER_PLACED_SERVICE = "Order Placed";
-    public static final String NOTIFICATION_ORDER_STATUS_SERVICE = "Order Status";
+    public static final String NOTIFICATION_ORDER_STATUS_SERVICE = "Order Statusserver.port=3000";
     public static final String NOTIFICATION_ORDER_CANCELLED_SERVICE = "Order Cancelled";
     public static final String TWILIO_ASSIGNED_NUMBER = "twilio.number";
     public static final String SENDGRID_FROM_EMAIL = "sendgrid.email.from";
@@ -21,7 +22,9 @@ public class CommonsUtil {
     public static final String NOTIFICATION_ORDER_STATUS_TOPIC = "notification.order.status.topic";
     public static final String NOTIFICATION_ORDER_CANCEL_TOPIC = "notification.order.cancel.topic";
 
-
+    public static final String EMAIL_EXISTS = "There is an account with this email address:";
+    public static final String CUSTOMER_NOT_FOUND = "Customer Not Found";
+    public static final String WRONG_CUSTOMER_ID = "Wrong Customer Id";
 
     static {
         notificationProducer = new NotificationProducer();

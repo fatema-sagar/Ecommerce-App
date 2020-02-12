@@ -1,13 +1,20 @@
 package com.ecommerce.ecommApp.products.services;
 
 import com.ecommerce.ecommApp.commons.pojo.products.Cart;
-//import com.ecommerce.ecommApp.exceptions.ResourceNotFoundException;
-import com.ecommerce.ecommApp.payloads.CartsPayload;
+import com.ecommerce.ecommApp.products.composite.CartIdentity;
+import com.ecommerce.ecommApp.products.payload.CartItem;
 import com.ecommerce.ecommApp.products.repositories.CartRepository;
 import com.ecommerce.ecommApp.products.repositories.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Optional;
+
+/**
+ * @Author Krishna
+ * This class will work as a service classs for the CartController.
+ */
 @Service
 public class CartService {
 
@@ -17,46 +24,33 @@ public class CartService {
     @Autowired
     private ProductRepository productRepository;
 
-    public Cart addToCart(CartsPayload payload) {
+    public Cart addToCart(CartItem payload) {
         Cart cart = new Cart();
-//        Product product = productRepository.findById(productId).get();
-        cart.setProductId(payload.getProductId());
+        CartIdentity cartIdentity = new CartIdentity(payload.getCustomerId(), payload.getProductId());
+        cart.setCartIdentity(cartIdentity);
         cart.setQuantity(payload.getQuantity());
-        cart.setCustomerId(payload.getCustomerId());
+        cart.setCost(payload.getCost());
         cartRepository.save(cart);
         return cart;
     }
 
-    public Cart deleteFromCart(Long cartId) {
-
-        Cart deletedC = cartRepository.findByCartId(cartId).get();
-        cartRepository.delete(deletedC);
-        return deletedC;
-
+    public Cart deleteFromCart(CartIdentity identity) {
+        Cart cart = cartRepository.findById(identity).get();
+        cartRepository.delete(cart);
+        return cart;
     }
 
-    public Cart getCart(Long cartId) {
-        return  cartRepository.findByCartId(cartId).orElse(new Cart());
-
+    public List<Cart> getCart(Long customerId) {
+        Optional<List<Cart>> fetchCartItems = cartRepository.findByCustomerId(customerId);
+        List<Cart> fetchedCartItems = fetchCartItems.get();
+        return fetchedCartItems;
     }
 
-    public Cart updateCart(Long cartId, int quantity) {
-        Cart updatedCart = cartRepository.findByCartId(cartId).get();
-        updatedCart.setCart_id(cartId);
-        updatedCart.setQuantity(quantity);
-        cartRepository.save(updatedCart);
-        return updatedCart;
-
-//                 cartRepository.findByCartId(cartId);
-
-//                cart.map(cart1 -> {
-//                    cart1 = cart.get();
-//                    cart1.setQuantity(quantity);
-//                    cartRepository.save(cart1);
-//                    return cart1;
-//                }).orElseThrow(()-> new ResourceNotFoundException("Cart not found with id " + cartId));
-
-
+    public Cart updateCart(CartItem payload) {
+        Cart cart=cartRepository.findById(new CartIdentity(payload.getCustomerId(),payload.getProductId())).get();
+        cart.setCost(payload.getCost());
+        cart.setQuantity(payload.getQuantity());
+        return cartRepository.save(cart);
     }
 
 
