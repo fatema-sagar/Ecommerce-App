@@ -88,4 +88,14 @@ public final class ElasticSearchUtil {
 ////        System.out.println(updateProduct(product));
 //        deleteProduct(1);
     }
+
+    private static List<Product> searchProduct() {
+        try {
+            ObjectMapper objectMapper = CommonsUtil.getObjectMapper();
+            return null;
+        }
+        catch (Exception e) {
+            return null;
+        }
+    }
 }
