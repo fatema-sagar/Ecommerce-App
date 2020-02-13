@@ -46,6 +46,21 @@ public class Product {
   @JsonProperty("product_image")
   @Column
   private String image;
+
+  @Override
+  public String toString() {
+    return "Product{" +
+            "productId=" + productId +
+            ", category='" + category + '\'' +
+            ", name='" + name + '\'' +
+            ", productDescription='" + productDescription + '\'' +
+            ", size='" + size + '\'' +
+            ", quantity=" + quantity +
+            ", price=" + price +
+            ", image='" + image + '\'' +
+            '}';
+  }
+
 }
 
 

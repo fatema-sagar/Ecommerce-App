@@ -4,13 +4,16 @@ import com.ecommerce.ecommApp.commons.Util.CommonsUtil;
 import com.ecommerce.ecommApp.commons.Util.Communication;
 import com.ecommerce.ecommApp.commons.pojo.products.Product;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.json.JSONObject;
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -61,12 +64,33 @@ public final class ElasticSearchUtil {
         }
     }
 
-    public static List<Product> getAllProducts()
-    {
-        String endPoint = String.format("%s/%s/%s?q=*",INET_ADDRESS,_INDEX,"_search");
+    public static List<Product> getAllProducts() {
+        List<Product> list = new ArrayList<>();
+        ObjectMapper objectMapper = CommonsUtil.getObjectMapper();
+        String endPoint = String.format("%s/%s/%s?q=*", INET_ADDRESS, _INDEX, "_search");
         String response = Communication.sendGetRequest(endPoint);
         JSONObject jsonObject = null;
+        JSONArray jsonArray = null;
+        try {
+            jsonObject = new JSONObject(response);
+            jsonArray = jsonObject.getJSONObject("hits").getJSONArray("hits");
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject object = jsonArray.getJSONObject(i);
+                object = object.getJSONObject("_source");
+                String productJson = object.toString();
+                Product product = objectMapper.readValue(productJson, Product.class);
+                System.out.println("\n\n" + product);
+                list.add(product);
 
+            }
+            return list;
+        } catch (JSONException e) {
+            e.printStackTrace();
+        } catch (JsonMappingException e) {
+            e.printStackTrace();
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
         return null;
     }
 
@@ -87,14 +111,14 @@ public final class ElasticSearchUtil {
 ////        product.setName("Ripped Jeans");
 ////        System.out.println(updateProduct(product));
 //        deleteProduct(1);
+        getAllProducts();
     }
 
     private static List<Product> searchProduct() {
         try {
             ObjectMapper objectMapper = CommonsUtil.getObjectMapper();
             return null;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return null;
         }
     }
