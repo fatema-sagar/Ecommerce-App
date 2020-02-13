@@ -1,10 +1,7 @@
 package com.ecommerce.ecommApp.commons.pojo.orders;
 
-import com.ecommerce.ecommApp.commons.enums.OrderStatus;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
-
-import java.util.UUID;
 
 @Data
 public class OrdersDTO {

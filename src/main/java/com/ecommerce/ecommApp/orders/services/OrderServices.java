@@ -5,7 +5,7 @@ import com.ecommerce.ecommApp.commons.NotificationProducer;
 import com.ecommerce.ecommApp.commons.Util.CommonsUtil;
 import com.ecommerce.ecommApp.commons.Util.Communication;
 import com.ecommerce.ecommApp.commons.enums.NotificationType;
-import com.ecommerce.ecommApp.commons.enums.OrderStatus;
+import com.ecommerce.ecommApp.orders.enums.OrderStatus;
 import com.ecommerce.ecommApp.commons.pojo.customer.CustomerDto;
 import com.ecommerce.ecommApp.commons.pojo.notification.OrderPlaced;
 import com.ecommerce.ecommApp.commons.pojo.orders.ItemsDTO;
@@ -13,7 +13,6 @@ import com.ecommerce.ecommApp.commons.pojo.orders.OrdersDTO;
 import com.ecommerce.ecommApp.commons.pojo.products.Product;
 import com.ecommerce.ecommApp.orders.Models.Orders;
 import com.ecommerce.ecommApp.orders.repository.OrderRepository;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +20,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class OrderServices {
