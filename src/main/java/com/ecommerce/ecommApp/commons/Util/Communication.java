@@ -76,6 +76,21 @@ public class Communication {
         }
     }
 
+    public static String sendDeleteRequest(String endpoint) {
+        try {
+            URL url = new URL(endpoint);
+            HttpURLConnection httpCon = (HttpURLConnection) url.openConnection();
+            httpCon.setDoOutput(true);
+            httpCon.setRequestProperty(
+                    "Content-Type", "application/x-www-form-urlencoded");
+            httpCon.setRequestMethod("DELETE");
+            httpCon.connect();
+            return httpCon.getResponseMessage();
+        } catch (IOException ex) {
+            return null;
+        }
+    }
+
     public static String getApplicationAddress() throws Exception {
         try {
             InetAddress address = InetAddress.getLocalHost();
