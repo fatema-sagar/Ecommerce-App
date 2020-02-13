@@ -38,7 +38,40 @@ public class Communication {
         return null;
     }
 
-    public static String sendPostRequest(String endpoint, String json) {
+    public static String sendPutOrPostRequest(String endpoint, String json,RequestMethod method) {
+        try {
+            URL url = new URL(endpoint);
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+
+            if(method.toString().equals(RequestMethod.POST.toString()))
+               con.setRequestMethod(RequestMethod.POST.toString());
+
+            if(method.toString().equals(RequestMethod.PUT.toString()))
+                con.setRequestMethod(RequestMethod.PUT.toString());
+
+            con.setRequestProperty("Content-Type", "application/json; utf-8");
+            con.setRequestProperty("Accept", "application/json");
+            con.setDoOutput(true);
+            try (OutputStream os = con.getOutputStream()) {
+                byte[] input = json.getBytes("utf-8");
+                os.write(input, 0, input.length);
+            }
+            try (BufferedReader br = new BufferedReader(
+                    new InputStreamReader(con.getInputStream(), "utf-8"))) {
+                StringBuilder response = new StringBuilder();
+                String responseLine = null;
+                while ((responseLine = br.readLine()) != null) {
+                    response.append(responseLine.trim());
+                }
+                return response.toString();
+            }
+        } catch (IOException io) {
+
+        }
+        return null;
+    }
+
+    public static String sendPutRequest(String endpoint, String json) {
         try {
             URL url = new URL(endpoint);
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
@@ -64,6 +97,8 @@ public class Communication {
         }
         return null;
     }
+
+
 
     public static String getApplicationAddress() throws Exception {
         try {
