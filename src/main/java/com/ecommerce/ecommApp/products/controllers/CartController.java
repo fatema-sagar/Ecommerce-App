@@ -66,10 +66,10 @@ public class CartController {
            List<Cart> fetchedCart = cartService.getCart(customerId);
            return new ResponseEntity(fetchedCart,HttpStatus.OK);
        }
-       catch (CustomerNotFoundException ex)
-       {
-           return new ResponseEntity(new ResponseMessage("Customer Not present for Customer Id : "+customerId,"ERROR"),HttpStatus.NOT_FOUND);
-       }
+//       catch (CustomerNotFoundException ex)
+//       {
+//           return new ResponseEntity(new ResponseMessage("Customer Not present for Customer Id : "+customerId,"ERROR"),HttpStatus.NOT_FOUND);
+//       }
        catch (Exception ex)
        {
            return new ResponseEntity(new ResponseMessage("Error in Retriving cart : "+ex.getMessage(),"ERROR"),HttpStatus.NOT_FOUND);

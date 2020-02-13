@@ -110,11 +110,11 @@ public class Communication {
         }
     }
 
-//    public static void main(String []g)
-//    {
+    public static void main(String []g)
+    {
 //        System.out.println(sendGetRequest("https://jsonplaceholder.typicode.com/todos/2"));
-//        System.out.println(sendPostRequest("https://jsonplaceholder.typicode.com/posts","{\"title\":\"foo\",\"body\":\"bar\",\"userId\":1}"));
-//    }
+        System.out.println("" + sendPutOrPostRequest("https://jsonplaceholder.typicode.com/posts","{\"title\":\"foo\",\"body\":\"bar\",\"userId\":1}", RequestMethod.PUT));
+    }
 
 }
 

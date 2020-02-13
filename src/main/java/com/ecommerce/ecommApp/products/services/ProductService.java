@@ -29,7 +29,7 @@ public class ProductService {
     }
 
     public Product updateProduct(Product product) throws ElementNotFoundException {
-        if (productRepository.existsById(product.getProductid())) {
+        if (productRepository.existsById(product.getProductId())) {
             logger.info("Updated Product: {}", product);
             return productRepository.save(product);
         } else {
@@ -54,8 +54,8 @@ public class ProductService {
     }
 
     public Product increaseProductCount(Product product) throws ElementNotFoundException {
-        if (productRepository.existsById(product.getProductid())) {
-            Product existingProduct = productRepository.findById(product.getProductid()).get();
+        if (productRepository.existsById(product.getProductId())) {
+            Product existingProduct = productRepository.findById(product.getProductId()).get();
             existingProduct.setQuantity(existingProduct.getQuantity() + product.getQuantity());
             return productRepository.save(existingProduct);
         } else {

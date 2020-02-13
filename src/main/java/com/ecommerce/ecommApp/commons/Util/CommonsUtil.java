@@ -10,7 +10,7 @@ public class CommonsUtil {
     public static final String SERVER_PORT="server.port";
     public static final String NOTIFICATION_USER_REGISTERED_SERVICE = "User Registered";
     public static final String NOTIFICATION_ORDER_PLACED_SERVICE = "Order Placed";
-    public static final String NOTIFICATION_ORDER_STATUS_SERVICE = "Order Statusserver.port=3000";
+    public static final String NOTIFICATION_ORDER_STATUS_SERVICE = "Order Status";
     public static final String NOTIFICATION_ORDER_CANCELLED_SERVICE = "Order Cancelled";
     public static final String TWILIO_ASSIGNED_NUMBER = "twilio.number";
     public static final String SENDGRID_FROM_EMAIL = "sendgrid.email.from";
