@@ -7,7 +7,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import java.util.Objects;
 
 public final class ElasticSearchUtil {
     private static final String INET_ADDRESS = "localhost:9200";
@@ -19,7 +18,7 @@ public final class ElasticSearchUtil {
             ObjectMapper objectMapper = CommonsUtil.getObjectMapper();
             String json = objectMapper.writeValueAsString(product);
             String endpoint = String.format("%s/%s/%s/%s", INET_ADDRESS, _INDEX, _TYPE, product.getProductId());
-            Communication.sendPutOrPostRequest(endpoint, json, RequestMethod.POST);
+            Communication.sendHttpRequest(endpoint, json, RequestMethod.POST);
             return true;
         } catch (Exception ex) {
             return false;
@@ -31,11 +30,10 @@ public final class ElasticSearchUtil {
             ObjectMapper objectMapper = CommonsUtil.getObjectMapper();
             String json = objectMapper.writeValueAsString(product);
             String endpoint = String.format("%s%s%s%s", INET_ADDRESS, _INDEX, _TYPE, product.getProductId());
-            Communication.sendPutOrPostRequest(endpoint, json, RequestMethod.PUT);
+            Communication.sendHttpRequest(endpoint, json, RequestMethod.PUT);
             return true;
         } catch (JsonProcessingException ex) {
             return false;
         }
     }
-
 }
