@@ -1,5 +1,6 @@
 package com.ecommerce.ecommApp.products.services;
 
+import com.ecommerce.ecommApp.commons.exceptions.CustomerNotFoundException;
 import com.ecommerce.ecommApp.commons.pojo.products.Cart;
 import com.ecommerce.ecommApp.products.composite.CartIdentity;
 import com.ecommerce.ecommApp.products.payload.CartItem;
@@ -59,10 +60,16 @@ public class CartService {
      * @return
      */
 
-    public List<Cart> getCart(Long customerId) {
-        Optional<List<Cart>> fetchCartItems = cartRepository.findByCustomerId(customerId);
-        List<Cart> fetchedCartItems = fetchCartItems.get();
-        return fetchedCartItems;
+    public List<Cart> getCart(Long customerId) throws CustomerNotFoundException {
+        try {
+            Optional<List<Cart>> fetchCartItems = cartRepository.findByCustomerId(customerId);
+            List<Cart> fetchedCartItems = fetchCartItems.get();
+            return fetchedCartItems;
+        }
+        catch (Exception ex)
+        {
+            throw new CustomerNotFoundException();
+        }
     }
 
     /**
@@ -78,6 +85,5 @@ public class CartService {
         cart.setQuantity(payload.getQuantity());
         return cartRepository.save(cart);
     }
-
 
 }
