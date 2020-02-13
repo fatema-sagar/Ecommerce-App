@@ -17,7 +17,7 @@ public final class ElasticSearchUtil {
         try {
             ObjectMapper objectMapper = CommonsUtil.getObjectMapper();
             String json = objectMapper.writeValueAsString(product);
-            String endpoint = String.format("https://%s/%s/%s/%s", INET_ADDRESS, _INDEX, _TYPE, product.getProductId());
+            String endpoint = String.format("http://%s/%s/%s/%s", INET_ADDRESS, _INDEX, _TYPE, product.getProductId());
             System.out.println(endpoint);
             System.out.println(json);
             System.out.println(Communication.sendHttpRequest(endpoint, json, RequestMethod.POST));
@@ -48,6 +48,8 @@ public final class ElasticSearchUtil {
         product.setCategory("Bottoms");
         product.setSize("XL");
         product.setImage("abc");
+        product.setProductDescription("shgfsdukfusdfus");
+        product.setPrice(653);
         System.out.println(insertProduct(product));
 
 //        product.setName("Ripped Jeans");
