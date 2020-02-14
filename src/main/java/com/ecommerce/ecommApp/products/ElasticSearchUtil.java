@@ -78,6 +78,8 @@ public final class ElasticSearchUtil {
             List<Product> allProducts;
             logger.info("Searching all products");
             String endpoint = String.format("%s/%s/%s", INET_ADDRESS, _INDEX, "_search");
+            QueryBuilder queryBuilder = new QueryBuilder(jsonBody);
+            jsonBody = queryBuilder.build();
             String response = Communication.sendHttpRequest(endpoint, jsonBody, RequestMethod.GET);
             allProducts = extractFromResponse(response);
             return allProducts;

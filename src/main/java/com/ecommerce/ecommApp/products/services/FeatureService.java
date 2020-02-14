@@ -20,9 +20,8 @@ public class FeatureService {
     return sortedProducts;
   }
 
-  public List<Product> getSearchedElements(JSONObject searchQuery) {
-
-    List<Product> searchedProducts = ElasticSearchUtil.searchProduct(searchQuery.toString());
+  public List<Product> getSearchedElements(String searchQuery) {
+    List<Product> searchedProducts = ElasticSearchUtil.searchProduct(searchQuery);
     return searchedProducts;
   }
 

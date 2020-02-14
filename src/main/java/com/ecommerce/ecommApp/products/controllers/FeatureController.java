@@ -1,7 +1,9 @@
 package com.ecommerce.ecommApp.products.controllers;
 
+import com.ecommerce.ecommApp.commons.Util.CommonsUtil;
 import com.ecommerce.ecommApp.commons.pojo.products.Product;
 import com.ecommerce.ecommApp.products.services.FeatureService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +33,7 @@ public class FeatureController {
   }
 
   @PostMapping("/search")
-  private ResponseEntity<Object> searchProducts(@RequestBody JSONObject jsonObject) {
+  private ResponseEntity<Object> searchProducts(@RequestBody String jsonObject) {
     try {
       List<Product> searchedProducts = featureService.getSearchedElements(jsonObject);
       return new ResponseEntity(searchedProducts, HttpStatus.OK);
