@@ -1,8 +1,6 @@
 package com.ecommerce.ecommApp.commons.Util;
 
 import com.ecommerce.ecommApp.EcommAppApplication;
-import com.ecommerce.ecommApp.commons.pojo.products.Product;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -12,8 +10,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.*;
-import java.util.ArrayList;
-import java.util.List;
 
 public class Communication {
 
@@ -21,6 +17,7 @@ public class Communication {
 
   public static String sendGetRequest(String endpoint) {
     try {
+      logger.info("Sending request for GET.");
       URL url = new URL(endpoint);
       HttpURLConnection con = (HttpURLConnection) url.openConnection();
       con.setRequestMethod(RequestMethod.GET.toString());
@@ -43,32 +40,17 @@ public class Communication {
     return null;
   }
 
-  public static String sendGetForSearchRequest(String endpoint, String json, RequestMethod method) {
-    logger.info("Sending search request to the Elasticsearch...");
-    try {
-      String filteredProduct = "";
-      URL url = new URL(endpoint);
-      HttpURLConnection con = (HttpURLConnection) url.openConnection();
-      con.setRequestMethod(method.toString());
-      con.setRequestProperty("Content-Type", "application/json; utf-8");
-      con.setRequestProperty("Accept", "application/json");
-      con.setDoOutput(true);
-      try (OutputStream os = con.getOutputStream()) {
-        byte[] input = json.getBytes("utf-8");
-        os.write(input, 0, input.length);
-      }
-      return filteredProduct;
-    } catch (MalformedURLException e) {
-      e.printStackTrace();
-      return "Malformed url exception";
-    } catch (IOException e) {
-      e.printStackTrace();
-      return "IOException occurred";
-    }
-  }
-
+  /**
+   *
+   * @param endpoint The URL at which the Search query should hit the elastic search.
+   * @param json The jsonBody Which should be sent with the URL
+   * @param method The particular RequestMethod (POST, PUT, DELETE, GET) to be used with the given URL and JSON body.
+   *               All these are sent with a particular body to the elastic search.
+   * @return Returns a response to the calling method with JSON objects in the form of String.
+   */
   public static String sendHttpRequest(String endpoint, String json,RequestMethod method) {
     try {
+      logger.info("Sending HTTP Request for {} method", method);
       URL url = new URL(endpoint);
       HttpURLConnection con = (HttpURLConnection) url.openConnection();
 
@@ -110,6 +92,7 @@ public class Communication {
 
   public static String sendDeleteRequest(String endpoint) {
     try {
+      logger.info("Sending DELETE request to elasticsearch");
       URL url = new URL(endpoint);
       HttpURLConnection httpCon = (HttpURLConnection) url.openConnection();
       httpCon.setDoOutput(true);
@@ -119,6 +102,7 @@ public class Communication {
       httpCon.connect();
       return httpCon.getResponseMessage();
     } catch (IOException ex) {
+      logger.error("IOException occurred in DELETE request" + ex.getMessage());
       return null;
     }
   }

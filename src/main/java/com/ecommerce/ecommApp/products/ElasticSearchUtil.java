@@ -19,7 +19,7 @@ import java.util.List;
 
 public final class ElasticSearchUtil {
 
-    private static final Logger log = LoggerFactory.getLogger(ElasticSearchUtil.class);
+    private static final Logger logger = LoggerFactory.getLogger(ElasticSearchUtil.class);
     private static final String INET_ADDRESS = "http://localhost:9200";
     private static final String _INDEX = "products";
     private static final String _TYPE = "_doc";
@@ -29,12 +29,12 @@ public final class ElasticSearchUtil {
             ObjectMapper objectMapper = CommonsUtil.getObjectMapper();
             String json = objectMapper.writeValueAsString(product);
             String endpoint = String.format("%s/%s/%s/%s", INET_ADDRESS, _INDEX, _TYPE, product.getProductId());
-            log.info("Data inserted in elastic search : {} : {} " + endpoint, json);
+            logger.info("Data inserted in elastic search : {} : {} " + endpoint, json);
             String response = Communication.sendHttpRequest(endpoint, json, RequestMethod.POST);
-            log.trace("Response : {} ", response);
+            logger.trace("Response : {} ", response);
             return true;
         } catch (Exception ex) {
-            log.error("Error in inserting data into the elastic seach : {} ", ex);
+            logger.error("Error in inserting data into the elastic seach : {} ", ex);
             return false;
         }
     }
@@ -46,10 +46,10 @@ public final class ElasticSearchUtil {
             String jsonBody = String.format("{\"doc\":%s}", productJson);
             String endpoint = String.format("%s/%s/%s/%s", INET_ADDRESS, _INDEX, "_update", product.getProductId());
             Communication.sendHttpRequest(endpoint, jsonBody, RequestMethod.POST);
-            log.info("Data updated in elastic seach for product {}", product.getProductId());
+            logger.info("Data updated in elastic seach for product {}", product.getProductId());
             return true;
         } catch (JsonProcessingException ex) {
-            log.error("Error in Updating data into the Elastic seach : {} ", ex);
+            logger.error("Error in Updating data into the Elastic seach : {} ", ex);
             return false;
         }
     }
@@ -58,10 +58,10 @@ public final class ElasticSearchUtil {
         String endpoint = String.format("%s/%s/%s/%s", INET_ADDRESS, _INDEX, _TYPE, id);
         try {
             String response = Communication.sendDeleteRequest(endpoint);
-            log.trace("product deted for id : {} ", id);
+            logger.trace("product deted for id : {} ", id);
             return true;
         } catch (Exception ex) {
-            log.error("Error in Deleting prouct for Product ID {} ", ex);
+            logger.error("Error in Deleting prouct for Product ID {} ", ex);
             return false;
         }
     }
@@ -85,11 +85,40 @@ public final class ElasticSearchUtil {
             }
             return list;
         } catch (JSONException e) {
-            e.printStackTrace();
+            logger.error("JSONException while reading all products" + e.getMessage());
         } catch (JsonMappingException e) {
-            e.printStackTrace();
+            logger.error("JsonMappingException while reading all products" + e.getMessage());
         } catch (JsonProcessingException e) {
-            e.printStackTrace();
+            logger.error("JsonProcessingException while reading all products" + e.getMessage());
+        }
+        return null;
+    }
+
+    private static List<Product> searchProduct(String jsonBody) {
+        try {
+            List<Product> allProducts = new ArrayList<>();
+            logger.info("Searching all products");
+            ObjectMapper objectMapper = CommonsUtil.getObjectMapper();
+            String endpoint = String.format("%s/%s/%s", INET_ADDRESS, _INDEX, "_search");
+            String response = Communication.sendHttpRequest(endpoint, jsonBody, RequestMethod.GET);
+            JSONObject jsonObject = null;
+            JSONArray jsonArray = null;
+            try {
+                jsonObject = new JSONObject(response);
+                jsonArray = jsonObject.getJSONObject("hits").getJSONArray("hits");
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject object = jsonArray.getJSONObject(i);
+                    object = object.getJSONObject("_source");
+                    String productJson = object.toString();
+                    Product product = objectMapper.readValue(productJson, Product.class);
+                    allProducts.add(product);
+                }
+                return allProducts;
+            } catch (JSONException | JsonProcessingException e) {
+                logger.error("JSON Error"+ e.getMessage());
+            }
+        } catch (Exception e) {
+            logger.error("Error while searching products" + e.getMessage());
         }
         return null;
     }
@@ -111,19 +140,5 @@ public final class ElasticSearchUtil {
         QueryBuilder queryBuilder = new QueryBuilder(json);
         String jsonBody = queryBuilder.build();
         searchProduct(jsonBody);
-    }
-
-
-    private static List<Product> searchProduct(String jsonBody) {
-        try {
-            List<Product> allProducts = new ArrayList<>();
-            log.info("Searching all products");
-            ObjectMapper objectMapper = CommonsUtil.getObjectMapper();
-            String endpoint = String.format("%s/%s/%s", INET_ADDRESS, _INDEX, "_search");
-            System.out.println(Communication.sendHttpRequest(endpoint, jsonBody, RequestMethod.GET));
-            return allProducts;
-        } catch (Exception e) {
-            return null;
-        }
     }
 }
