@@ -95,41 +95,41 @@ public final class ElasticSearchUtil {
     }
 
     public static void main(String[] args) throws JSONException {
-//        for (int i = 0; i < 10; i++)
-//        {
-//            Product product = new Product();
-//            product.setName("Jeans");
-//            product.setProductId(i);
-//            product.setCategory("Bottoms");
-//            product.setSize("XL");
-//            product.setImage("1234asdfg");
-//            product.setProductDescription("product detail description");
-//            product.setPrice(123);
-//            insertProduct(product);
-//        }
-//        System.out.println(insertProduct(product));
-////        product.setName("Ripped Jeans");
-////        System.out.println(updateProduct(product));
+        for (int i = 0; i < 10; i++)
+        {
+            Product product = new Product();
+            product.setName("Jeans");
+            product.setProductId(i);
+            product.setCategory("Bottoms");
+            product.setSize("XL");
+            product.setImage("1234asdfg");
+            product.setProductDescription("product detail description");
+            product.setPrice(123);
+            insertProduct(product);
+        }
 //        deleteProduct(1);
 //        getAllProducts();
 //        searchProduct();
-        String json = "{\"search_text\":\"a\",\"price\":{\"lte\":1,\"gte\":13},\"category\":\"abc\"}";
+        String json = "{\"search_text\":\"jeans\",\"price\":{\"lte\":500,\"gte\":13},\"category\":\"bottoms\"}";
         QueryBuilder queryBuilder = new QueryBuilder(json);
-        System.out.println(queryBuilder.build());
+        String jsonBody = queryBuilder.build();
+        searchProduct(jsonBody);
     }
 
-    private static List<Product> searchProduct() {
+
+    private static List<Product> searchProduct(String jsonBody) {
         try {
             List<Product> allProducts = new ArrayList<>();
             log.info("Searching all products");
             ObjectMapper objectMapper = CommonsUtil.getObjectMapper();
-            String endpoint = String.format("%s/%s/%s/%s", INET_ADDRESS, _INDEX, "_search?q=*");
-            Communication.sendGetRequest(endpoint);
-            return null;
+            String endpoint = String.format("%s/%s/%s", INET_ADDRESS, _INDEX, "_search");
+            System.out.println(Communication.sendHttpRequest(endpoint, jsonBody, RequestMethod.GET));
+            return allProducts;
         } catch (Exception e) {
             return null;
         }
     }
+
 
 }
 
