@@ -15,7 +15,7 @@ public class Product {
   @Id
   @Column(unique = true, nullable = false)
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private long productid;
+  private long productId;
 
   @JsonProperty("category")
   @NotNull
@@ -43,6 +43,24 @@ public class Product {
   @Column
   private float price;
 
+  @JsonProperty("product_image")
+  @Column
+  private String image;
+
+  @Override
+  public String toString() {
+    return "Product{" +
+            "productId=" + productId +
+            ", category='" + category + '\'' +
+            ", name='" + name + '\'' +
+            ", productDescription='" + productDescription + '\'' +
+            ", size='" + size + '\'' +
+            ", quantity=" + quantity +
+            ", price=" + price +
+            ", image='" + image + '\'' +
+            '}';
+  }
+
 }
 
 
@@ -52,7 +70,7 @@ public class Product {
 //                  CascadeType.MERGE
 //          })
 //  @JoinTable(name = "product_cart",
-//          joinColumns = { @JoinColumn(name = "productid") },
-//          inverseJoinColumns = { @JoinColumn(name = "cart_id") })
+//          joinColumns = { @JoinColumn(name = "productId") },
+//          inverseJoinColumns = { @JoinColumn(name = "cartId") })
 
 //  private Set<Cart> cart = new HashSet<>();
