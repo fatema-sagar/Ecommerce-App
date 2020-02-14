@@ -91,8 +91,8 @@ public final class ElasticSearchUtil {
     private static List<Product> extractFromResponse(String response) {
         ObjectMapper objectMapper = CommonsUtil.getObjectMapper();
         List<Product> allProducts = new ArrayList<>();
-        JSONObject jsonObject = null;
-        JSONArray jsonArray = null;
+        JSONObject jsonObject;
+        JSONArray jsonArray;
         try {
             jsonObject = new JSONObject(response);
             jsonArray = jsonObject.getJSONObject("hits").getJSONArray("hits");
