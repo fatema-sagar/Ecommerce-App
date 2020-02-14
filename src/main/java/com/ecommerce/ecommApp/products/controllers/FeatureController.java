@@ -1,10 +1,7 @@
 package com.ecommerce.ecommApp.products.controllers;
 
-import com.ecommerce.ecommApp.commons.Util.CommonsUtil;
 import com.ecommerce.ecommApp.commons.pojo.products.Product;
 import com.ecommerce.ecommApp.products.services.FeatureService;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +36,7 @@ public class FeatureController {
       return new ResponseEntity(searchedProducts, HttpStatus.OK);
     } catch (Exception e) {
       logger.error("Error while searching" + e.getMessage());
-      return new ResponseEntity<>("Error while searching", HttpStatus.NOT_FOUND);
+      return new ResponseEntity<>("No elements found for the given search", HttpStatus.NOT_FOUND);
     }
   }
 }

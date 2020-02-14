@@ -42,6 +42,7 @@ public class ProductService {
     public Product updateProduct(Product product) throws ElementNotFoundException {
         if (productRepository.existsById(product.getProductId())) {
             logger.info("Updated Product: {}", product);
+            ElasticSearchUtil.updateProduct(product);
             return productRepository.save(product);
         } else {
             throw new ElementNotFoundException("Product ID is not available");
@@ -55,6 +56,7 @@ public class ProductService {
                 if (invent.getQuantity() >= element.getQuantity()) {
                     invent.setQuantity(invent.getQuantity() - element.getQuantity());
                     productRepository.save(invent);
+                    ElasticSearchUtil.updateProduct(invent);
                 } else {
                     throw new NotEnoughQuantityException("The product you are trying to update does not enough quantity");
                 }
@@ -68,6 +70,7 @@ public class ProductService {
         if (productRepository.existsById(product.getProductId())) {
             Product existingProduct = productRepository.findById(product.getProductId()).get();
             existingProduct.setQuantity(existingProduct.getQuantity() + product.getQuantity());
+            ElasticSearchUtil.updateProduct(existingProduct);
             return productRepository.save(existingProduct);
         } else {
             throw new ElementNotFoundException("Unable to update the quantity for the product, as it is not available with the database.");
@@ -111,7 +114,6 @@ public class ProductService {
                 Random random = new Random();
                 product.setQuantity(random.nextInt(100));
                 product.setSize("M");
-//                System.out.println(product);
                 createProduct(product);
             }
         } catch (IOException e) {

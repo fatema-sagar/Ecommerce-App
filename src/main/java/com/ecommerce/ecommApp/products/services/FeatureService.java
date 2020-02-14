@@ -2,8 +2,8 @@ package com.ecommerce.ecommApp.products.services;
 
 import com.ecommerce.ecommApp.commons.pojo.products.Product;
 import com.ecommerce.ecommApp.products.ElasticSearchUtil;
+import com.ecommerce.ecommApp.products.exceptions.ElementNotFoundException;
 import com.ecommerce.ecommApp.products.repositories.ProductRepository;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,9 +20,12 @@ public class FeatureService {
     return sortedProducts;
   }
 
-  public List<Product> getSearchedElements(String searchQuery) {
+  public List<Product> getSearchedElements(String searchQuery) throws ElementNotFoundException {
     List<Product> searchedProducts = ElasticSearchUtil.searchProduct(searchQuery);
-    return searchedProducts;
+    if (searchedProducts.size() != 0) {
+      return searchedProducts;
+    } else {
+      throw new ElementNotFoundException(" No elements found for the given search");
+    }
   }
-
 }
