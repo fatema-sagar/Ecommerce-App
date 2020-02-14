@@ -30,7 +30,7 @@ public class FeatureController {
     }
   }
 
-  @GetMapping("/search")
+  @PostMapping("/search")
   private ResponseEntity<Object> searchProducts(@RequestBody JSONObject jsonObject) {
     try {
       List<Product> searchedProducts = featureService.getSearchedElements(jsonObject);

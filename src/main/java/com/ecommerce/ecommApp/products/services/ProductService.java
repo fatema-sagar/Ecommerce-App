@@ -2,6 +2,7 @@ package com.ecommerce.ecommApp.products.services;
 
 import com.ecommerce.ecommApp.commons.pojo.orders.ItemsDTO;
 import com.ecommerce.ecommApp.commons.pojo.products.Product;
+import com.ecommerce.ecommApp.products.ElasticSearchUtil;
 import com.ecommerce.ecommApp.products.exceptions.ElementNotFoundException;
 import com.ecommerce.ecommApp.products.exceptions.NotEnoughQuantityException;
 import com.ecommerce.ecommApp.products.repositories.ProductRepository;
@@ -25,7 +26,9 @@ public class ProductService {
 
     public Product createProduct(Product product) {
         logger.info("Adding the following Product {} to the db..", product);
-        return productRepository.save(product);
+        Product generatedProduct = productRepository.save(product);
+        ElasticSearchUtil.insertProduct(generatedProduct);
+        return generatedProduct;
     }
 
     public Product updateProduct(Product product) throws ElementNotFoundException {
