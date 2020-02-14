@@ -74,7 +74,7 @@ public final class ElasticSearchUtil {
         return allProducts;
     }
 
-    private static List<Product> searchProduct(String jsonBody) {
+    public static List<Product> searchProduct(String jsonBody) {
         try {
             List<Product> allProducts;
             logger.info("Searching all products");

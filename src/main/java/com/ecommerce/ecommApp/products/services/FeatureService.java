@@ -1,7 +1,9 @@
 package com.ecommerce.ecommApp.products.services;
 
 import com.ecommerce.ecommApp.commons.pojo.products.Product;
+import com.ecommerce.ecommApp.products.ElasticSearchUtil;
 import com.ecommerce.ecommApp.products.repositories.ProductRepository;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,4 +19,11 @@ public class FeatureService {
     List<Product> sortedProducts = productRepository.getElementsByCategory(category);
     return sortedProducts;
   }
+
+  public List<Product> getSearchedElements(JSONObject searchQuery) {
+
+    List<Product> searchedProducts = ElasticSearchUtil.searchProduct(searchQuery.toString());
+    return searchedProducts;
+  }
+
 }
