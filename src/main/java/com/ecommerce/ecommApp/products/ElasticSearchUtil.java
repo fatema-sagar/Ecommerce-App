@@ -67,10 +67,30 @@ public final class ElasticSearchUtil {
     }
 
     public static List<Product> getAllProducts() {
-        List<Product> list = new ArrayList<>();
-        ObjectMapper objectMapper = CommonsUtil.getObjectMapper();
+        List<Product> allProducts;
         String endPoint = String.format("%s/%s/%s?q=*", INET_ADDRESS, _INDEX, "_search");
         String response = Communication.sendGetRequest(endPoint);
+        allProducts = extractFromResponse(response);
+        return allProducts;
+    }
+
+    private static List<Product> searchProduct(String jsonBody) {
+        try {
+            List<Product> allProducts;
+            logger.info("Searching all products");
+            String endpoint = String.format("%s/%s/%s", INET_ADDRESS, _INDEX, "_search");
+            String response = Communication.sendHttpRequest(endpoint, jsonBody, RequestMethod.GET);
+            allProducts = extractFromResponse(response);
+            return allProducts;
+        } catch (Exception ex) {
+            ex.getMessage();
+        }
+        return null;
+    }
+
+    private static List<Product> extractFromResponse(String response) {
+        ObjectMapper objectMapper = CommonsUtil.getObjectMapper();
+        List<Product> allProducts = new ArrayList<>();
         JSONObject jsonObject = null;
         JSONArray jsonArray = null;
         try {
@@ -81,46 +101,14 @@ public final class ElasticSearchUtil {
                 object = object.getJSONObject("_source");
                 String productJson = object.toString();
                 Product product = objectMapper.readValue(productJson, Product.class);
-                list.add(product);
+                System.out.println(product);
+                allProducts.add(product);
             }
-            return list;
-        } catch (JSONException e) {
-            logger.error("JSONException while reading all products" + e.getMessage());
-        } catch (JsonMappingException e) {
-            logger.error("JsonMappingException while reading all products" + e.getMessage());
-        } catch (JsonProcessingException e) {
-            logger.error("JsonProcessingException while reading all products" + e.getMessage());
+            return allProducts;
+        } catch (JSONException | JsonProcessingException e) {
+            logger.error("JSON Error"+ e.getMessage());
+            return null;
         }
-        return null;
-    }
-
-    private static List<Product> searchProduct(String jsonBody) {
-        try {
-            List<Product> allProducts = new ArrayList<>();
-            logger.info("Searching all products");
-            ObjectMapper objectMapper = CommonsUtil.getObjectMapper();
-            String endpoint = String.format("%s/%s/%s", INET_ADDRESS, _INDEX, "_search");
-            String response = Communication.sendHttpRequest(endpoint, jsonBody, RequestMethod.GET);
-            JSONObject jsonObject = null;
-            JSONArray jsonArray = null;
-            try {
-                jsonObject = new JSONObject(response);
-                jsonArray = jsonObject.getJSONObject("hits").getJSONArray("hits");
-                for (int i = 0; i < jsonArray.length(); i++) {
-                    JSONObject object = jsonArray.getJSONObject(i);
-                    object = object.getJSONObject("_source");
-                    String productJson = object.toString();
-                    Product product = objectMapper.readValue(productJson, Product.class);
-                    allProducts.add(product);
-                }
-                return allProducts;
-            } catch (JSONException | JsonProcessingException e) {
-                logger.error("JSON Error"+ e.getMessage());
-            }
-        } catch (Exception e) {
-            logger.error("Error while searching products" + e.getMessage());
-        }
-        return null;
     }
 
     public static void main(String[] args) throws JSONException {
@@ -140,5 +128,6 @@ public final class ElasticSearchUtil {
         QueryBuilder queryBuilder = new QueryBuilder(json);
         String jsonBody = queryBuilder.build();
         searchProduct(jsonBody);
+        getAllProducts();
     }
 }
