@@ -606,5 +606,3 @@ POST products/_search
 }
 
 
-
-

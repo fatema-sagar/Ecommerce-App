@@ -4,7 +4,6 @@ import com.ecommerce.ecommApp.commons.Util.CommonsUtil;
 import com.ecommerce.ecommApp.commons.Util.Communication;
 import com.ecommerce.ecommApp.commons.pojo.products.Product;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -112,22 +111,11 @@ public final class ElasticSearchUtil {
     }
 
     public static void main(String[] args) throws JSONException {
-        for (int i = 0; i < 10; i++)
-        {
-            Product product = new Product();
-            product.setName("Jeans");
-            product.setProductId(i);
-            product.setCategory("Bottoms");
-            product.setSize("XL");
-            product.setImage("1234asdfg");
-            product.setProductDescription("product detail description");
-            product.setPrice(123);
-            insertProduct(product);
-        }
         String json = "{\"search_text\":\"jeans\",\"price\":{\"lte\":500,\"gte\":13},\"category\":\"bottoms\"}";
         QueryBuilder queryBuilder = new QueryBuilder(json);
         String jsonBody = queryBuilder.build();
         searchProduct(jsonBody);
         getAllProducts();
     }
+
 }

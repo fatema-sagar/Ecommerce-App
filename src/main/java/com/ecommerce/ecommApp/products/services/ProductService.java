@@ -6,12 +6,20 @@ import com.ecommerce.ecommApp.products.ElasticSearchUtil;
 import com.ecommerce.ecommApp.products.exceptions.ElementNotFoundException;
 import com.ecommerce.ecommApp.products.exceptions.NotEnoughQuantityException;
 import com.ecommerce.ecommApp.products.repositories.ProductRepository;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.io.IOException;
+import java.io.Reader;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.List;
+import java.util.Random;
 
 @Service
 public class ProductService {
@@ -75,6 +83,39 @@ public class ProductService {
             return productRepository.findById(productId).get();
         } else {
             throw new ElementNotFoundException("ProductId not found");
+        }
+    }
+
+    public void generateProducts() {
+        long id = 0;
+        try (
+                Reader reader = Files.newBufferedReader(Paths.get("/home/sagar_bindal/Desktop/flipkart_com-ecommerce_sample.csv"));
+                CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT);
+        ) {
+            for (CSVRecord csvRecord : csvParser) {
+                if (id == 0) {
+                    id++;
+                    continue;
+                }
+                // Accessing Values by Column Index
+                System.out.println(csvRecord.size() + " : " + csvRecord.toString());
+                Product product = new Product();
+                product.setProductId(id++);
+                product.setName(csvRecord.get(3));
+                product.setPrice((csvRecord.get(6).equals("")) ? 0 : Integer.parseInt(csvRecord.get(6)));
+                product.setImage("Image Dummy");
+                product.setProductDescription(csvRecord.get(10));
+                String category = csvRecord.get(4).replace("[", "").replace("]", "");
+                String text = category.split(">>")[0].trim();
+                product.setCategory(text);
+                Random random = new Random();
+                product.setQuantity(random.nextInt(100));
+                product.setSize("M");
+//                System.out.println(product);
+                createProduct(product);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }
