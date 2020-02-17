@@ -1,4 +1,4 @@
-package com.ecommerce.ecommApp.view.kafka.producer;
+package com.ecommerce.ecommApp.kafka.producer;
 
 import com.ecommerce.ecommApp.EcommAppApplication;
 import com.ecommerce.ecommApp.commons.Util.CommonsUtil;
