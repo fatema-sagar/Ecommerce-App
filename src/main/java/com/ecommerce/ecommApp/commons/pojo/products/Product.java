@@ -33,7 +33,7 @@ public class Product {
   private String brand;
 
   @JsonProperty("product_description")
-  @Column(length = 5000)
+  @Column(length = 5100)
   private String productDescription;
 
   @JsonProperty("size")
