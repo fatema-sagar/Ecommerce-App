@@ -32,6 +32,11 @@ public class ProductService {
         return productRepository.findAll();
     }
 
+    /**
+     * The method is used to add the Product in the database and later add the product to the Elasticsearch.
+     * @param product The product sent from the user.
+     * @return The generated product added to the database.
+     */
     public Product createProduct(Product product) {
         logger.info("Adding the following Product {} to the db..", product);
         Product generatedProduct = productRepository.save(product);
@@ -39,6 +44,12 @@ public class ProductService {
         return generatedProduct;
     }
 
+    /**
+     * Updates the product sent by the user only if the Product is already available in the database.
+     * @param product The Product object sent by the user.
+     * @return The generated product after updating it.
+     * @throws ElementNotFoundException In case the product is not found, returns an exception.
+     */
     public Product updateProduct(Product product) throws ElementNotFoundException {
         if (productRepository.existsById(product.getProductId())) {
             logger.info("Updated Product: {}", product);
@@ -49,6 +60,12 @@ public class ProductService {
         }
     }
 
+    /**
+     * After an order is placed, this method is called to deduct the available quantity of the product.
+     * @param product The ItemsDTO object which contains the productID and quantity which has to be deducted from the db.
+     * @throws ElementNotFoundException In case the product is not found, returns an exception.
+     * @throws NotEnoughQuantityException In case the product does not have the appropriate quantity which has to be reduced.
+     */
     public void deductProducts(List<ItemsDTO> product) throws ElementNotFoundException, NotEnoughQuantityException {
         for (ItemsDTO element : product) {
             if (productRepository.existsById(element.getProductID())) {
@@ -58,7 +75,7 @@ public class ProductService {
                     productRepository.save(invent);
                     ElasticSearchUtil.updateProduct(invent);
                 } else {
-                    throw new NotEnoughQuantityException("The product you are trying to update does not enough quantity");
+                    throw new NotEnoughQuantityException("The product you are trying to update does not have enough quantity");
                 }
             } else {
                 throw new ElementNotFoundException("Element does not exist");
@@ -66,6 +83,13 @@ public class ProductService {
         }
     }
 
+    /**
+     * This method is used to increase the quantity of an existing product. It updates the quantity in the db
+     * and later updates it in the elasticsearch.
+     * @param product The Product object whose quantity has to be added in the existing products quantity.
+     * @return The updated product.
+     * @throws ElementNotFoundException In case the product is not found, returns an exception.
+     */
     public Product increaseProductCount(Product product) throws ElementNotFoundException {
         if (productRepository.existsById(product.getProductId())) {
             Product existingProduct = productRepository.findById(product.getProductId()).get();
@@ -77,10 +101,20 @@ public class ProductService {
         }
     }
 
+    /**
+     * This method returns the list of all distinct categories.
+     * @return List of categories available in the database.
+     */
     public List<String> getAllCategories() {
         return productRepository.getCategory();
     }
 
+    /**
+     * This method is used to get all details of a particular product using its Product ID.
+     * @param productId The product id sent from the API.
+     * @return The Product with the given product id.
+     * @throws ElementNotFoundException In case the product id is not found, returns an exception.
+     */
     public Product getProduct(long productId) throws ElementNotFoundException {
         if (productRepository.existsById(productId)) {
             return productRepository.findById(productId).get();
@@ -89,6 +123,9 @@ public class ProductService {
         }
     }
 
+    /**
+     * This method is used to read the csv file to directly generate the products from the csv file.
+     */
     public void generateProducts() {
         long id = 0;
         try (
