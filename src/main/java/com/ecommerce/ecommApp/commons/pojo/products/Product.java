@@ -24,16 +24,15 @@ public class Product {
 
   @JsonProperty("product_name")
   @NotNull
-  @Column
+  @Column(length = 1500)
   private String name;
 
   @JsonProperty("brand")
-  @NotNull
   @Column
   private String brand;
 
   @JsonProperty("product_description")
-  @Column
+  @Column(length = 6000)
   private String productDescription;
 
   @JsonProperty("size")
@@ -58,7 +57,7 @@ public class Product {
             "productId=" + productId +
             ", category='" + category + '\'' +
             ", name='" + name + '\'' +
-            ", brand='" + brand + '\'' +
+            ", brand='" + brand +'\'' +
             ", productDescription='" + productDescription + '\'' +
             ", size='" + size + '\'' +
             ", quantity=" + quantity +

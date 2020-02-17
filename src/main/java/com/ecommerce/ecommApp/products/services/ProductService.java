@@ -129,7 +129,7 @@ public class ProductService {
     public void generateProducts() {
         long id = 0;
         try (
-                Reader reader = Files.newBufferedReader(Paths.get("/home/sagar_bindal/Desktop/flipkart_com-ecommerce_sample.csv"));
+                Reader reader = Files.newBufferedReader(Paths.get("/home/sanchay_gupta/Downloads/flipkart_com-ecommerce_sample.csv"));
                 CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT);
         ) {
             for (CSVRecord csvRecord : csvParser) {
@@ -145,7 +145,7 @@ public class ProductService {
                 product.setPrice((csvRecord.get(6).equals("")) ? 0 : Integer.parseInt(csvRecord.get(6)));
                 product.setImage("Image Dummy");
                 product.setProductDescription(csvRecord.get(10));
-                String category = csvRecord.get(4).replace("[", "").replace("]", "");
+                String category = csvRecord.get(4).replace("[\"", "").replace("]", "");
                 String text = category.split(">>")[0].trim();
                 product.setCategory(text);
                 Random random = new Random();
