@@ -81,7 +81,9 @@ public class CartService {
 
     public Cart updateCart(CartItem payload) {
         Cart cart=cartRepository.findById(new CartIdentity(payload.getCustomerId(),payload.getProductId())).get();
-        cart.setCost(payload.getCost());
+        int previousQuantity = cart.getQuantity();
+        Float previousCost = cart.getCost();
+        cart.setCost((payload.getQuantity()/previousQuantity)*previousCost);
         cart.setQuantity(payload.getQuantity());
         return cartRepository.save(cart);
     }
