@@ -4,6 +4,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+/**
+ * This class is used for designing the query which is forwarded to the Elasticsearch for
+ * searching the data sent by user. Since, the Elasticsearch SDK was hard to integrate,
+ * we created our own query builder to suffice the search needs.
+ */
 public class QueryBuilder {
 
     private JSONObject jsonQuery = new JSONObject("{\"query\":{\"bool\":{}}}");

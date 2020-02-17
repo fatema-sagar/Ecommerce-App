@@ -1,8 +1,9 @@
 package com.ecommerce.ecommApp.products.services;
 
-import com.ecommerce.ecommApp.commons.exceptions.CustomerNotFoundException;
+import com.ecommerce.ecommApp.products.exceptions.CustomerNotFoundException;
 import com.ecommerce.ecommApp.commons.pojo.products.Cart;
 import com.ecommerce.ecommApp.products.composite.CartIdentity;
+import com.ecommerce.ecommApp.products.exceptions.ElementNotFoundException;
 import com.ecommerce.ecommApp.products.payload.CartItem;
 import com.ecommerce.ecommApp.products.repositories.CartRepository;
 import com.ecommerce.ecommApp.products.repositories.ProductRepository;
@@ -68,7 +69,7 @@ public class CartService {
         }
         catch (Exception ex)
         {
-            throw new CustomerNotFoundException();
+            throw new CustomerNotFoundException("Customer with cartId= {} not found");
         }
     }
 
@@ -79,13 +80,18 @@ public class CartService {
      * @return :Updated cart of the customer
      */
 
-    public Cart updateCart(CartItem payload) {
-        Cart cart=cartRepository.findById(new CartIdentity(payload.getCustomerId(),payload.getProductId())).get();
-        int previousQuantity = cart.getQuantity();
-        Float previousCost = cart.getCost();
-        cart.setCost((payload.getQuantity()/previousQuantity)*previousCost);
-        cart.setQuantity(payload.getQuantity());
-        return cartRepository.save(cart);
+    public Cart updateCart(CartItem payload) throws ElementNotFoundException {
+        List<Cart> check = cartRepository.existsByProductId(payload.getProductId());
+        if (check.size() != 0) {
+            Cart cart=cartRepository.findById(new CartIdentity(payload.getCustomerId(),payload.getProductId())).get();
+            int previousQuantity = cart.getQuantity();
+            Float previousCost = cart.getCost();
+            cart.setCost((payload.getQuantity()/previousQuantity)*previousCost);
+            cart.setQuantity(payload.getQuantity());
+            return cartRepository.save(cart);
+        } else {
+            throw new ElementNotFoundException("Product not found in the cart.");
+        }
     }
 
 }
