@@ -15,7 +15,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import java.util.ArrayList;
 import java.util.List;
 
-
+/**
+ * This class is used to call the Request methods of the Elasticsearch.
+ * It is used to format the data in the manner which is accepted by the Request methods.
+ * @Author Sagar Bindal and Fatema Sagar.
+ */
 public final class ElasticSearchUtil {
 
     private static final Logger logger = LoggerFactory.getLogger(ElasticSearchUtil.class);
@@ -93,9 +97,15 @@ public final class ElasticSearchUtil {
         return allProducts;
     }
 
+    /**
+     * This method is used to search the json body sent for returning the specific product(s).
+     * @param jsonBody The String formatted json body to search in elastic search.
+     * @return List of Products matching the search text or else returns null.
+     */
     public static List<Product> searchProduct(String jsonBody) {
+        List<Product> allProducts = new ArrayList<>();
         try {
-            List<Product> allProducts;
+
             logger.info("Searching all products");
             String endpoint = String.format("%s/%s/%s", INET_ADDRESS, _INDEX, "_search");
             QueryBuilder queryBuilder = new QueryBuilder(jsonBody);
@@ -106,9 +116,15 @@ public final class ElasticSearchUtil {
         } catch (Exception ex) {
             ex.getMessage();
         }
-        return null;
+        return allProducts;
     }
 
+    /**
+     * This method is used to extract the response sent from the Elasticsearch in the form of a response.
+     * @usages It is used in searchProduct() and in getAllProducts() to return a list of Products.
+     * @param response The response received from elasticsearch.
+     * @return List of Products extracted from the response.
+     */
     private static List<Product> extractFromResponse(String response) {
         ObjectMapper objectMapper = CommonsUtil.getObjectMapper();
         List<Product> allProducts = new ArrayList<>();
