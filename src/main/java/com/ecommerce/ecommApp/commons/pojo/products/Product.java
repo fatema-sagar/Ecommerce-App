@@ -27,6 +27,11 @@ public class Product {
   @Column
   private String name;
 
+  @JsonProperty("brand")
+  @NotNull
+  @Column
+  private String brand;
+
   @JsonProperty("product_description")
   @Column
   private String productDescription;
@@ -53,6 +58,7 @@ public class Product {
             "productId=" + productId +
             ", category='" + category + '\'' +
             ", name='" + name + '\'' +
+            ", brand='" + brand + '\'' +
             ", productDescription='" + productDescription + '\'' +
             ", size='" + size + '\'' +
             ", quantity=" + quantity +

@@ -23,6 +23,12 @@ public final class ElasticSearchUtil {
     private static final String _INDEX = "products";
     private static final String _TYPE = "_doc";
 
+    /**
+     * This method is called from the ProductService while adding the product to the database,
+     * it also adds the product to the Elasticsearch.
+     * @param product The product object which has to be added to the elasticsearch.
+     * @return It returns a boolean value whether the object is added to elasticsearch or not.
+     */
     public static boolean insertProduct(Product product) {
         try {
             ObjectMapper objectMapper = CommonsUtil.getObjectMapper();
@@ -38,6 +44,11 @@ public final class ElasticSearchUtil {
         }
     }
 
+    /**
+     * This method is called from the ProductService each time the product is updated in the database.
+     * @param product The existing Product which has to be updated in elasticsearch.
+     * @return It returns a boolean value whether the object is updated to elasticsearch or not.
+     */
     public static boolean updateProduct(Product product) {
         try {
             ObjectMapper objectMapper = CommonsUtil.getObjectMapper();
@@ -53,11 +64,16 @@ public final class ElasticSearchUtil {
         }
     }
 
-    public static boolean deleteProduct(long id) {
-        String endpoint = String.format("%s/%s/%s/%s", INET_ADDRESS, _INDEX, _TYPE, id);
+    /**
+     * This method is used to delete a product from the elasticsearch.
+     * @param product_id The product which has to be deleted from the elasticsearch identity.
+     * @return It returns a boolean value whether the object is deleted from elasticsearch or not.
+     */
+    public static boolean deleteProduct(long product_id) {
+        String endpoint = String.format("%s/%s/%s/%s", INET_ADDRESS, _INDEX, _TYPE, product_id);
         try {
             String response = Communication.sendDeleteRequest(endpoint);
-            logger.trace("product deted for id : {} ", id);
+            logger.trace("product deted for id : {} ", product_id);
             return true;
         } catch (Exception ex) {
             logger.error("Error in Deleting prouct for Product ID {} ", ex);
@@ -65,6 +81,10 @@ public final class ElasticSearchUtil {
         }
     }
 
+    /**
+     * This method is used to return all the Products added to the elasticsearch.
+     * @return List of all Products available in Elasticsearch.
+     */
     public static List<Product> getAllProducts() {
         List<Product> allProducts;
         String endPoint = String.format("%s/%s/%s?q=*", INET_ADDRESS, _INDEX, "_search");
