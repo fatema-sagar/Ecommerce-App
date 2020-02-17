@@ -1,5 +1,6 @@
 package com.ecommerce.ecommApp.products.controllers;
 
+import com.ecommerce.ecommApp.commons.pojo.ResponseMessage;
 import com.ecommerce.ecommApp.commons.pojo.orders.ItemsDTO;
 import com.ecommerce.ecommApp.commons.pojo.products.Product;
 import com.ecommerce.ecommApp.products.exceptions.ElementNotFoundException;
@@ -85,4 +86,15 @@ public class ProductController {
             return new ResponseEntity("ProductId not found" + e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
+
+    @RequestMapping(path = "/generate", method = RequestMethod.GET)
+    public ResponseEntity<Object> generateProducts() {
+        try {
+            productService.generateProducts();
+            return new ResponseEntity(new ResponseMessage("Products are Inserted", "GENERATED"), HttpStatus.CREATED);
+        } catch (Exception ex) {
+            return new ResponseEntity(new ResponseMessage("Products are not Inserted", "ERROR"), HttpStatus.BAD_REQUEST);
+        }
+    }
 }
+

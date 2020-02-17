@@ -5,6 +5,7 @@ import com.ecommerce.ecommApp.notifications.services.OrderCancelledService;
 import com.ecommerce.ecommApp.notifications.services.OrderPlacedService;
 import com.ecommerce.ecommApp.notifications.services.OrderStatusService;
 import com.ecommerce.ecommApp.notifications.services.UserRegisteredService;
+import com.ecommerce.ecommApp.products.services.ProductService;
 import com.twilio.Twilio;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +23,6 @@ public class EcommAppApplication {
 
 	public static ConfigurableApplicationContext context;
 	public static Environment environment;
-
 	@Bean
 	BCryptPasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();

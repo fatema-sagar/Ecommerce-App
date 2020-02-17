@@ -1,5 +1,7 @@
 package com.ecommerce.ecommApp.products.controllers;
 
+import com.ecommerce.ecommApp.commons.exceptions.CustomerNotFoundException;
+import com.ecommerce.ecommApp.commons.pojo.ResponseMessage;
 import com.ecommerce.ecommApp.commons.pojo.products.Cart;
 import com.ecommerce.ecommApp.products.composite.CartIdentity;
 import com.ecommerce.ecommApp.products.payload.CartItem;
@@ -9,7 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
+import java.net.HttpURLConnection;
 import java.util.List;
 
 /**
@@ -28,8 +30,13 @@ public class CartController {
      */
     @RequestMapping(value = "/carts", method = RequestMethod.POST)
     public ResponseEntity<Object> addToCart(@RequestBody CartItem cartItem) {
-        Cart cart = cartService.addToCart(cartItem);
-        return new ResponseEntity(cart, HttpStatus.CREATED);
+        try {
+            Cart cart = cartService.addToCart(cartItem);
+            return new ResponseEntity(new ResponseMessage("Item successfully added to the cart", "CREATED"), HttpStatus.CREATED);
+        } catch (Exception ex) {
+            return new ResponseEntity(new ResponseMessage("Item was not added in cart due to following error : " + ex.getMessage(), "FAILED")
+                    , HttpStatus.NOT_ACCEPTABLE);
+        }
     }
 
     /**
@@ -37,10 +44,15 @@ public class CartController {
      * @return : Object of ResponseMessage class with a proper HTTP request status
      */
     @RequestMapping(value = "/carts", method = RequestMethod.DELETE)
-    public ResponseEntity<Object> deleteFromCart(@RequestBody CartIdentity cartIdentity)
-    {
-        Cart cart = cartService.deleteFromCart(cartIdentity);
-        return ResponseEntity.ok(cart);
+    public ResponseEntity<Object> deleteFromCart(@RequestBody CartIdentity cartIdentity) {
+        try {
+            Cart cart = cartService.deleteFromCart(cartIdentity);
+            return new ResponseEntity(new ResponseMessage("Item successfully deleted from the cart for customer : " + cartIdentity.getCustomerId(), "DELETED")
+                    , HttpStatus.OK);
+        } catch (Exception ex) {
+            return new ResponseEntity(new ResponseMessage("Item was not deleted from cart due to following error : " + ex.getMessage(), "FAILED")
+                    , HttpStatus.NOT_ACCEPTABLE);
+        }
     }
 
     /**
@@ -49,8 +61,19 @@ public class CartController {
      */
     @RequestMapping(value = "/carts/{customerId}", method = RequestMethod.GET)
     public ResponseEntity<Object> getCustomerCart( @PathVariable  Long customerId) {
-       List<Cart> fetchedCart = cartService.getCart(customerId);
-        return ResponseEntity.ok(fetchedCart);
+       try
+       {
+           List<Cart> fetchedCart = cartService.getCart(customerId);
+           return new ResponseEntity(fetchedCart,HttpStatus.OK);
+       }
+       catch (CustomerNotFoundException ex)
+       {
+           return new ResponseEntity(new ResponseMessage("Customer Not present for Customer Id : "+customerId,"ERROR"),HttpStatus.NOT_FOUND);
+       }
+       catch (Exception ex)
+       {
+           return new ResponseEntity(new ResponseMessage("Error in Retriving cart : "+ex.getMessage(),"ERROR"),HttpStatus.NOT_FOUND);
+       }
     }
 
     /**
@@ -59,8 +82,17 @@ public class CartController {
      */
     @RequestMapping(value = "/carts", method = RequestMethod.PUT)
     public ResponseEntity<Object> updateCustomerCart(@RequestBody CartItem updateCart) {
-        Cart cart = cartService.updateCart(updateCart);
-        return ResponseEntity.ok(cart);
+        try {
+            Cart cart = cartService.updateCart(updateCart);
+            return new ResponseEntity<>(new ResponseMessage("Cart Item Successfully Updated for customerId "+updateCart.getCustomerId()
+                    ,"UPDATED"),HttpStatus.OK);
+        }
+        catch(Exception ex)
+        {
+            return new ResponseEntity<>(new ResponseMessage("Cart Item is Not Updated for customerId "+updateCart.getCustomerId()
+                    +" due to : "+ex.getMessage()
+                    ,"ERROR"),HttpStatus.NOT_ACCEPTABLE);
+        }
     }
 }
 
