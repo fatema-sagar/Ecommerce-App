@@ -12,11 +12,10 @@ import javax.servlet.http.HttpServletRequest;
 @RestControllerAdvice
 public class ExceptionController {
 
-    @ResponseStatus(HttpStatus.OK)
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<ApiResponse> handleException(HttpServletRequest req, Exception ex) {
         log.info("Catch Exceptions ----------\n");
-        return ResponseEntity.status(HttpStatus.OK)
+        return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE)
                 .body(new ApiResponse(HttpStatus.NOT_ACCEPTABLE,ex.getMessage(),null));
     }
 

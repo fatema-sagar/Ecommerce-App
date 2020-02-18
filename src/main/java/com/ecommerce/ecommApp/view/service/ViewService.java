@@ -37,10 +37,10 @@ public class ViewService {
             producer.produceViewProduct(data, viewTopic);
         } catch (JsonProcessingException e) {
             log.error("JsonProcessingException : " + e.getMessage());
-            throw new RuntimeException("Object convert exception");
+            throw new RuntimeException("Object convert exception : " + e.getOriginalMessage());
         } catch (Exception e) {
             log.error("Exception" + e.getMessage());
-            throw new RuntimeException("Unknown exception");
+            throw new RuntimeException("Unknown exception : " + e.getMessage() + "\nCause : " + e.getCause());
         }
         return new ApiResponse(HttpStatus.OK, "Saved view product");
 

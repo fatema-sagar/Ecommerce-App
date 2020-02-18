@@ -1,52 +1,55 @@
 package com.ecommerce.ecommApp.kafka.consumer;
 
-import com.ecommerce.ecommApp.EcommAppApplication;
-import com.ecommerce.ecommApp.commons.Util.CommonsUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.serialization.StringDeserializer;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
+import java.time.Duration;
+import java.util.Arrays;
 import java.util.Properties;
 
+@Slf4j
 @Component
 public class Consumer {
 
-    private Environment environment;
-
-    @Autowired
-    public Consumer() {
-        environment = EcommAppApplication.environment;
+    // get the consumer properties
+    private Properties getProperties(String groupId) {
+        Properties properties = new Properties();
+        properties.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+        properties.setProperty(ConsumerConfig.GROUP_ID_CONFIG, groupId);
+        properties.setProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        properties.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        properties.setProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+        return properties;
     }
 
-    private Properties getConsumerConfigs() {
-        Properties props = new Properties();
-        try {
-            props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, environment.getProperty
-                    (CommonsUtil.KAFKA_BOOTSTRAP_SERVERS));
-            props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG,
-                    StringDeserializer.class.getName());
-            props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG,
-                    StringDeserializer.class.getName());
-            props.put(ConsumerConfig.GROUP_ID_CONFIG, "view-product-details");
-        } catch (Exception ex) {
-        }
-        return props;
-    }
-
-    /**
-     * This method will return a Kafka Comsumer Object
-     *
-     * @param props          : Kafka Consumer Properties
-     * @param kafkaTopicName : Kafka Topic Name
-     */
-    public KafkaConsumer createConsumer(Properties props, String kafkaTopicName) {
-        KafkaConsumer kafkaConsumer = new KafkaConsumer<Long, String>(props);
-        kafkaConsumer.subscribe(Collections.singletonList(kafkaTopicName));
+    public KafkaConsumer getKafkaConsumer(String groupId) {
+        KafkaConsumer<String, String> kafkaConsumer = new KafkaConsumer<>(getProperties(groupId));
         return kafkaConsumer;
+    }
 
+    // subscribe the topic and get the data
+    public void printData(KafkaConsumer kafkaConsumer, String topic) {
+
+        // subscribe the topic
+        kafkaConsumer.subscribe(Arrays.asList(topic));
+
+        // pool the topic
+        while(true) {
+            ConsumerRecords<String, String> consumerRecords = kafkaConsumer.poll(Duration.ofMillis(10));
+            log.info("Consume record : " + consumerRecords.count());
+            if(consumerRecords.count() > 0) {
+                for (ConsumerRecord<String, String> consumerRecord : consumerRecords) {
+                    log.info("\n\n\n");
+                    log.info("Key : " + consumerRecord.key() + "\nvalues : " + consumerRecord.value());
+                    log.info("\nPartition : " + consumerRecord.partition() + "\nOffset : " + consumerRecord.offset());
+                }
+            }
+
+        }
     }
 }
