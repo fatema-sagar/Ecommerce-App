@@ -5,12 +5,14 @@ import com.ecommerce.ecommApp.view.dto.ViewProductDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import net.bytebuddy.implementation.bind.annotation.RuntimeType;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.StreamsConfig;
 import org.apache.kafka.streams.kstream.Consumed;
+import org.apache.kafka.streams.kstream.KTable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
@@ -24,8 +26,14 @@ import java.util.UUID;
 @Service
 public class FetchViewProductsStream {
 
-    @Autowired
     private Environment environment;
+    private ObjectMapper objectMapper;
+
+    @Autowired
+    public FetchViewProductsStream(Environment environment) {
+        this.objectMapper = CommonsUtil.getObjectMapper();
+        this.environment = environment;
+    }
 
     private Properties getStreamProperties() {
         Properties properties = new Properties();
@@ -41,8 +49,8 @@ public class FetchViewProductsStream {
         return properties;
     }
 
-    public List<ViewProductDto> start(String customerId) {
-        List<ViewProductDto> viewProducts = new ArrayList<>();
+    public List<String> start(String customerId) {
+        List<String> viewProducts = new ArrayList<>();
         Properties properties = getStreamProperties();
         KafkaStreams kafkaStreams = createTopology(properties, viewProducts, customerId);
 
@@ -50,7 +58,7 @@ public class FetchViewProductsStream {
         kafkaStreams.start();
 
         try {
-            Thread.sleep(5000);
+            Thread.sleep(7000);
             kafkaStreams.close();
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -61,30 +69,41 @@ public class FetchViewProductsStream {
         return viewProducts;
     }
 
-    private KafkaStreams createTopology(Properties properties, List<ViewProductDto> list, String customerId) {
+    private KafkaStreams createTopology(Properties properties, List<String> list, String customerId) {
 
         StreamsBuilder builder = new StreamsBuilder();
         Serdes.StringSerde stringSerde = new Serdes.StringSerde();
 
         builder
                 .stream(environment.getProperty(CommonsUtil.VIEW_PRODUCT_TOPIC), Consumed.with(stringSerde, stringSerde))
-                .filter((key, value) -> isValidView(value, customerId, list))
-                .peek((key, value) -> log.info("Viewed products : " + value + "\n"));
+                .filter((key, value) -> isValidView(value, customerId))
+                .selectKey((key, value) -> selectKey(value))
+                .groupByKey()
+                .count()
+                .toStream()
+                .foreach( (productId, value) -> list.add(productId));
 
         return new KafkaStreams(builder.build(), properties);
     }
 
-    private Boolean isValidView(String value, String customerId, List<ViewProductDto> list) {
-        ObjectMapper objectMapper = CommonsUtil.getObjectMapper();
+    private String selectKey(String value) {
+        try {
+            ViewProductDto viewProductDto = objectMapper.readValue(value, ViewProductDto.class);
+            return viewProductDto.getProductId();
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("JsonProcessingException : " + e.getOriginalMessage());
+        }
+    }
+
+    private Boolean isValidView(String value, String customerId) {
         try {
             ViewProductDto viewProductDto = objectMapper.readValue(value, ViewProductDto.class);
             if( viewProductDto.getCustomerId().equalsIgnoreCase(customerId)) {
-                list.add(viewProductDto);
                 return true;
             }
             return false;
         } catch (JsonProcessingException e) {
-            throw new RuntimeException("Json parse exception ");
+            throw new RuntimeException("Json processing exception " + e.getOriginalMessage() + "\nCause " + e.getCause());
         }
     }
 }
