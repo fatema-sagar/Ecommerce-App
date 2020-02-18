@@ -21,7 +21,7 @@ public class ViewController {
     private ViewService viewService;
 
     @PostMapping("/product")
-    public ResponseEntity<ApiResponse> viewProduct(@Valid  @RequestBody ViewProductDto viewProductDto) throws Exception {
+    public ResponseEntity<ApiResponse> viewProduct(@Valid  @RequestBody ViewProductDto viewProductDto) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new ApiResponse(HttpStatus.OK,
                         "ok",viewService.viewProduct(viewProductDto)));

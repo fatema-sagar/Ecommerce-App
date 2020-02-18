@@ -13,10 +13,10 @@ public class ViewProductDto {
 
     @NonNull
     @JsonProperty("customer_id")
-    private String customerId;
+    private Long customerId;
 
     @NonNull
     @JsonProperty("product_id")
-    private String productId;
+    private Long productId;
 
 }
