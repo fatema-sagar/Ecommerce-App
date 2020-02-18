@@ -1,14 +1,14 @@
 package com.ecommerce.ecommApp.view.dto;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.sun.istack.NotNull;
+
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
-import javax.validation.constraints.NotBlank;
 
 @Data
+@NoArgsConstructor
 public class ViewProductDto {
 
     @NonNull
