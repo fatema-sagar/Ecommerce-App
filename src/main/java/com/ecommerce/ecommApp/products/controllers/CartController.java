@@ -1,6 +1,6 @@
 package com.ecommerce.ecommApp.products.controllers;
 
-import com.ecommerce.ecommApp.commons.exceptions.CustomerNotFoundException;
+import com.ecommerce.ecommApp.products.exceptions.CustomerNotFoundException;
 import com.ecommerce.ecommApp.commons.pojo.ResponseMessage;
 import com.ecommerce.ecommApp.commons.pojo.products.Cart;
 import com.ecommerce.ecommApp.products.composite.CartIdentity;
@@ -11,7 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.HttpURLConnection;
 import java.util.List;
 
 /**
@@ -61,17 +60,14 @@ public class CartController {
      */
     @RequestMapping(value = "/carts/{customerId}", method = RequestMethod.GET)
     public ResponseEntity<Object> getCustomerCart( @PathVariable  Long customerId) {
-       try
-       {
+       try {
            List<Cart> fetchedCart = cartService.getCart(customerId);
            return new ResponseEntity(fetchedCart,HttpStatus.OK);
        }
-       catch (CustomerNotFoundException ex)
-       {
+       catch (CustomerNotFoundException ex) {
            return new ResponseEntity(new ResponseMessage("Customer Not present for Customer Id : "+customerId,"ERROR"),HttpStatus.NOT_FOUND);
        }
-       catch (Exception ex)
-       {
+       catch (Exception ex) {
            return new ResponseEntity(new ResponseMessage("Error in Retriving cart : "+ex.getMessage(),"ERROR"),HttpStatus.NOT_FOUND);
        }
     }

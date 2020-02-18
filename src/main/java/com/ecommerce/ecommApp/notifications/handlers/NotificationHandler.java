@@ -121,7 +121,7 @@ public class NotificationHandler implements Handler {
     /**
      * This method send email notification to the particular email using the SendGrid SDK.
      * @param email : Email to which we need to send the Notification
-     * @param subject : Subject of teh Email is basically the Name of the Notification Service
+     * @param subject : Subject of the Email is basically the Name of the Notification Service
      * @param message : Message to be send.
      */
     public void sendEmailNotificaton(String email, String subject, String message) {
