@@ -1,5 +1,6 @@
 package com.ecommerce.ecommApp.recommendation.service;
 
+import com.ecommerce.ecommApp.commons.Util.ElasticSearchQueryBuilder;
 import com.ecommerce.ecommApp.commons.pojo.products.Product;
 import com.ecommerce.ecommApp.kafka.consumer.FetchViewedProduct;
 import com.ecommerce.ecommApp.kafka.stream.FetchViewProductsStream;
@@ -32,9 +33,9 @@ public class RecommendationService {
     private ProductService productService;
 
 
-    public Set<Product> fetchRecommendedProduct(String customerId) {
+    public Set<Product> fetchRecommendedProduct(Long customerId) {
 
-        List<String> viewProductList;
+        List<Long> viewProductList;
         Set<Product> products = new HashSet<>();
         viewProductList = viewProductsStream.start(customerId);
 //        viewProductList = fetchViewedProduct.getViewProduct(customerId);
@@ -59,6 +60,8 @@ public class RecommendationService {
             products.addAll(ElasticSearchUtil.searchProduct(jsonObject.toString()));
             jsonObject.remove("productId");
             jsonObject.put("brand", product.getBrand());
+            products.addAll(ElasticSearchUtil.searchProduct(jsonObject.toString()));
+            jsonObject.put("category", product.getCategory());
             products.addAll(ElasticSearchUtil.searchProduct(jsonObject.toString()));
 
         } catch (JSONException e) {

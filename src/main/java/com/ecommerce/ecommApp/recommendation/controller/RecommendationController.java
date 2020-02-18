@@ -24,7 +24,7 @@ public class RecommendationController {
     private RecommendationService recommendationService;
 
     @GetMapping("/fetch")
-    public ResponseEntity<ApiResponse> fetchRecommendation(@RequestParam( value = "id", required = true) String customerId) {
+    public ResponseEntity<ApiResponse> fetchRecommendation(@RequestParam( value = "id", required = true) Long customerId) {
         Set<Product> products = recommendationService.fetchRecommendedProduct(customerId);
         return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK, "Recommended Product", products));
     }

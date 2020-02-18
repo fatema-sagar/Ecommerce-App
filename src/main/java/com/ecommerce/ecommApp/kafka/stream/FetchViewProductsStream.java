@@ -15,6 +15,7 @@ import org.apache.kafka.streams.kstream.Consumed;
 import org.apache.kafka.streams.kstream.KTable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.kafka.support.serializer.JsonSerde;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -43,14 +44,14 @@ public class FetchViewProductsStream {
         properties.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, environment.getProperty(CommonsUtil.KAFKA_BOOTSTRAP_SERVERS));
         properties.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
 
-        properties.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.StringSerde.class);
+        properties.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.LongSerde.class);
         properties.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.StringSerde.class);
 
         return properties;
     }
 
-    public List<String> start(String customerId) {
-        List<String> viewProducts = new ArrayList<>();
+    public List<Long> start(Long customerId) {
+        List<Long> viewProducts = new ArrayList<>();
         Properties properties = getStreamProperties();
         KafkaStreams kafkaStreams = createTopology(properties, viewProducts, customerId);
 
@@ -69,13 +70,15 @@ public class FetchViewProductsStream {
         return viewProducts;
     }
 
-    private KafkaStreams createTopology(Properties properties, List<String> list, String customerId) {
+    private KafkaStreams createTopology(Properties properties, List<Long> list, Long customerId) {
 
         StreamsBuilder builder = new StreamsBuilder();
         Serdes.StringSerde stringSerde = new Serdes.StringSerde();
+        Serdes.LongSerde longSerde = new Serdes.LongSerde();
+        JsonSerde jsonSerde = new JsonSerde();
 
         builder
-                .stream(environment.getProperty(CommonsUtil.VIEW_PRODUCT_TOPIC), Consumed.with(stringSerde, stringSerde))
+                .stream(environment.getProperty(CommonsUtil.VIEW_PRODUCT_TOPIC), Consumed.with(longSerde, stringSerde))
                 .filter((key, value) -> isValidView(value, customerId))
                 .selectKey((key, value) -> selectKey(value))
                 .groupByKey()
@@ -86,7 +89,7 @@ public class FetchViewProductsStream {
         return new KafkaStreams(builder.build(), properties);
     }
 
-    private String selectKey(String value) {
+    private Long selectKey(String  value) {
         try {
             ViewProductDto viewProductDto = objectMapper.readValue(value, ViewProductDto.class);
             return viewProductDto.getProductId();
@@ -95,10 +98,10 @@ public class FetchViewProductsStream {
         }
     }
 
-    private Boolean isValidView(String value, String customerId) {
+    private Boolean isValidView(String value, Long customerId) {
         try {
             ViewProductDto viewProductDto = objectMapper.readValue(value, ViewProductDto.class);
-            if( viewProductDto.getCustomerId().equalsIgnoreCase(customerId)) {
+            if( viewProductDto.getCustomerId().equals(customerId)) {
                 return true;
             }
             return false;
