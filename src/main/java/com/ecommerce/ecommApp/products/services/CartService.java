@@ -1,9 +1,9 @@
 package com.ecommerce.ecommApp.products.services;
 
-import com.ecommerce.ecommApp.products.exceptions.CustomerNotFoundException;
+import com.ecommerce.ecommApp.commons.exceptions.CustomerNotFoundException;
 import com.ecommerce.ecommApp.commons.pojo.products.Cart;
 import com.ecommerce.ecommApp.products.composite.CartIdentity;
-import com.ecommerce.ecommApp.products.exceptions.ElementNotFoundException;
+import com.ecommerce.ecommApp.commons.exceptions.ElementNotFoundException;
 import com.ecommerce.ecommApp.products.payload.CartItem;
 import com.ecommerce.ecommApp.products.repositories.CartRepository;
 import com.ecommerce.ecommApp.products.repositories.ProductRepository;

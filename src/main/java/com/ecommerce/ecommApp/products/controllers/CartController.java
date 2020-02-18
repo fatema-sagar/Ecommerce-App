@@ -1,6 +1,6 @@
 package com.ecommerce.ecommApp.products.controllers;
 
-import com.ecommerce.ecommApp.products.exceptions.CustomerNotFoundException;
+import com.ecommerce.ecommApp.commons.exceptions.CustomerNotFoundException;
 import com.ecommerce.ecommApp.commons.pojo.ResponseMessage;
 import com.ecommerce.ecommApp.commons.pojo.products.Cart;
 import com.ecommerce.ecommApp.products.composite.CartIdentity;
