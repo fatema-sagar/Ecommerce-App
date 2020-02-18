@@ -19,13 +19,4 @@ public class ViewProductDto {
     @JsonProperty("product_id")
     private String productId;
 
-    @JsonProperty("category")
-    private String category;
-
-    @JsonProperty("name")
-    private String name;
-
-    @JsonProperty("brand")
-    private String brand;
-
 }
