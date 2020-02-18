@@ -1,4 +1,4 @@
-package com.ecommerce.ecommApp.recommendation.service;
+package com.ecommerce.ecommApp.kafka.consumer;
 
 import com.ecommerce.ecommApp.commons.Util.CommonsUtil;
 import com.ecommerce.ecommApp.kafka.consumer.Consumer;
