@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
+import java.util.Set;
 
 @Controller
 @RequestMapping("/recommendation")
@@ -24,7 +25,7 @@ public class RecommendationController {
 
     @GetMapping("/fetch")
     public ResponseEntity<ApiResponse> fetchRecommendation(@RequestParam( value = "id", required = true) String customerId) {
-        List<ViewProductDto> products = recommendationService.fetchRecommendedProduct(customerId);
+        Set<Product> products = recommendationService.fetchRecommendedProduct(customerId);
         return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK, "Recommended Product", products));
     }
 }

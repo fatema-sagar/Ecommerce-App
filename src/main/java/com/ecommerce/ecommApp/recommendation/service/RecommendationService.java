@@ -11,8 +11,9 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @Service
@@ -25,18 +26,18 @@ public class RecommendationService {
     private FetchViewProductsStream viewProductsStream;
 
 
-    public List<ViewProductDto> fetchRecommendedProduct(String customerId) {
+    public Set<Product> fetchRecommendedProduct(String customerId) {
 
         List<ViewProductDto> viewProductList;
-        List<Product> products = new ArrayList<>();
+        Set<Product> products = new HashSet<>();
         viewProductList = viewProductsStream.start(customerId);
 //        viewProductList = fetchViewedProduct.getViewProduct(customerId);
-//        viewProductList.forEach(product -> products.addAll(searchProductElasticSearch(product)));
-        return viewProductList;
+        viewProductList.forEach(product -> products.addAll(searchProductElasticSearch(product)));
+        return products;
     }
 
-    private List<Product> searchProductElasticSearch(ViewProductDto viewProduct) {
-        List<Product> products = null;
+    private Set<Product> searchProductElasticSearch(ViewProductDto viewProduct) {
+        Set<Product> products = new HashSet<>();
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("productId", viewProduct.getProductId());
