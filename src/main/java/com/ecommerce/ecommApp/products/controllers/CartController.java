@@ -28,7 +28,7 @@ public class CartController {
      * @return : Object of ResponseMessage class with a proper HTTP request status
      */
     @RequestMapping(value = "/carts", method = RequestMethod.POST)
-    public ResponseEntity<Object> addToCart(@RequestBody CartItem cartItem) {
+    private ResponseEntity<Object> addToCart(@RequestBody CartItem cartItem) {
         try {
             Cart cart = cartService.addToCart(cartItem);
             return new ResponseEntity(new ResponseMessage("Item successfully added to the cart", "CREATED"), HttpStatus.CREATED);
@@ -43,8 +43,9 @@ public class CartController {
      * @return : Object of ResponseMessage class with a proper HTTP request status
      */
     @RequestMapping(value = "/carts", method = RequestMethod.DELETE)
-    public ResponseEntity<Object> deleteFromCart(@RequestBody CartIdentity cartIdentity) {
+    private ResponseEntity<Object> deleteFromCart(@RequestParam Long customer_id, @RequestParam Long product_id) {
         try {
+            CartIdentity cartIdentity = new CartIdentity(customer_id,product_id);
             Cart cart = cartService.deleteFromCart(cartIdentity);
             return new ResponseEntity(new ResponseMessage("Item successfully deleted from the cart for customer : " + cartIdentity.getCustomerId(), "DELETED")
                     , HttpStatus.OK);
@@ -59,7 +60,7 @@ public class CartController {
      * It expects a customer id as a path variable in the url.
      */
     @RequestMapping(value = "/carts/{customerId}", method = RequestMethod.GET)
-    public ResponseEntity<Object> getCustomerCart( @PathVariable  Long customerId) {
+    private ResponseEntity<Object> getCustomerCart( @PathVariable  Long customerId) {
        try {
            List<Cart> fetchedCart = cartService.getCart(customerId);
            return new ResponseEntity(fetchedCart,HttpStatus.OK);
@@ -77,7 +78,7 @@ public class CartController {
      * @return : Object of ResponseMessage class with a proper HTTP request status
      */
     @RequestMapping(value = "/carts", method = RequestMethod.PUT)
-    public ResponseEntity<Object> updateCustomerCart(@RequestBody CartItem updateCart) {
+    private ResponseEntity<Object> updateCustomerCart(@RequestBody CartItem updateCart) {
         try {
             Cart cart = cartService.updateCart(updateCart);
             return new ResponseEntity<>(new ResponseMessage("Cart Item Successfully Updated for customerId "+updateCart.getCustomerId()
