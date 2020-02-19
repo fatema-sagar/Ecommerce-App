@@ -3,6 +3,7 @@ package com.ecommerce.ecommApp.customers.services;
 import com.ecommerce.ecommApp.EcommAppApplication;
 import com.ecommerce.ecommApp.commons.NotificationProducer;
 import com.ecommerce.ecommApp.commons.Util.CommonsUtil;
+import com.ecommerce.ecommApp.commons.pojo.JwtAuthentication;
 import com.ecommerce.ecommApp.commons.pojo.customer.CustomerDto;
 import com.ecommerce.ecommApp.commons.pojo.notification.UserRegistered;
 import com.ecommerce.ecommApp.customers.dto.LoginDto;
@@ -11,11 +12,17 @@ import com.ecommerce.ecommApp.customers.exceptions.EmailExistsException;
 import com.ecommerce.ecommApp.customers.models.Customer;
 import com.ecommerce.ecommApp.customers.repository.CustomerRepository;
 import com.ecommerce.ecommApp.commons.enums.NotificationType;
+import com.ecommerce.ecommApp.commons.security.JwtTokenProvider;
 import com.ecommerce.ecommApp.customers.utils.CustomerUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -27,8 +34,13 @@ public class CustomerService {
 
     @Autowired
     private CustomerRepository customerRepository;
+    @Autowired
+    private
+    JwtTokenProvider tokenProvider;
     NotificationProducer notificationProducer;
     CustomerUtil customerUtil = new CustomerUtil();
+
+    @Autowired private PasswordEncoder passwordEncoder;
 
     public CustomerDto register(RegistrationDto regDetails) throws EmailExistsException {
 
@@ -40,8 +52,7 @@ public class CustomerService {
         customer.setName(regDetails.getName());
         customer.setEmail(regDetails.getEmail());
         customer.setNumber(regDetails.getNumber());
-        customer.setPassword(EcommAppApplication.context.getBean(BCryptPasswordEncoder.class).
-                encode(regDetails.getPassword()));
+        customer.setPassword(passwordEncoder.encode(regDetails.getPassword()));
         customer.setWhatsapp(regDetails.getWhatsapp());
         customer.setGender(regDetails.getGender());
         customerRepository.save(customer);
@@ -55,7 +66,11 @@ public class CustomerService {
         Optional<Customer> loggedInCustomer = customerRepository.findByEmail(loginDetails.getEmail());
         if (loggedInCustomer.isPresent() && EcommAppApplication.context.getBean(BCryptPasswordEncoder.class)
                 .matches(loginDetails.getPassword(), loggedInCustomer.get().getPassword())) {
-            return customerUtil.convertToPojo(loggedInCustomer.get());
+
+            JwtAuthentication jwt = authenticateLogin(loginDetails);
+            CustomerDto customer = customerUtil.convertToPojo(loggedInCustomer.get());
+            customer.setJwt(jwt);
+            return customer;
         } else {
             throw new NotFoundException(CommonsUtil.CUSTOMER_NOT_FOUND);
         }
@@ -111,6 +126,19 @@ public class CustomerService {
     private boolean emailExists(String email) {
         Optional<Customer> customer = customerRepository.findByEmail(email);
         return customer.isPresent();
+    }
+
+    private JwtAuthentication authenticateLogin(LoginDto loginDetails){
+
+        Authentication authentication = EcommAppApplication.context.getBean(AuthenticationManager.class).authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        loginDetails.getEmail(),
+                        loginDetails.getPassword()
+                )
+        );
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        String jwt = tokenProvider.generateToken(authentication);
+        return new JwtAuthentication(jwt);
     }
 
 }

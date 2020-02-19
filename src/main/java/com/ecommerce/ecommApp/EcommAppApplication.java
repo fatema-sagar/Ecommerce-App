@@ -22,12 +22,6 @@ public class EcommAppApplication {
 
 	public static ConfigurableApplicationContext context;
 	public static Environment environment;
-
-	@Bean
-	BCryptPasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder();
-	}
-
 	public static void main(String[] args) {
 		context = SpringApplication.run(EcommAppApplication.class, args);
 		log.info("E-Comm application is started");
