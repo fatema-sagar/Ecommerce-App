@@ -17,7 +17,7 @@ public class BillRequestDto {
     private Long customerId;
 
     @NonNull
-    @JsonProperty("product_id")
+    @JsonProperty("product_ids")
     private List<Long> productIds;
 
     public BillRequestDto() {
