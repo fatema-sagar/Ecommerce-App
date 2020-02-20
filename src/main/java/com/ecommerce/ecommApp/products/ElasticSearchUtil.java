@@ -5,6 +5,7 @@ import com.ecommerce.ecommApp.commons.Util.Communication;
 import com.ecommerce.ecommApp.commons.pojo.products.Product;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.elasticsearch.ElasticsearchException;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -12,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -102,7 +104,7 @@ public final class ElasticSearchUtil {
      * @param jsonBody The String formatted json body to search in elastic search.
      * @return List of Products matching the search text or else returns null.
      */
-    public static List<Product> searchProduct(String jsonBody) {
+    public static List<Product> searchProduct(String jsonBody) throws ElasticsearchException {
         List<Product> allProducts = new ArrayList<>();
         try {
 
@@ -114,9 +116,8 @@ public final class ElasticSearchUtil {
             allProducts = extractFromResponse(response);
             return allProducts;
         } catch (Exception ex) {
-            ex.getMessage();
+            throw new ElasticsearchException("Elasticsearch is not running "+ ex.getMessage());
         }
-        return allProducts;
     }
 
     /**
