@@ -15,6 +15,8 @@ public class Utils {
     public static final String PDF_EXTENSION = ".pdf";
     public static final String[] PDF_METADATA = {"Invoice", "Amit Verma", "Order Invoice"};
 
+    public static final String INVOICE_FOLDER = "/invoice/";
+
 
 
 }

@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 public class InvoiceFormatDto {
 
     @JsonProperty(value = "invoice_id", required = true)
-    private Long invoiceId;
+    private String invoiceId;
 
     @JsonProperty(value = "customer_id", required = true)
     private Long customerId;

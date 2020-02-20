@@ -15,14 +15,17 @@ import pl.allegro.finance.tradukisto.MoneyConverters;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Date;
 
 @Slf4j
 @Service
 public class PdfGenerateService {
 
-    @Autowired
     private HeaderFooterService headerFooterService;
     private PdfWriter pdfWriter;
     private Document document;
@@ -30,16 +33,23 @@ public class PdfGenerateService {
     @Autowired
     public PdfGenerateService(HeaderFooterService headerFooterService) {
         this.headerFooterService = headerFooterService;
-        document = new Document(PageSize.A4);
     }
 
 
-    public void generatePdf(InvoiceFormatDto invoiceFormatDto) throws DocumentException, FileNotFoundException {
+    public void generatePdf(InvoiceFormatDto invoiceFormatDto) throws DocumentException, IOException {
+
+        Path source = Paths.get(this.getClass().getResource("/").getPath());
+        Path newFolder = Paths.get(source.toAbsolutePath() + Utils.INVOICE_FOLDER);
+
+        if(!Files.exists(newFolder))
+            Files.createDirectories(newFolder);
+
+        document = new Document(PageSize.A4);
 
         pdfWriter = PdfWriter.getInstance(document,
                 new FileOutputStream(
-                        new File(invoiceFormatDto.getCustomerName() +
-                                invoiceFormatDto.getInvoiceId() + Utils.PDF_EXTENSION)));
+                        new File(newFolder + "/" +  invoiceFormatDto.getCustomerName() +
+                                invoiceFormatDto.getInvoiceDetails().getProductId() + Utils.PDF_EXTENSION)));
         headerFooterService.setHeader(invoiceFormatDto.getTitle());
         pdfWriter.setPageEvent(headerFooterService);
 

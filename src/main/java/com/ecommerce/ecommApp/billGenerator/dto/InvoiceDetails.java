@@ -32,9 +32,9 @@ public class InvoiceDetails {
     private String productImage;
 
     @JsonProperty(value = "price", required = true)
-    private Long price;
+    private Float price;
 
     @JsonProperty(value = "total_amount", required = true)
-    private Long totalAmount;
+    private Double totalAmount;
 
 }

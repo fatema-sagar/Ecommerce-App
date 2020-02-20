@@ -1,7 +1,7 @@
 package com.ecommerce.ecommApp.billGenerator.service;
 
+import com.ecommerce.ecommApp.billGenerator.converter.OrderDtoToInvoiceFormat;
 import com.ecommerce.ecommApp.billGenerator.dto.BillRequestDto;
-import com.ecommerce.ecommApp.billGenerator.dto.InvoiceDetails;
 import com.ecommerce.ecommApp.billGenerator.dto.InvoiceFormatDto;
 import com.ecommerce.ecommApp.commons.pojo.orders.OrdersDTO;
 import com.ecommerce.ecommApp.view.dto.response.ApiResponse;
@@ -11,54 +11,37 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.List;
 
 @Slf4j
 @Service
 public class BillGeneratorService {
 
-    @Autowired
     private FetchOrderService fetchOrderService;
+    private PdfGenerateService pdfGenerateService;
+    private OrderDtoToInvoiceFormat toInvoiceFormat;
 
     @Autowired
-    private PdfGenerateService pdfGenerateService;
+    public BillGeneratorService(FetchOrderService fetchOrderService, PdfGenerateService pdfGenerateService,
+                                OrderDtoToInvoiceFormat orderDtoToInvoiceFormat) {
+        this.pdfGenerateService = pdfGenerateService;
+        this.fetchOrderService = fetchOrderService;
+        this.toInvoiceFormat = orderDtoToInvoiceFormat;
+
+    }
 
 
-    public ApiResponse billGenerate(BillRequestDto billRequestDto) throws FileNotFoundException, DocumentException {
+    public ApiResponse billGenerate(BillRequestDto billRequestDto) throws IOException, DocumentException {
 
         List<OrdersDTO> ordersList = fetchOrderService.fetchOrder(billRequestDto);
-        InvoiceFormatDto invoiceFormatDto = getDataObjectList();
-        pdfGenerateService.generatePdf(invoiceFormatDto);
+        List<InvoiceFormatDto> invoiceFormatDtoList = toInvoiceFormat.convertToInvoiceFormatDto(ordersList);
+
+        for (InvoiceFormatDto invoiceFormatDto: invoiceFormatDtoList) {
+            pdfGenerateService.generatePdf(invoiceFormatDto);
+        }
 
         return new ApiResponse(HttpStatus.OK, "Successfully get orders", ordersList);
     }
 
-    private InvoiceFormatDto getDataObjectList(){
-
-        InvoiceFormatDto invoiceFormat = new InvoiceFormatDto();
-        InvoiceDetails invoiceDetails = new InvoiceDetails();
-        invoiceFormat.setBillingAddress("address");
-        invoiceFormat.setShippingAddress("address");
-        invoiceFormat.setCustomerId(Long.valueOf(1));
-        invoiceFormat.setCustomerName("amit");
-        invoiceFormat.setInvoiceId(Long.valueOf(3));
-        invoiceFormat.setSoldBy("amit");
-        invoiceFormat.setTitle("Amazon");
-
-        invoiceDetails.setBrand("b");
-        invoiceDetails.setOrderId("1");
-        invoiceDetails.setPrice(Long.valueOf(9));
-        invoiceDetails.setProduct_description("hello");
-        invoiceDetails.setProductId(Long.valueOf(1));
-        invoiceDetails.setProductName("t-shirt");
-        invoiceDetails.setProductImage("h");
-        invoiceDetails.setQuantity(Long.valueOf(1));
-        invoiceDetails.setTotalAmount(Long.valueOf(500));
-
-        invoiceFormat.setInvoiceDetails(invoiceDetails);
-
-        return invoiceFormat;
-
-    }
 }

@@ -1,4 +1,4 @@
-package com.ecommerce.ecommApp.view.exception;
+package com.ecommerce.ecommApp.exception;
 
 import com.ecommerce.ecommApp.view.dto.response.ApiResponse;
 import com.itextpdf.text.DocumentException;
@@ -12,12 +12,12 @@ import java.io.FileNotFoundException;
 
 @Slf4j
 @RestControllerAdvice
-public class ExceptionController {
+public class ExceptionHandleController {
 
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<ApiResponse> handleRunTimeException(HttpServletRequest req, Exception ex) {
         log.info("Catch Exceptions ----------\n");
-        return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE)
+        return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED)
                 .body(new ApiResponse(HttpStatus.NOT_ACCEPTABLE,ex.getMessage(),null));
     }
 

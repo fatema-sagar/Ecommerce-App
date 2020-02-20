@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.validation.Valid;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 
 @Controller
 @RequestMapping("/invoice")
@@ -22,7 +22,7 @@ public class BillGeneratorController {
     private BillGeneratorService billGeneratorService;
 
     @RequestMapping("/generator")
-    public ResponseEntity<ApiResponse> billGenerator(@Valid @RequestBody BillRequestDto billRequestDto) throws FileNotFoundException, DocumentException {
+    public ResponseEntity<ApiResponse> billGenerator(@Valid @RequestBody BillRequestDto billRequestDto) throws IOException, DocumentException {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(billGeneratorService.billGenerate(billRequestDto));
