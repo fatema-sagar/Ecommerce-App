@@ -5,6 +5,7 @@ import com.ecommerce.ecommApp.notifications.services.OrderCancelledService;
 import com.ecommerce.ecommApp.notifications.services.OrderPlacedService;
 import com.ecommerce.ecommApp.notifications.services.OrderStatusService;
 import com.ecommerce.ecommApp.notifications.services.UserRegisteredService;
+import com.ecommerce.ecommApp.products.services.ProductService;
 import com.twilio.Twilio;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,13 +23,14 @@ public class EcommAppApplication {
 
 	public static ConfigurableApplicationContext context;
 	public static Environment environment;
+
 	public static void main(String[] args) {
 		context = SpringApplication.run(EcommAppApplication.class, args);
 		log.info("E-Comm application is started");
 		environment = context.getBean(Environment.class);
 		init();
 		log.trace("starting Notification services");
-		startNotificationServices();
+  	startNotificationServices();
 	}
 
 	public static void startNotificationServices() {

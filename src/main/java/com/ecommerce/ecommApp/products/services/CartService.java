@@ -1,7 +1,10 @@
 package com.ecommerce.ecommApp.products.services;
 
+import com.ecommerce.ecommApp.commons.exceptions.CustomerNotFoundException;
 import com.ecommerce.ecommApp.commons.pojo.products.Cart;
+import com.ecommerce.ecommApp.customers.repository.CustomerRepository;
 import com.ecommerce.ecommApp.products.composite.CartIdentity;
+import com.ecommerce.ecommApp.commons.exceptions.ElementNotFoundException;
 import com.ecommerce.ecommApp.products.payload.CartItem;
 import com.ecommerce.ecommApp.products.repositories.CartRepository;
 import com.ecommerce.ecommApp.products.repositories.ProductRepository;
@@ -11,10 +14,15 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
-//import com.ecommerce.ecommApp.payloads.CartsPayload;
-
+/**
+ * @Author Krishna
+ * This class will work as a service class for the CartController.
+ */
 @Service
 public class CartService {
+
+    @Autowired
+    private CustomerRepository customerRepository;
 
     @Autowired
     private CartRepository cartRepository;
@@ -22,9 +30,18 @@ public class CartService {
     @Autowired
     private ProductRepository productRepository;
 
-    public Cart addToCart(CartItem payload) {
+    /**
+     * This function adds requested productIds  to the cart of the customer
+     * @param  payload CartItem as argument
+     * @return :List of Objects of Cart which are added to the cart of customer
+     */
+
+    public Cart addToCart(CartItem payload) throws ElementNotFoundException  {
         Cart cart = new Cart();
-        CartIdentity cartIdentity = new CartIdentity(payload.getCustomerId(), payload.getProductId());
+        CartIdentity cartIdentity;
+        if(customerRepository.existsById(payload.getCustomerId()) && productRepository.existsById(payload.getProductId()))
+         cartIdentity = new CartIdentity(payload.getCustomerId(), payload.getProductId());
+        else throw new ElementNotFoundException("customerId or productId not present");
         cart.setCartIdentity(cartIdentity);
         cart.setQuantity(payload.getQuantity());
         cart.setCost(payload.getCost());
@@ -32,24 +49,59 @@ public class CartService {
         return cart;
     }
 
-    public Cart deleteFromCart(CartIdentity identity) {
-        Cart cart = cartRepository.findById(identity).get();
+    /**
+     * This function deletes requested products from the Cart
+     * Takes composite id CartIdentity as argument
+     * @param  identity
+     * @return :Object of Cart which is deleted
+     */
+    public Cart deleteFromCart(CartIdentity identity) throws ElementNotFoundException {
+        Cart cart = new Cart();
+       if(cartRepository.findById(identity).isPresent())
+         cart = cartRepository.findById(identity).get();
+       else throw new ElementNotFoundException("productId or customerId not present in the repository");
         cartRepository.delete(cart);
         return cart;
     }
 
-    public List<Cart> getCart(Long customerId) {
-        Optional<List<Cart>> fetchCartItems = cartRepository.findByCustomerId(customerId);
-        List<Cart> fetchedCartItems = fetchCartItems.get();
-        return fetchedCartItems;
+    /**
+     * This function fetches list of Cart for a particular customer
+     * Takes customerId as argument
+     * @param customerId
+     * @return
+     */
+
+    public List<Cart> getCart(Long customerId) throws CustomerNotFoundException {
+        try {
+            Optional<List<Cart>> fetchCartItems = cartRepository.findByCustomerId(customerId);
+            List<Cart> fetchedCartItems = fetchCartItems.get();
+            return fetchedCartItems;
+        }
+        catch (Exception ex)
+        {
+            throw new CustomerNotFoundException("Customer with cartId= {} not found");
+        }
     }
 
-    public Cart updateCart(CartItem payload) {
-        Cart cart=cartRepository.findById(new CartIdentity(payload.getCustomerId(),payload.getProductId())).get();
-        cart.setCost(payload.getCost());
-        cart.setQuantity(payload.getQuantity());
-        return cartRepository.save(cart);
-    }
+    /**
+     * This function updates particular cart item of a particular customer
+     * Takes cartItem payload as argument
+     * @param payload
+     * @return :Updated cart of the customer
+     */
 
+    public Cart updateCart(CartItem payload) throws ElementNotFoundException {
+        List<Cart> check = cartRepository.existsByProductId(payload.getProductId());
+        if (check.size() != 0) {
+            Cart cart=cartRepository.findById(new CartIdentity(payload.getCustomerId(),payload.getProductId())).get();
+            int previousQuantity = cart.getQuantity();
+            Float previousCost = cart.getCost();
+            cart.setCost((payload.getQuantity()/previousQuantity)*previousCost);
+            cart.setQuantity(payload.getQuantity());
+            return cartRepository.save(cart);
+        } else {
+            throw new ElementNotFoundException("Product not found in the cart.");
+        }
+    }
 
 }

@@ -488,3 +488,121 @@ GET /recipe/default/_search
 }
 
 // Compound Queries
+
+GET /recipe/default/_search
+{
+    "query": {
+        "bool": {
+
+        }
+    }
+}
+
+
+
+//search query Ecomm-App
+
+
+POST products/_search
+{
+  "query": {
+    "bool": {
+      "should": [
+        {"match": {
+          "product_name":{
+            "query": "jeans",
+            "fuzziness": "AUTO"
+          }
+        }},
+        {"match": {
+          "product_description": {
+            "query": "%s",
+            "fuzziness": "AUTO"
+          }
+        }},
+        {"match": {
+          "category": {
+            "query": "%s",
+            "fuzziness": "AUTO"
+          }
+        }}
+      ]
+      , "filter": {
+        "range": {
+          "price": {
+            "gte": 123,
+            "lte": 1000
+          }
+        }
+
+      },
+      "must": [
+        {"match": {
+          "category": {
+            "query":"Bottoms",
+            "fuzziness": "AUTO"
+
+          }
+        }}
+      ]
+      , "minimum_should_match": 1
+    }
+  }
+}
+
+
+// formatted
+
+{
+    "query":{
+        "bool":{
+            "should":[
+                {
+                    "match":{
+                        "product_name":{
+                            "query":"jeans",
+                            "fuzziness":"AUTO"
+                        }
+                    }
+                },
+                {
+                    "match":{
+                        "product_description":{
+                            "query":"%s",
+                            "fuzziness":"AUTO"
+                        }
+                    }
+                },
+                {
+                    "match":{
+                        "category":{
+                            "query":"%s",
+                            "fuzziness":"AUTO"
+                        }
+                    }
+                }
+            ],
+            "filter":{
+                "range":{
+                    "price":{
+                        "gte":123,
+                        "lte":1000
+                    }
+                }
+            },
+            "must":[
+                {
+                    "match":{
+                        "category":{
+                            "query":"Bottoms",
+                            "fuzziness":"AUTO"
+                        }
+                    }
+                }
+            ],
+            "minimum_should_match":1
+        }
+    }
+}
+
+
