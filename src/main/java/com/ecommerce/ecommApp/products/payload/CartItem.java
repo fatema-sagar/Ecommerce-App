@@ -1,17 +1,21 @@
-package com.ecommerce.ecommApp.commons.pojo.orders;
-
+package com.ecommerce.ecommApp.products.payload;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 @Data
-public class ItemsDTO {
+public class CartItem {
 
     @JsonProperty("product_id")
-    private long productID;
+    private Long productId;
 
     @JsonProperty("quantity")
-    private int quantity;
+    private Integer quantity;
+
+    @JsonProperty("customer_id")
+    private Long customerId;
 
     @JsonProperty("total_cost")
     private float cost;
+
 }
+
