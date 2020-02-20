@@ -9,6 +9,7 @@ import com.ecommerce.ecommApp.products.repositories.ProductRepository;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
+import org.elasticsearch.ElasticsearchException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,10 +39,16 @@ public class ProductService {
      * @return The generated product added to the database.
      */
     public Product createProduct(Product product) {
-        logger.info("Adding the following Product {} to the db..", product);
-        Product generatedProduct = productRepository.save(product);
-        ElasticSearchUtil.insertProduct(generatedProduct);
-        return generatedProduct;
+        try {
+            logger.info("Adding the following Product {} to the db..", product);
+            Product generatedProduct = productRepository.save(product);
+            ElasticSearchUtil.insertProduct(generatedProduct);
+            return generatedProduct;
+        } catch (ElasticsearchException ex) {
+            throw new ElasticsearchException("Seems like elastic search is not up !! " +
+                    "Kindly run the docker image to continue adding to the Elastic search.");
+        }
+
     }
 
     /**
