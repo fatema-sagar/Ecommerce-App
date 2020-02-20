@@ -24,10 +24,13 @@ import java.util.NoSuchElementException;
  * Customer Controller to manage requests for customer module.
  */
 @RestController
-public class CustomerController {
+class CustomerController {
 
+    private CustomerService customerService;
     @Autowired
-    CustomerService customerService;
+    private CustomerController(CustomerService customerService){
+        this.customerService = customerService;
+    }
 
     /**
      * Post method to register a customer
@@ -36,7 +39,7 @@ public class CustomerController {
      * EmailExistsException - when already used email used for registration.
      */
     @PostMapping("/register")
-    ResponseEntity<Object> registerUser(@RequestBody @Valid RegistrationDto registrationDetails){
+    private ResponseEntity<Object> registerUser(@RequestBody @Valid RegistrationDto registrationDetails){
 
         try {
             CustomerDto customerDetails =  customerService.register(registrationDetails);
@@ -54,7 +57,7 @@ public class CustomerController {
      * @return - {@link ResponseEntity}
      */
     @PostMapping("/login")
-    ResponseEntity<Object> login(@RequestBody @Valid LoginDto loginDetails){
+    private ResponseEntity<Object> login(@RequestBody @Valid LoginDto loginDetails){
 
         try{
             CustomerDto customerDetails = customerService.loginCustomer(loginDetails);
@@ -72,7 +75,7 @@ public class CustomerController {
      * @return - {@link ResponseEntity}
      */
     @GetMapping("/customer/{customerId}")
-    ResponseEntity<Object> getCustomerDetails(@PathVariable long customerId){
+    private ResponseEntity<Object> getCustomerDetails(@PathVariable long customerId){
         try{
             CustomerDto customerDetails = customerService.getCustomerDetails(customerId);
             return new ResponseEntity<>(customerDetails,HttpStatus.OK);
@@ -89,7 +92,7 @@ public class CustomerController {
      * @return - {@link ResponseEntity}
      */
     @PutMapping("/customer")
-    ResponseEntity<Object> updateCustomerDetails(@RequestBody @Valid CustomerDto customerDetails){
+    private ResponseEntity<Object> updateCustomerDetails(@RequestBody @Valid CustomerDto customerDetails){
         try{
             CustomerDto updatedCustomerDetails = customerService.updateCustomerDetails(customerDetails);
             return new ResponseEntity<>(updatedCustomerDetails,HttpStatus.OK);

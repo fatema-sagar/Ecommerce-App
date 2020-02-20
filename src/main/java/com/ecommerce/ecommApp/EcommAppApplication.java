@@ -23,10 +23,6 @@ public class EcommAppApplication {
 
 	public static ConfigurableApplicationContext context;
 	public static Environment environment;
-	@Bean
-	BCryptPasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder();
-	}
 
 	public static void main(String[] args) {
 		context = SpringApplication.run(EcommAppApplication.class, args);
@@ -34,7 +30,7 @@ public class EcommAppApplication {
 		environment = context.getBean(Environment.class);
 		init();
 		log.trace("starting Notification services");
-//		startNotificationServices();
+  	startNotificationServices();
 	}
 
 	public static void startNotificationServices() {
