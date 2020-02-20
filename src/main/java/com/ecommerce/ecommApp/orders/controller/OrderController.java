@@ -25,12 +25,11 @@ public class OrderController {
 
     /**
      * Get Order history for a customer
-     *
      * @param customerID
      * @return List of Orders
      */
     @GetMapping("/{customerID}")
-    public ResponseEntity<Object> getOrderByCustomerId(@PathVariable long customerID) {
+    private ResponseEntity<Object> getOrderByCustomerId(@PathVariable long customerID) {
         try {
             return new ResponseEntity<>(orderService.getAllOrder(customerID), HttpStatus.OK);
         } catch (NotFoundException err) {
@@ -40,14 +39,13 @@ public class OrderController {
 
     /**
      * Stores and places orders when a customer hit checkout.
-     *
      * @param orderedProducts The list of Items the customer wants to order
      * @param customerID
      * @return Success message
      * @throws Exception
      */
     @RequestMapping(path = "/{customerID}", method = RequestMethod.POST)
-    public ResponseEntity<ResponseMessage> placeOrder(@RequestBody List<ItemsDTO> orderedProducts, @PathVariable long customerID) throws Exception {
+    private ResponseEntity<ResponseMessage> placeOrder(@RequestBody List<ItemsDTO> orderedProducts, @PathVariable long customerID) throws Exception {
         try {
             orderService.placeOrder(customerID, orderedProducts);
             return new ResponseEntity<>(new ResponseMessage("Success order placed", "created"), HttpStatus.CREATED);
@@ -58,12 +56,11 @@ public class OrderController {
 
     /**
      * Get details of a particular order
-     *
      * @param orderID UUID of the order
      * @return Order
      */
     @GetMapping("/status/{orderID}")
-    public ResponseEntity<Object> getOrderDetail(@PathVariable String orderID) {
+    private ResponseEntity<Object> getOrderDetail(@PathVariable String orderID) {
         try {
             OrdersDTO ordersDTO = orderService.getOrderDetails(orderID);
             return new ResponseEntity<>(ordersDTO, HttpStatus.OK);
@@ -74,13 +71,12 @@ public class OrderController {
 
     /**
      * Update a particular order
-     *
      * @param updateOrder Updated value of the Order
      * @param orderID     UUID of the order
      * @return Updates message or notify user of an error
      */
     @PutMapping("/update/{orderID}")
-    public ResponseEntity<ResponseMessage> updateStatus(@RequestBody OrdersDTO updateOrder, @PathVariable String orderID) {
+    private ResponseEntity<ResponseMessage> updateStatus(@RequestBody OrdersDTO updateOrder, @PathVariable String orderID) {
         try {
             String message = orderService.updateOrderStatus(orderID, updateOrder);
             return new ResponseEntity<>(new ResponseMessage(message, "Updated"), HttpStatus.OK);
