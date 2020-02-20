@@ -36,6 +36,13 @@ public class QueryBuilder {
             jsonQuery.getJSONObject("query").getJSONObject("bool").put("must", mustArray);
         }
 
+        if (jsonObject.has("brand")) {
+            String categoryValue = jsonObject.getString("brand");
+            String mustValue = String.format("[{\"match\":{\"brand\":{\"query\":\"%s\",\"fuzziness\":\"AUTO\"}}}]", categoryValue);
+            JSONArray mustArray = new JSONArray(mustValue);
+            jsonQuery.getJSONObject("query").getJSONObject("bool").put("must", mustArray);
+        }
+
         if (jsonObject.has("search_text")) {
             String text = jsonObject.getString("search_text");
             if (!jsonObject.has("category")) {
