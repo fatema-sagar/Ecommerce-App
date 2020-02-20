@@ -5,24 +5,23 @@ import com.itextpdf.text.pdf.*;
 import org.springframework.stereotype.Component;
 
 @Component
-class HeaderFooter extends PdfPageEventHelper {
-    /** The header/footer text. */
-    String header;
-    /** The template with the total number of pages. */
-    PdfTemplate total;
-    /**
-     * Allows us to change the content of the header.
-     * @param header The new header String
-     */
+public class HeaderFooterService extends PdfPageEventHelper {
+
+    private String header;
+    private PdfTemplate total;
+
     public void setHeader(String header) {
         this.header = header;
     }
+
     /**
      * Creates the PdfTemplate that will hold the total number of pages
      */
     public void onOpenDocument(PdfWriter writer, Document document) {
         total = writer.getDirectContent().createTemplate(25, 16);
     }
+
+
     /**
      * Adds a header to every page
      */
@@ -43,6 +42,7 @@ class HeaderFooter extends PdfPageEventHelper {
             throw new ExceptionConverter(de);
         }
     }
+
     /**
      * Fills out the total number of pages before the document is closed
      */

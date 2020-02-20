@@ -1,4 +1,4 @@
-package com.ecommerce.ecommApp.billGenerator.service;
+package com.ecommerce.ecommApp.billGenerator.pdfUtils;
 
 import com.itextpdf.text.Font;
 
