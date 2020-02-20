@@ -7,14 +7,20 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-
 import javax.transaction.Transactional;
+
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
+    private CustomerRepository customerRepository;
+    private CustomerPrincipal customerPrincipal;
+
     @Autowired
-    CustomerRepository customerRepository;
+    public CustomUserDetailsService(CustomerRepository customerRepository) {
+        this.customerRepository = customerRepository;
+        this.customerPrincipal = new CustomerPrincipal();
+    }
 
     @Override
     @Transactional
@@ -25,8 +31,7 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .orElseThrow(() ->
                         new UsernameNotFoundException("User not found with email : " + email)
                 );
-
-        return CustomerPrincipal.create(customer);
+        return customerPrincipal.create(customer);
     }
 
     // This method is used by JWTAuthenticationFilter
@@ -35,6 +40,6 @@ public class CustomUserDetailsService implements UserDetailsService {
         Customer customer = customerRepository.findById(id).orElseThrow(
                 () -> new UsernameNotFoundException("User not found with id : " + id)
         );
-        return CustomerPrincipal.create(customer);
+        return customerPrincipal.create(customer);
     }
 }

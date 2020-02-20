@@ -2,12 +2,15 @@ package com.ecommerce.ecommApp.commons.security;
 
 import com.ecommerce.ecommApp.customers.models.Customer;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Component;
+
 import java.util.Collection;
 import java.util.Objects;
 
-
+@Component @NoArgsConstructor
 public class CustomerPrincipal implements UserDetails {
 
     private Long id;
@@ -27,7 +30,7 @@ public class CustomerPrincipal implements UserDetails {
         this.password = password;
     }
 
-    public static CustomerPrincipal create(Customer customer) {
+    public CustomerPrincipal create(Customer customer) {
         return new CustomerPrincipal(
                 customer.getId(),
                 customer.getName(),

@@ -6,13 +6,13 @@ import com.ecommerce.ecommApp.commons.Util.CommonsUtil;
 import com.ecommerce.ecommApp.commons.pojo.JwtAuthentication;
 import com.ecommerce.ecommApp.commons.pojo.customer.CustomerDto;
 import com.ecommerce.ecommApp.commons.pojo.notification.UserRegistered;
+import com.ecommerce.ecommApp.commons.security.*;
 import com.ecommerce.ecommApp.customers.dto.LoginDto;
 import com.ecommerce.ecommApp.customers.dto.RegistrationDto;
 import com.ecommerce.ecommApp.customers.exceptions.EmailExistsException;
 import com.ecommerce.ecommApp.customers.models.Customer;
 import com.ecommerce.ecommApp.customers.repository.CustomerRepository;
 import com.ecommerce.ecommApp.commons.enums.NotificationType;
-import com.ecommerce.ecommApp.commons.security.JwtTokenProvider;
 import com.ecommerce.ecommApp.customers.utils.CustomerUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javassist.NotFoundException;
@@ -32,15 +32,22 @@ import java.util.Optional;
 @Service
 public class CustomerService {
 
-    @Autowired
     private CustomerRepository customerRepository;
-    @Autowired
-    private
-    JwtTokenProvider tokenProvider;
-    NotificationProducer notificationProducer;
-    CustomerUtil customerUtil = new CustomerUtil();
+    private JwtTokenProvider jwtTokenProvider;
+    private NotificationProducer notificationProducer;
+    private CustomerUtil customerUtil;
+    private PasswordEncoder passwordEncoder;
 
-    @Autowired private PasswordEncoder passwordEncoder;
+    @Autowired
+    private CustomerService(JwtTokenProvider jwtTokenProvider, CustomerRepository customerRepository,
+                           PasswordEncoder passwordEncoder) {
+        this.customerRepository = customerRepository;
+        this.jwtTokenProvider = jwtTokenProvider;
+        this.notificationProducer = CommonsUtil.getNotificationProducer();
+        this.customerUtil = new CustomerUtil();
+        this.passwordEncoder = passwordEncoder;
+    }
+
 
     public CustomerDto register(RegistrationDto regDetails) throws EmailExistsException {
 
@@ -137,7 +144,7 @@ public class CustomerService {
                 )
         );
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        String jwt = tokenProvider.generateToken(authentication);
+        String jwt = jwtTokenProvider.generateToken(authentication);
         return new JwtAuthentication(jwt);
     }
 
