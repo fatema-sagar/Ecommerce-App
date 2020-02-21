@@ -15,8 +15,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
@@ -135,8 +138,9 @@ public class ProductService {
      */
     public void generateProducts() {
         long id = 0;
+        URL res = getClass().getClassLoader().getResource("flipkart_com-ecommerce_sample.csv");
         try (
-                Reader reader = Files.newBufferedReader(Paths.get("/home/sanchay_gupta/Downloads/flipkart_com-ecommerce_sample.csv"));
+                Reader reader = Files.newBufferedReader(Paths.get(res.toURI()));
                 CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT);
         ) {
             for (CSVRecord csvRecord : csvParser) {
@@ -160,7 +164,7 @@ public class ProductService {
                 product.setSize("M");
                 createProduct(product);
             }
-        } catch (IOException e) {
+        } catch (IOException | URISyntaxException e) {
             e.printStackTrace();
         }
     }
