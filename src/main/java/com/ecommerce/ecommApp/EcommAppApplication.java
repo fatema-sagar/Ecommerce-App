@@ -13,8 +13,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.EnableMBeanExport;
 import org.springframework.core.env.Environment;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.reactive.function.client.WebClient;
 
 @SpringBootApplication
 public class EcommAppApplication {
@@ -55,4 +57,10 @@ public class EcommAppApplication {
 	private static void init() {
 		Twilio.init(environment.getRequiredProperty("twilio.sid"),environment.getRequiredProperty("twilio.access.token"));
 	}
+
+	@Bean
+	public WebClient.Builder getWebClientBuilder() {
+		return WebClient.builder();
+	}
+
 }

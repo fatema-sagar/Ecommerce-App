@@ -7,6 +7,7 @@ import com.ecommerce.ecommApp.commons.pojo.products.Product;
 import com.ecommerce.ecommApp.products.exceptions.ElementNotFoundException;
 import com.ecommerce.ecommApp.products.services.ProductService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -17,6 +18,7 @@ import java.util.UUID;
 @Service
 public class OrderDtoToInvoiceFormat {
 
+    @Autowired
     private ProductService productService;
 
     public List<InvoiceFormatDto> convertToInvoiceFormatDto(List<OrdersDTO> ordersDTOList) {

@@ -36,7 +36,7 @@ public class PdfGenerateService {
     }
 
 
-    public void generatePdf(InvoiceFormatDto invoiceFormatDto) throws DocumentException, IOException {
+    public String generatePdf(InvoiceFormatDto invoiceFormatDto) throws DocumentException, IOException {
 
         Path source = Paths.get(this.getClass().getResource("/").getPath());
         Path newFolder = Paths.get(source.toAbsolutePath() + Utils.INVOICE_FOLDER);
@@ -44,12 +44,14 @@ public class PdfGenerateService {
         if(!Files.exists(newFolder))
             Files.createDirectories(newFolder);
 
+        String filePath = newFolder + "/" +  invoiceFormatDto.getCustomerName() +
+                invoiceFormatDto.getInvoiceDetails().getProductId() + Utils.PDF_EXTENSION;
+
         document = new Document(PageSize.A4);
 
         pdfWriter = PdfWriter.getInstance(document,
                 new FileOutputStream(
-                        new File(newFolder + "/" +  invoiceFormatDto.getCustomerName() +
-                                invoiceFormatDto.getInvoiceDetails().getProductId() + Utils.PDF_EXTENSION)));
+                        new File(filePath)));
         headerFooterService.setHeader(invoiceFormatDto.getTitle());
         pdfWriter.setPageEvent(headerFooterService);
 
@@ -57,6 +59,8 @@ public class PdfGenerateService {
             this.addMetaData(document, Utils.PDF_METADATA);
             this.addContent(document, invoiceFormatDto);
         document.close();
+
+        return filePath;
 
     }
 
