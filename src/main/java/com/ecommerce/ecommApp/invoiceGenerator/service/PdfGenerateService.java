@@ -36,28 +36,29 @@ public class PdfGenerateService {
     }
 
 
-    public String generatePdf(InvoiceFormatDto invoiceFormatDto) throws DocumentException, IOException {
+    public String generatePdf(InvoiceFormatDto invoiceFormatDto) {
 
-        Path source = Paths.get(this.getClass().getResource("/").getPath());
-        Path newFolder = Paths.get(source.toAbsolutePath() + Utils.INVOICE_FOLDER);
-
-        if(!Files.exists(newFolder))
-            Files.createDirectories(newFolder);
-
-        String filePath = newFolder + "/" +  invoiceFormatDto.getCustomerName() +
+        String filePath = invoiceFormatDto.getCustomerName() +
                 invoiceFormatDto.getInvoiceDetails().getProductId() + Utils.PDF_EXTENSION;
 
         document = new Document(PageSize.A4);
 
-        pdfWriter = PdfWriter.getInstance(document,
-                new FileOutputStream(
-                        new File(filePath)));
+        try {
+            pdfWriter = PdfWriter.getInstance(document,
+                    new FileOutputStream(
+                            new File(filePath)));
+        } catch (DocumentException e) {
+            e.printStackTrace();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
         headerFooterService.setHeader(invoiceFormatDto.getTitle());
         pdfWriter.setPageEvent(headerFooterService);
 
         document.open();
             this.addMetaData(document, Utils.PDF_METADATA);
             this.addContent(document, invoiceFormatDto);
+
         document.close();
 
         return filePath;
@@ -74,13 +75,17 @@ public class PdfGenerateService {
     }
 
 
-    private void addContent(Document document, InvoiceFormatDto invoiceFormatDto) throws DocumentException {
+    private void addContent(Document document, InvoiceFormatDto invoiceFormatDto)  {
 
-        document.add(getInvoiceDetails(invoiceFormatDto.getInvoiceDetails()));
-        document.add(addSoldBy(invoiceFormatDto.getSoldBy()));
-        document.add(addAddresses(invoiceFormatDto));
-        document.add(getProductDetails(invoiceFormatDto.getInvoiceDetails()));
-        document.add(getAmountInWords(invoiceFormatDto));
+        try {
+            document.add(getInvoiceDetails(invoiceFormatDto.getInvoiceDetails()));
+            document.add(addSoldBy(invoiceFormatDto.getSoldBy()));
+            document.add(addAddresses(invoiceFormatDto));
+            document.add(getProductDetails(invoiceFormatDto.getInvoiceDetails()));
+            document.add(getAmountInWords(invoiceFormatDto));
+        } catch (DocumentException e) {
+            e.printStackTrace();
+        }
 
     }
 

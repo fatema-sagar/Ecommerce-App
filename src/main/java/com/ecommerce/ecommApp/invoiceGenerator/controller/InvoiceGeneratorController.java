@@ -1,7 +1,7 @@
-package com.ecommerce.ecommApp.billGenerator.controller;
+package com.ecommerce.ecommApp.invoiceGenerator.controller;
 
-import com.ecommerce.ecommApp.billGenerator.dto.BillRequestDto;
-import com.ecommerce.ecommApp.billGenerator.service.BillGeneratorService;
+import com.ecommerce.ecommApp.invoiceGenerator.dto.BillRequestDto;
+import com.ecommerce.ecommApp.invoiceGenerator.service.BillGeneratorService;
 import com.ecommerce.ecommApp.view.dto.response.ApiResponse;
 import com.itextpdf.text.DocumentException;
 import javassist.NotFoundException;
@@ -25,7 +25,7 @@ public class BillGeneratorController {
     private BillGeneratorService billGeneratorService;
 
     @RequestMapping("/generator")
-    public ResponseEntity<ApiResponse> billGenerator(@Valid @RequestBody BillRequestDto billRequestDto) throws IOException, DocumentException, NotFoundException {
+    public ResponseEntity<ApiResponse> billGenerator(@Valid @RequestBody BillRequestDto billRequestDto) {
 
         log.info("Invoice generator called with customer id : " + billRequestDto.getCustomerId());
 

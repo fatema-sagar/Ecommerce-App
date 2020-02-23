@@ -80,6 +80,7 @@ public class FetchOrderService {
             } else if(loop-- < 1)
                 break;
         }
+        this.consumer.closeConsumer(kafkaConsumer);
         return ordersList;
     }
 }
