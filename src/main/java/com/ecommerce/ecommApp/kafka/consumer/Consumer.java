@@ -38,7 +38,7 @@ public class Consumer {
         return kafkaConsumer;
     }
 
-    public void closeConsumer(KafkaConsumer kafkaConsumer) {
+    public void closeConsumer(KafkaConsumer<String, String> kafkaConsumer) {
         kafkaConsumer.close();
     }
 

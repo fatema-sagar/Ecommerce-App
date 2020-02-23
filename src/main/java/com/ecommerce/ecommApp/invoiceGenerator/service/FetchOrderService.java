@@ -1,6 +1,6 @@
-package com.ecommerce.ecommApp.billGenerator.service;
+package com.ecommerce.ecommApp.invoiceGenerator.service;
 
-import com.ecommerce.ecommApp.billGenerator.dto.BillRequestDto;
+import com.ecommerce.ecommApp.invoiceGenerator.dto.InvoiceRequestDto;
 import com.ecommerce.ecommApp.commons.Util.CommonsUtil;
 import com.ecommerce.ecommApp.commons.pojo.notification.OrderPlaced;
 import com.ecommerce.ecommApp.commons.pojo.orders.OrdersDTO;
@@ -42,7 +42,7 @@ public class FetchOrderService {
         this.orderServices = orderServices;
     }
 
-    public List<OrdersDTO> fetchOrder(BillRequestDto billRequestDto) {
+    public List<OrdersDTO> fetchOrder(InvoiceRequestDto invoiceRequestDto) {
 
         kafkaConsumer.subscribe(Collections.singleton(
                 environment.getProperty(CommonsUtil.NOTIFICATION_ORDER_PLACED_TOPIC)));
@@ -61,8 +61,8 @@ public class FetchOrderService {
                             OrderPlaced orderPlaced = objectMapper.readValue(record.value(), OrderPlaced.class);
                             OrdersDTO ordersDTO = orderServices.getOrderDetails(orderPlaced.getOrderID());
 
-                        if(billRequestDto.getCustomerId().equals(ordersDTO.getCustomerID()) &&
-                                billRequestDto.getProductIds().contains(ordersDTO.getProductID())) {
+                        if(invoiceRequestDto.getCustomerId().equals(ordersDTO.getCustomerID()) &&
+                                invoiceRequestDto.getProductIds().contains(ordersDTO.getProductID())) {
                             ordersList.add(ordersDTO);
                         }
                     } catch (JsonProcessingException e) {

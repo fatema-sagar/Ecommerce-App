@@ -1,8 +1,8 @@
-package com.ecommerce.ecommApp.billGenerator.service;
+package com.ecommerce.ecommApp.invoiceGenerator.service;
 
-import com.ecommerce.ecommApp.billGenerator.dto.InvoiceDetails;
-import com.ecommerce.ecommApp.billGenerator.dto.InvoiceFormatDto;
-import com.ecommerce.ecommApp.billGenerator.pdfUtils.Utils;
+import com.ecommerce.ecommApp.invoiceGenerator.dto.InvoiceDetails;
+import com.ecommerce.ecommApp.invoiceGenerator.dto.InvoiceFormatDto;
+import com.ecommerce.ecommApp.invoiceGenerator.pdfUtils.Utils;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
@@ -11,14 +11,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pl.allegro.finance.tradukisto.MoneyConverters;
+import com.ecommerce.ecommApp.exception.DocumentExceptionHandle;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Date;
 
@@ -37,21 +36,26 @@ public class PdfGenerateService {
 
 
     public String generatePdf(InvoiceFormatDto invoiceFormatDto) {
-
-        String filePath = invoiceFormatDto.getCustomerName() +
-                invoiceFormatDto.getInvoiceDetails().getProductId() + Utils.PDF_EXTENSION;
-
-        document = new Document(PageSize.A4);
-
+        String filePath = null;
         try {
+            if(!Files.exists(Paths.get(Utils.INVOICE_FOLDER)))
+                Files.createDirectories(Paths.get(Utils.INVOICE_FOLDER));
+
+            filePath = Utils.INVOICE_FOLDER + invoiceFormatDto.getCustomerName() +
+                    invoiceFormatDto.getInvoiceDetails().getProductId() + Utils.PDF_EXTENSION;
+
+            document = new Document(PageSize.A4);
             pdfWriter = PdfWriter.getInstance(document,
                     new FileOutputStream(
                             new File(filePath)));
-        } catch (DocumentException e) {
-            e.printStackTrace();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
+
+        } catch (IOException | DocumentException e) {
+
+            log.info("Exception occur with pid  {} and message {} and Cause is : {}", invoiceFormatDto.getInvoiceId()
+                    , e.getMessage(), e.getCause());
+            throw new RuntimeException("Exception : " + e.getMessage() + " Cause : " + e.getCause());
         }
+
         headerFooterService.setHeader(invoiceFormatDto.getTitle());
         pdfWriter.setPageEvent(headerFooterService);
 
@@ -78,13 +82,16 @@ public class PdfGenerateService {
     private void addContent(Document document, InvoiceFormatDto invoiceFormatDto)  {
 
         try {
+
             document.add(getInvoiceDetails(invoiceFormatDto.getInvoiceDetails()));
             document.add(addSoldBy(invoiceFormatDto.getSoldBy()));
             document.add(addAddresses(invoiceFormatDto));
             document.add(getProductDetails(invoiceFormatDto.getInvoiceDetails()));
             document.add(getAmountInWords(invoiceFormatDto));
+
         } catch (DocumentException e) {
-            e.printStackTrace();
+            log.info("Document exception for add the content with PID {}", invoiceFormatDto.getInvoiceId());
+            throw new DocumentExceptionHandle("Document Exception : " + e.getMessage() + "Cause : " + e.getCause());
         }
 
     }

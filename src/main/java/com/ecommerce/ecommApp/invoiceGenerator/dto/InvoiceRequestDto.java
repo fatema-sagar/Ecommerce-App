@@ -10,7 +10,7 @@ import java.util.List;
 
 @Data
 @AllArgsConstructor
-public class BillRequestDto {
+public class InvoiceRequestDto {
 
     @NonNull
     @JsonProperty("customer_id")
@@ -20,7 +20,7 @@ public class BillRequestDto {
     @JsonProperty("product_ids")
     private List<Long> productIds;
 
-    public BillRequestDto() {
+    public InvoiceRequestDto() {
         this.productIds = new ArrayList<>();
     }
 

@@ -1,8 +1,8 @@
 package com.ecommerce.ecommApp.exception;
 
-public class DocumentException extends RuntimeException {
+public class DocumentExceptionHandle extends RuntimeException {
 
-    public DocumentException(String message) {
+    public DocumentExceptionHandle(String message) {
         super(message);
     }
 }

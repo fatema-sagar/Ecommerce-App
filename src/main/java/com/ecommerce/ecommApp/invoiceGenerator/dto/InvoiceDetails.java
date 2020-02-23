@@ -1,4 +1,4 @@
-package com.ecommerce.ecommApp.billGenerator.dto;
+package com.ecommerce.ecommApp.invoiceGenerator.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;

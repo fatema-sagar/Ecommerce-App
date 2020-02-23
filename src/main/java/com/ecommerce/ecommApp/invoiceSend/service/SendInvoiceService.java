@@ -27,7 +27,7 @@ public class SendInvoiceService {
     private SendGridAPI sendGridAPI;
 
 
-    public Response sendInvoice(SendInvoiceDto sendInvoiceDto) throws IOException {
+    public Response sendInvoice(SendInvoiceDto sendInvoiceDto)  {
 
         Email from = new Email(SendUtils.VENDOR_EMAIL, SendUtils.VENDOR_NAME);
         Email to = new Email(sendInvoiceDto.getTo(), sendInvoiceDto.getCustomerName());
@@ -42,22 +42,39 @@ public class SendInvoiceService {
 
         request.setMethod(Method.POST);
         request.setEndpoint(SendUtils.END_POINT);
-        request.setBody(mail.build());
+        Response response = null;
 
-        Response response = sendGridAPI.api(request);
+        try {
+
+            request.setBody(mail.build());
+            response = sendGridAPI.api(request);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw  new RuntimeException("Exception with build or send the mail with message : " + e.getMessage());
+        }
+
 
         log.trace("Send mail with response code : " + response.getStatusCode());
 
         return response;
     }
 
-    private Attachments getAttachments(File file) throws IOException {
+    private Attachments getAttachments(File file)  {
 
         Attachments attachment = new Attachments();
 
-        attachment.setContent(convertFileToBase64(Files.toByteArray(file)));
-        attachment.setType(SendUtils.SEND_TYPE);
-        attachment.setFilename(SendUtils.FILE_NAME + SendUtils.FILE_EXTENSION);
+        try {
+            attachment.setContent(convertFileToBase64(Files.toByteArray(file)));
+            attachment.setType(SendUtils.SEND_TYPE);
+            attachment.setFilename(SendUtils.FILE_NAME + SendUtils.FILE_EXTENSION);
+
+        } catch (IOException e) {
+            log.info("File not found for attaching the customer invoice ,file path is  : {}", file.getPath());
+            e.printStackTrace();
+            throw  new RuntimeException("File not fount exception " + e.getMessage() + " Cause : " + e.getCause());
+        }
+
         return attachment;
     }
 

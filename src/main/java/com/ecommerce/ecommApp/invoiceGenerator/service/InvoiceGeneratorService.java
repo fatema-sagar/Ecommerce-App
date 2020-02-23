@@ -1,7 +1,7 @@
 package com.ecommerce.ecommApp.invoiceGenerator.service;
 
 import com.ecommerce.ecommApp.invoiceGenerator.converter.OrderDtoToInvoiceFormat;
-import com.ecommerce.ecommApp.invoiceGenerator.dto.BillRequestDto;
+import com.ecommerce.ecommApp.invoiceGenerator.dto.InvoiceRequestDto;
 import com.ecommerce.ecommApp.invoiceGenerator.dto.InvoiceFormatDto;
 import com.ecommerce.ecommApp.commons.pojo.customer.CustomerDto;
 import com.ecommerce.ecommApp.commons.pojo.orders.OrdersDTO;
@@ -27,7 +27,7 @@ import java.util.*;
 
 @Slf4j
 @Service
-public class BillGeneratorService {
+public class InvoiceGeneratorService {
 
     private FetchOrderService fetchOrderService;
     private PdfGenerateService pdfGenerateService;
@@ -37,9 +37,9 @@ public class BillGeneratorService {
     private WebClient.Builder builder;
 
     @Autowired
-    public BillGeneratorService(FetchOrderService fetchOrderService, PdfGenerateService pdfGenerateService,
-                                OrderDtoToInvoiceFormat orderDtoToInvoiceFormat, CustomerService customerService,
-                                HttpServletRequest request, WebClient.Builder builder) {
+    public InvoiceGeneratorService(FetchOrderService fetchOrderService, PdfGenerateService pdfGenerateService,
+                                   OrderDtoToInvoiceFormat orderDtoToInvoiceFormat, CustomerService customerService,
+                                   HttpServletRequest request, WebClient.Builder builder) {
         this.pdfGenerateService = pdfGenerateService;
         this.fetchOrderService = fetchOrderService;
         this.toInvoiceFormat = orderDtoToInvoiceFormat;
@@ -50,13 +50,13 @@ public class BillGeneratorService {
     }
 
 
-    public ApiResponse billGenerate(BillRequestDto billRequestDto)  {
+    public ApiResponse invoiceGenerate(InvoiceRequestDto invoiceRequestDto)  {
 
         Map<Long, Integer> responseStatus = new HashMap<>();
 
 
-        List<OrdersDTO> ordersList = fetchOrderService.fetchOrder(billRequestDto);
-        log.trace("Fetch {} orders for customer Id {} ", ordersList.size(), billRequestDto.getCustomerId());
+        List<OrdersDTO> ordersList = fetchOrderService.fetchOrder(invoiceRequestDto);
+        log.trace("Fetch {} orders for customer Id {} ", ordersList.size(), invoiceRequestDto.getCustomerId());
 
         List<InvoiceFormatDto> invoiceFormatDtoList = toInvoiceFormat.convertToInvoiceFormatDto(ordersList);
         log.trace("Convert {} record to invoice format ", invoiceFormatDtoList.size());
@@ -65,7 +65,7 @@ public class BillGeneratorService {
         for (InvoiceFormatDto invoiceFormatDto: invoiceFormatDtoList) {
 
             String filePath = pdfGenerateService.generatePdf(invoiceFormatDto);
-            Response response = sendMail(filePath, billRequestDto.getCustomerId());
+            Response response = sendMail(filePath, invoiceRequestDto.getCustomerId());
             responseStatus.put(invoiceFormatDto.getInvoiceDetails().getProductId(), response.getStatusCode());
         }
 
