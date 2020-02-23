@@ -38,6 +38,10 @@ public class Consumer {
         return kafkaConsumer;
     }
 
+    public void closeConsumer(KafkaConsumer kafkaConsumer) {
+        kafkaConsumer.close();
+    }
+
     // subscribe the topic and get the data
     public void printData(KafkaConsumer kafkaConsumer, String topic) {
 
