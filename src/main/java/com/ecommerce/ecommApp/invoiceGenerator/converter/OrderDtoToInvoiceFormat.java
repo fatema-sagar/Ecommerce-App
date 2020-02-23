@@ -1,7 +1,7 @@
-package com.ecommerce.ecommApp.billGenerator.converter;
+package com.ecommerce.ecommApp.invoiceGenerator.converter;
 
-import com.ecommerce.ecommApp.billGenerator.dto.InvoiceDetails;
-import com.ecommerce.ecommApp.billGenerator.dto.InvoiceFormatDto;
+import com.ecommerce.ecommApp.invoiceGenerator.dto.InvoiceDetails;
+import com.ecommerce.ecommApp.invoiceGenerator.dto.InvoiceFormatDto;
 import com.ecommerce.ecommApp.commons.pojo.orders.OrdersDTO;
 import com.ecommerce.ecommApp.commons.pojo.products.Product;
 import com.ecommerce.ecommApp.products.exceptions.ElementNotFoundException;

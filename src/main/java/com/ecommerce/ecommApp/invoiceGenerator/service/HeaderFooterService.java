@@ -1,10 +1,10 @@
-package com.ecommerce.ecommApp.billGenerator.service;
+package com.ecommerce.ecommApp.invoiceGenerator.service;
 
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.*;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component
+@Service
 public class HeaderFooterService extends PdfPageEventHelper {
 
     private String header;

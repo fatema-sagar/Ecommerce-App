@@ -1,4 +1,4 @@
-package com.ecommerce.ecommApp.billGenerator.pdfUtils;
+package com.ecommerce.ecommApp.invoiceGenerator.pdfUtils;
 
 import com.itextpdf.text.Font;
 
@@ -15,7 +15,7 @@ public class Utils {
     public static final String PDF_EXTENSION = ".pdf";
     public static final String[] PDF_METADATA = {"Invoice", "Amit Verma", "Order Invoice"};
 
-    public static final String INVOICE_FOLDER = "/invoice/";
+    public static final String INVOICE_FOLDER = "src/main/resources/invoice/";
 
 
 

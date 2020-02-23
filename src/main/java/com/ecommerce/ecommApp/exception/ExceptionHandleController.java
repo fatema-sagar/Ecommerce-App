@@ -1,14 +1,10 @@
 package com.ecommerce.ecommApp.exception;
 
 import com.ecommerce.ecommApp.view.dto.response.ApiResponse;
-import com.itextpdf.text.DocumentException;
-import com.sun.tools.javac.util.DefinedBy;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.http.HttpException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import reactor.netty.http.client.PrematureCloseException;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.FileNotFoundException;
@@ -28,7 +24,7 @@ public class ExceptionHandleController {
                 .body(new ApiResponse(HttpStatus.NOT_ACCEPTABLE,e.getMessage(),null));
     }
 
-    @ExceptionHandler(DocumentException.class)
+    @ExceptionHandler(DocumentExceptionHandle.class)
     public ResponseEntity<ApiResponse> handleDocumentException(HttpServletRequest request, Exception e) {
 
         log.info("Document Exception catch-----------\n");
@@ -59,16 +55,6 @@ public class ExceptionHandleController {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
                 .body(new ApiResponse(HttpStatus.NOT_FOUND, e.getMessage(),null));
-    }
-
-    @ExceptionHandler(PrematureCloseException.class)
-    public ResponseEntity<ApiResponse> handlePrematureCloseException(HttpServletRequest request, Exception e) {
-
-        log.info("PrematureCloseException catch --------------\n");
-        log.error("Message : " + e.getMessage() + "\nCause : " + e.getCause());
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(new ApiResponse(HttpStatus.OK, "Send invoice to user", null));
     }
 
 }

@@ -23,7 +23,7 @@ public class InvoiceSendController {
 
 
     @RequestMapping("/invoice")
-    public ResponseEntity<Response> sendInvoice(@RequestBody SendInvoiceDto sendInvoiceDto) throws IOException {
+    public ResponseEntity<Response> sendInvoice(@RequestBody SendInvoiceDto sendInvoiceDto) {
 
         log.trace("Called send invoice controller for email id {}", sendInvoiceDto.getTo());
         Response response = sendInvoiceService.sendInvoice(sendInvoiceDto);
