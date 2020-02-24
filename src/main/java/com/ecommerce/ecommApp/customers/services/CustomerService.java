@@ -11,6 +11,8 @@ import com.ecommerce.ecommApp.customers.dto.LoginDto;
 import com.ecommerce.ecommApp.customers.dto.RegistrationDto;
 import com.ecommerce.ecommApp.customers.exceptions.EmailExistsException;
 import com.ecommerce.ecommApp.customers.models.Customer;
+import com.ecommerce.ecommApp.customers.models.CustomerAddress;
+import com.ecommerce.ecommApp.customers.repository.CustomerAddressRepository;
 import com.ecommerce.ecommApp.customers.repository.CustomerRepository;
 import com.ecommerce.ecommApp.commons.enums.NotificationType;
 import com.ecommerce.ecommApp.customers.utils.CustomerUtil;
@@ -26,6 +28,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -37,15 +40,17 @@ public class CustomerService {
     private NotificationProducer notificationProducer;
     private CustomerUtil customerUtil;
     private PasswordEncoder passwordEncoder;
+    private CustomerAddressRepository customerAddressRepository;
 
     @Autowired
     private CustomerService(JwtTokenProvider jwtTokenProvider, CustomerRepository customerRepository,
-                           PasswordEncoder passwordEncoder) {
+                           PasswordEncoder passwordEncoder, CustomerAddressRepository customerAddressRepository) {
         this.customerRepository = customerRepository;
         this.jwtTokenProvider = jwtTokenProvider;
         this.notificationProducer = CommonsUtil.getNotificationProducer();
         this.customerUtil = new CustomerUtil();
         this.passwordEncoder = passwordEncoder;
+        this.customerAddressRepository = customerAddressRepository;
     }
 
 
@@ -115,6 +120,29 @@ public class CustomerService {
         }
     }
 
+    public CustomerAddress addCustomerAddress(CustomerAddress addressDetails, String token){
+
+        Long customerId = jwtTokenProvider.getUserIdFromJWT(token);
+        if(customerRepository.findById(customerId).isPresent()) {
+
+            Customer customer = customerRepository.findById(customerId).get();
+            addressDetails.setCustomer(customer);
+            customerAddressRepository.save(addressDetails);
+            return addressDetails;
+        }
+        else
+            throw new NoSuchElementException(CommonsUtil.CUSTOMER_NOT_FOUND);
+    }
+
+    public List<CustomerAddress> getCustomerAddresses(String token){
+
+        Long customerId = jwtTokenProvider.getUserIdFromJWT(token);
+        if(customerRepository.findById(customerId).isPresent()){
+            Customer customer = customerRepository.findById(customerId).get();
+            return customerAddressRepository.findByCustomer(customer);
+        } else
+            throw new NoSuchElementException(CommonsUtil.CUSTOMER_NOT_FOUND);
+    }
     private void sendRegistrationNotification(CustomerDto customerDto) {
         ObjectMapper objectMapper = new ObjectMapper();
         UserRegistered userRegistered = new UserRegistered();

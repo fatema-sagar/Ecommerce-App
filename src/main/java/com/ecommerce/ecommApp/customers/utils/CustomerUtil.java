@@ -13,7 +13,7 @@ public class CustomerUtil {
         customerDto.setName(customer.getName());
         customerDto.setEmail(customer.getEmail());
         customerDto.setGender(customer.getGender());
-        customerDto.setId(customer.getId());
+        customerDto.setId(customer.getCustomerId());
         customerDto.setNumber(customer.getNumber());
         customerDto.setWhatsapp(customer.getWhatsapp());
         return customerDto;

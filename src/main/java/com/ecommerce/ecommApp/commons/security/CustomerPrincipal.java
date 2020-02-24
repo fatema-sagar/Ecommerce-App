@@ -32,7 +32,7 @@ public class CustomerPrincipal implements UserDetails {
 
     public CustomerPrincipal create(Customer customer) {
         return new CustomerPrincipal(
-                customer.getId(),
+                customer.getCustomerId(),
                 customer.getName(),
                 customer.getEmail(),
                 customer.getPassword()
