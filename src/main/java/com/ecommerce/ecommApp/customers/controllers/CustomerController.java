@@ -8,12 +8,17 @@ import com.ecommerce.ecommApp.customers.dto.RegistrationDto;
 import com.ecommerce.ecommApp.customers.exceptions.EmailExistsException;
 import com.ecommerce.ecommApp.customers.models.CustomerAddress;
 import com.ecommerce.ecommApp.customers.services.CustomerService;
-import io.jsonwebtoken.Jwts;
 import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.nio.file.AccessDeniedException;
@@ -104,6 +109,12 @@ class CustomerController {
         }
     }
 
+    /**
+     *
+     * @param address -{@link CustomerAddress} customer address details
+     * @param token - JWT authentication token
+     * @return - Response entity of saved customer address
+     */
     @PostMapping("/customer/address")
     private ResponseEntity<Object> addAddress(@RequestBody @Valid CustomerAddress address,
                                               @RequestHeader(name = "Authorization") String token){
@@ -125,6 +136,11 @@ class CustomerController {
         }
     }
 
+    /**
+     *
+     * @param token - Jwt Authentication Token to manage logged in users
+     * @return - List<{@link CustomerAddress} in the form of Response Entity.
+     */
     @GetMapping("/customer/address")
     private ResponseEntity<Object> getAddresses(@RequestHeader(name = "Authorization") String token){
         try{
