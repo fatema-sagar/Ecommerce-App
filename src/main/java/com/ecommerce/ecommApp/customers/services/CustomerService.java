@@ -17,6 +17,7 @@ import com.ecommerce.ecommApp.customers.utils.CustomerUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -37,15 +38,22 @@ public class CustomerService {
     private NotificationProducer notificationProducer;
     private CustomerUtil customerUtil;
     private PasswordEncoder passwordEncoder;
+    private Environment environment;
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
+    private AuthenticationManager authenticationManager;
 
     @Autowired
     private CustomerService(JwtTokenProvider jwtTokenProvider, CustomerRepository customerRepository,
-                           PasswordEncoder passwordEncoder) {
+                           PasswordEncoder passwordEncoder, Environment environment, BCryptPasswordEncoder bCryptPasswordEncoder,
+                            AuthenticationManager authenticationManager) {
         this.customerRepository = customerRepository;
         this.jwtTokenProvider = jwtTokenProvider;
         this.notificationProducer = CommonsUtil.getNotificationProducer();
         this.customerUtil = new CustomerUtil();
         this.passwordEncoder = passwordEncoder;
+        this.environment = environment;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.authenticationManager=authenticationManager;
     }
 
 
@@ -71,7 +79,7 @@ public class CustomerService {
     public CustomerDto loginCustomer(LoginDto loginDetails) throws NotFoundException {
 
         Optional<Customer> loggedInCustomer = customerRepository.findByEmail(loginDetails.getEmail());
-        if (loggedInCustomer.isPresent() && EcommAppApplication.context.getBean(BCryptPasswordEncoder.class)
+        if (loggedInCustomer.isPresent() && bCryptPasswordEncoder
                 .matches(loginDetails.getPassword(), loggedInCustomer.get().getPassword())) {
 
             JwtAuthentication jwt = authenticateLogin(loginDetails);
@@ -125,7 +133,7 @@ public class CustomerService {
         notificationProducer = CommonsUtil.getNotificationProducer();
         try {
             notificationProducer.producerNotification(objectMapper.writeValueAsString(userRegistered),
-                    EcommAppApplication.environment.getRequiredProperty(CommonsUtil.NOTIFICATION_REGISTERED_TOPIC));
+                    environment.getRequiredProperty(CommonsUtil.NOTIFICATION_REGISTERED_TOPIC));
         } catch (IOException ignored) {
         }
     }
@@ -137,7 +145,7 @@ public class CustomerService {
 
     private JwtAuthentication authenticateLogin(LoginDto loginDetails){
 
-        Authentication authentication = EcommAppApplication.context.getBean(AuthenticationManager.class).authenticate(
+        Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         loginDetails.getEmail(),
                         loginDetails.getPassword()

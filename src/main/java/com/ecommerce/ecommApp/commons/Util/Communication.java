@@ -3,6 +3,8 @@ package com.ecommerce.ecommApp.commons.Util;
 import com.ecommerce.ecommApp.EcommAppApplication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.io.BufferedReader;
@@ -16,6 +18,9 @@ import java.net.*;
  * of GET, POST, PUT and DELETE methods with the elasticsearch.
  */
 public class Communication {
+
+  @Autowired
+  private static Environment environment;
 
   private static final Logger logger = LoggerFactory.getLogger(Communication.class);
 
@@ -134,7 +139,7 @@ public class Communication {
   public static String getApplicationAddress() throws Exception {
     try {
       InetAddress address = InetAddress.getLocalHost();
-      return address.getHostAddress() + ":" + EcommAppApplication.environment.
+      return address.getHostAddress() + ":" + environment.
               getRequiredProperty(CommonsUtil.SERVER_PORT);
     } catch (UnknownHostException ex) {
       throw new Exception("Host is not available");

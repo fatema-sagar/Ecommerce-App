@@ -8,6 +8,7 @@ import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 
 import java.util.Collections;
@@ -20,7 +21,10 @@ import java.util.Properties;
 public class NotificationUtil {
 
     private static final Logger log = LoggerFactory.getLogger(NotificationUtil.class);
-    public static Environment environment = EcommAppApplication.environment;
+//    public static Environment environment = EcommAppApplication.environment;
+    @Autowired
+    private static Environment environment;
+
     private static NotificationHandler handler;
 
     static {

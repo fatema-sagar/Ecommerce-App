@@ -1,18 +1,15 @@
 package com.ecommerce.ecommApp.recommendation.service;
 
-import com.ecommerce.ecommApp.commons.Util.ElasticSearchQueryBuilder;
+import com.ecommerce.ecommApp.commons.exceptions.ElementNotFoundException;
 import com.ecommerce.ecommApp.commons.pojo.products.Product;
 import com.ecommerce.ecommApp.kafka.consumer.FetchViewedProduct;
 import com.ecommerce.ecommApp.kafka.stream.FetchViewProductsStream;
 import com.ecommerce.ecommApp.products.ElasticSearchUtil;
-import com.ecommerce.ecommApp.products.exceptions.ElementNotFoundException;
 import com.ecommerce.ecommApp.products.services.ProductService;
-import com.ecommerce.ecommApp.view.dto.ViewProductDto;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.ParameterResolutionDelegate;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;

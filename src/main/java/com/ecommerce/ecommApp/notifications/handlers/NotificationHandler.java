@@ -18,6 +18,8 @@ import com.twilio.rest.api.v2010.account.Message;
 import com.twilio.type.PhoneNumber;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 
 import java.util.List;
 
@@ -28,6 +30,9 @@ import java.util.List;
 public class NotificationHandler implements Handler {
 
     private static final Logger log=LoggerFactory.getLogger(NotificationHandler.class);
+
+    @Autowired
+    private Environment environment;
 
     /**
      * This Method will be the entry Point for any notification service to send notification.
@@ -110,7 +115,7 @@ public class NotificationHandler implements Handler {
         try {
             log.trace("Sending Sms Notification with {} message to {}", message, number);
             Message sms = Message.creator(new PhoneNumber("+91" + number),
-                    new PhoneNumber(EcommAppApplication.environment.getRequiredProperty(CommonsUtil.TWILIO_ASSIGNED_NUMBER)),
+                    new PhoneNumber(environment.getRequiredProperty(CommonsUtil.TWILIO_ASSIGNED_NUMBER)),
                     message).create();
             log.info("Sms Notification Sent to {} ", number);
         } catch (ApiException ex) {
@@ -129,7 +134,7 @@ public class NotificationHandler implements Handler {
         if (email.trim().equals(""))
             return;
         log.trace("Sending Email Notification with {} message to {}", message, email);
-        Email from = new Email(EcommAppApplication.environment.getRequiredProperty(CommonsUtil.SENDGRID_FROM_EMAIL));
+        Email from = new Email(environment.getRequiredProperty(CommonsUtil.SENDGRID_FROM_EMAIL));
         Email to = new Email(email);
         Content content = new Content("text/plain", message);
 

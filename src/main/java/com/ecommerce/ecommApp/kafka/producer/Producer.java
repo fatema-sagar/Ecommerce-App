@@ -6,12 +6,17 @@ import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.serialization.StringSerializer;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import java.util.Properties;
 
 @Component
 public class Producer {
+
+    @Autowired
+    private Environment environment;
 
     public void produceViewProduct(String json, String kafkaTopicName) {
         Properties props = getProducerConfigs();
@@ -24,7 +29,7 @@ public class Producer {
 
     private Properties getProducerConfigs() {
         Properties props = new Properties();
-        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, EcommAppApplication.environment.getRequiredProperty(CommonsUtil.KAFKA_BOOTSTRAP_SERVERS));
+        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, environment.getRequiredProperty(CommonsUtil.KAFKA_BOOTSTRAP_SERVERS));
         props.put(ProducerConfig.CLIENT_ID_CONFIG, "id : " + System.currentTimeMillis() + 1);
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());

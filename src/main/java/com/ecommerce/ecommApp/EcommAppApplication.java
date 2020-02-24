@@ -13,7 +13,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.reactive.function.client.WebClient;
 
 @SpringBootApplication
@@ -21,19 +20,20 @@ public class EcommAppApplication {
 
 	private static final Logger log=LoggerFactory.getLogger(EcommAppApplication.class);
 
-	public static ConfigurableApplicationContext context;
-	public static Environment environment;
+	private ConfigurableApplicationContext context;
+	private Environment environment;
 
 	public static void main(String[] args) {
-		context = SpringApplication.run(EcommAppApplication.class, args);
+		EcommAppApplication application = new EcommAppApplication();
+		application.context = SpringApplication.run(EcommAppApplication.class, args);
 		log.info("E-Comm application is started");
-		environment = context.getBean(Environment.class);
-		init();
+		application.environment = application.context.getBean(Environment.class);
+		application.init();
 		log.trace("starting Notification services");
-  	startNotificationServices();
+//		application.startNotificationServices();
 	}
 
-	public static void startNotificationServices() {
+	public void startNotificationServices() {
 		Thread userRegisteredThread = new UserRegisteredService(environment.getRequiredProperty(CommonsUtil.NOTIFICATION_REGISTERED_TOPIC));
 		Thread orderPlacedThread = new OrderPlacedService(environment.getRequiredProperty(CommonsUtil.NOTIFICATION_ORDER_PLACED_TOPIC));
 		Thread orderStatusThread = new OrderStatusService(environment.getRequiredProperty(CommonsUtil.NOTIFICATION_ORDER_STATUS_TOPIC));
@@ -48,8 +48,8 @@ public class EcommAppApplication {
 		orderStatusThread.start();
 	}
 
-	private static void init() {
-		Twilio.init(environment.getRequiredProperty("twilio.sid"),environment.getRequiredProperty("twilio.access.token"));
+	private void init() {
+		Twilio.init(environment.getRequiredProperty("twilio.sid"), environment.getRequiredProperty("twilio.access.token"));
 	}
 
 	@Bean
