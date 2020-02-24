@@ -5,6 +5,7 @@ import com.ecommerce.ecommApp.products.ElasticSearchUtil;
 import com.ecommerce.ecommApp.commons.exceptions.ElementNotFoundException;
 import com.ecommerce.ecommApp.products.repositories.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -33,9 +34,13 @@ public class FeatureService {
    * @return The list of products returned from the elasticsearch.
    * @throws ElementNotFoundException
    */
-  public List<Product> getSearchedElements(String searchQuery) throws ElementNotFoundException {
+
+  @Cacheable("product")
+  public List<Product> getSearchedElements(String searchQuery) throws ElementNotFoundException, InterruptedException {
     List<Product> searchedProducts = ElasticSearchUtil.searchProduct(searchQuery);
     if (searchedProducts.size() != 0) {
+      System.out.println("Going to sleep for 5 Secs.. to simulate backend call.");
+      Thread.sleep(1000*5);
       return searchedProducts;
     } else {
       throw new ElementNotFoundException(" No elements found for the given search");

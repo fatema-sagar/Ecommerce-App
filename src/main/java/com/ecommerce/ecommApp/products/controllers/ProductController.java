@@ -82,7 +82,7 @@ public class ProductController {
         try {
             logger.info("Fetching element {} from Products.", productId);
             return new ResponseEntity(productService.getProduct(productId), HttpStatus.OK);
-        } catch (ElementNotFoundException e) {
+        } catch (ElementNotFoundException | InterruptedException e) {
             return new ResponseEntity("ProductId not found" + e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }

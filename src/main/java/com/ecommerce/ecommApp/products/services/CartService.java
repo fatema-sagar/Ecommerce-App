@@ -9,6 +9,8 @@ import com.ecommerce.ecommApp.products.payload.CartItem;
 import com.ecommerce.ecommApp.products.repositories.CartRepository;
 import com.ecommerce.ecommApp.products.repositories.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+//import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -71,8 +73,11 @@ public class CartService {
      * @return
      */
 
+    @Cacheable("cart")
     public List<Cart> getCart(Long customerId) throws CustomerNotFoundException {
         try {
+            System.out.println("Going to sleep for 5 Secs.. to simulate backend call.");
+            Thread.sleep(1000*5);
             Optional<List<Cart>> fetchCartItems = cartRepository.findByCustomerId(customerId);
             List<Cart> fetchedCartItems = fetchCartItems.get();
             return fetchedCartItems;

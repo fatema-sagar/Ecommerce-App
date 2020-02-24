@@ -12,6 +12,7 @@ import org.apache.commons.csv.CSVRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -115,8 +116,12 @@ public class ProductService {
      * @return The Product with the given product id.
      * @throws ElementNotFoundException In case the product id is not found, returns an exception.
      */
-    public Product getProduct(long productId) throws ElementNotFoundException {
+    @Cacheable("product")
+    public Product getProduct(long productId) throws ElementNotFoundException, InterruptedException {
         if (productRepository.existsById(productId)) {
+
+            System.out.println("Going to sleep for 5 Secs.. to simulate backend call.");
+            Thread.sleep(1000*5);
             return productRepository.findById(productId).get();
         } else {
             throw new ElementNotFoundException("ProductId not found");
