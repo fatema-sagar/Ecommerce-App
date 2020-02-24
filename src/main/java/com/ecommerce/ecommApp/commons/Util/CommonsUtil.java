@@ -44,6 +44,9 @@ public class CommonsUtil {
     public static final String VIEWED = "/viewed";
     public static final String VIEW_PRODUCT = "/product";
 
+    public static final String JWT_SECRET = "app.jwtSecret";
+    public static final String JWT_EXPIRATION_TIME = "app.jwtExpirationInMs";
+
 
 
 
