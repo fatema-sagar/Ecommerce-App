@@ -37,7 +37,6 @@ public class FetchOrderService {
 
         this.consumer = consumer;
         this.environment = environment;
-        this.kafkaConsumer = consumer.getKafkaConsumer(UUID.randomUUID().toString());
         this.objectMapper = CommonsUtil.getObjectMapper();
         this.orderServices = orderServices;
     }
@@ -49,6 +48,7 @@ public class FetchOrderService {
 
         Integer loop = 40;
         List<OrdersDTO> ordersList = new ArrayList<>();
+        this.kafkaConsumer = consumer.getKafkaConsumer(invoiceRequestDto.getCustomerId().toString());
 
         while(true) {
 
