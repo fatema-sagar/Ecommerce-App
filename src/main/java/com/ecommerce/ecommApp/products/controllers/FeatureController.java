@@ -23,9 +23,9 @@ public class FeatureController {
   @GetMapping("/filterBy/{category}")
   private ResponseEntity<Object> filterByCategory(@PathVariable String category) {
     try {
-      return new ResponseEntity(featureService.getByCategory(category), HttpStatus.OK);
+      return new ResponseEntity<>(featureService.getByCategory(category), HttpStatus.OK);
     } catch (Exception e) {
-      return new ResponseEntity("The specified category is not available.. " +e.getMessage(), HttpStatus.BAD_REQUEST);
+      return new ResponseEntity<>("The specified category is not available.. " +e.getMessage(), HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -33,7 +33,7 @@ public class FeatureController {
   private ResponseEntity<Object> searchProducts(@RequestBody String jsonObject) {
     try {
       List<Product> searchedProducts = featureService.getSearchedElements(jsonObject);
-      return new ResponseEntity(searchedProducts, HttpStatus.OK);
+      return new ResponseEntity<>(searchedProducts, HttpStatus.OK);
     } catch (Exception e) {
       logger.error("Error while searching" + e.getMessage());
       return new ResponseEntity<>("No elements found for the given search", HttpStatus.NOT_FOUND);

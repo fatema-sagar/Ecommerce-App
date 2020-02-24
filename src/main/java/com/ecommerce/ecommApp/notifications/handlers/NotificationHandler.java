@@ -42,7 +42,7 @@ public class NotificationHandler implements Handler {
         if (modes.contains(NotificationType.Text_SMS.toString()))
             createSmsNotification(notifyingService, object, message);
 
-        if (modes.contains(NotificationType.EMAIL.toString()))
+        if (modes.contains(NotificationType.EMAIL.toString()) && !notifyingService.equals(CommonsUtil.NOTIFICATION_ORDER_PLACED_SERVICE) )
             createEmailNotificaton(notifyingService, object, message);
 
         if (modes.contains(NotificationType.Text_WHATSAPP.toString()))

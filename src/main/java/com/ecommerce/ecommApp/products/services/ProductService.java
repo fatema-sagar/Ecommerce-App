@@ -9,6 +9,7 @@ import com.ecommerce.ecommApp.products.repositories.ProductRepository;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
+import org.elasticsearch.ElasticsearchException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,18 +38,26 @@ public class ProductService {
 
     /**
      * The method is used to add the Product in the database and later add the product to the Elasticsearch.
+     *
      * @param product The product sent from the user.
      * @return The generated product added to the database.
      */
     public Product createProduct(Product product) {
-        logger.info("Adding the following Product {} to the db..", product);
-        Product generatedProduct = productRepository.save(product);
-        ElasticSearchUtil.insertProduct(generatedProduct);
-        return generatedProduct;
+        try {
+            logger.info("Adding the following Product {} to the db..", product);
+            Product generatedProduct = productRepository.save(product);
+            ElasticSearchUtil.insertProduct(generatedProduct);
+            return generatedProduct;
+        } catch (ElasticsearchException ex) {
+            throw new ElasticsearchException("Seems like elastic search is not up !! " +
+                    "Kindly run the docker image to continue adding to the Elastic search.");
+        }
+
     }
 
     /**
      * Updates the product sent by the user only if the Product is already available in the database.
+     *
      * @param product The Product object sent by the user.
      * @return The generated product after updating it.
      * @throws ElementNotFoundException In case the product is not found, returns an exception.
@@ -65,8 +74,9 @@ public class ProductService {
 
     /**
      * After an order is placed, this method is called to deduct the available quantity of the product.
+     *
      * @param product The ItemsDTO object which contains the productID and quantity which has to be deducted from the db.
-     * @throws ElementNotFoundException In case the product is not found, returns an exception.
+     * @throws ElementNotFoundException   In case the product is not found, returns an exception.
      * @throws NotEnoughQuantityException In case the product does not have the appropriate quantity which has to be reduced.
      */
     public void deductProducts(List<ItemsDTO> product) throws ElementNotFoundException, NotEnoughQuantityException {
@@ -89,6 +99,7 @@ public class ProductService {
     /**
      * This method is used to increase the quantity of an existing product. It updates the quantity in the db
      * and later updates it in the elasticsearch.
+     *
      * @param product The Product object whose quantity has to be added in the existing products quantity.
      * @return The updated product.
      * @throws ElementNotFoundException In case the product is not found, returns an exception.
@@ -106,6 +117,7 @@ public class ProductService {
 
     /**
      * This method returns the list of all distinct categories.
+     *
      * @return List of categories available in the database.
      */
     public List<String> getAllCategories() {
@@ -114,6 +126,7 @@ public class ProductService {
 
     /**
      * This method is used to get all details of a particular product using its Product ID.
+     *
      * @param productId The product id sent from the API.
      * @return The Product with the given product id.
      * @throws ElementNotFoundException In case the product id is not found, returns an exception.

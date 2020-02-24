@@ -1,7 +1,7 @@
 package com.ecommerce.ecommApp.customers.services;
 
 import com.ecommerce.ecommApp.EcommAppApplication;
-import com.ecommerce.ecommApp.commons.NotificationProducer;
+import com.ecommerce.ecommApp.commons.kafka.Producer;
 import com.ecommerce.ecommApp.commons.Util.CommonsUtil;
 import com.ecommerce.ecommApp.commons.pojo.JwtAuthentication;
 import com.ecommerce.ecommApp.commons.pojo.customer.CustomerDto;
@@ -18,12 +18,13 @@ import com.ecommerce.ecommApp.commons.enums.NotificationType;
 import com.ecommerce.ecommApp.customers.utils.CustomerUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javassist.NotFoundException;
+import org.apache.kafka.clients.producer.KafkaProducer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.io.IOException;
@@ -31,26 +32,32 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.Properties;
 
 @Service
 public class CustomerService {
 
     private CustomerRepository customerRepository;
     private JwtTokenProvider jwtTokenProvider;
-    private NotificationProducer notificationProducer;
+    private Producer producer;
     private CustomerUtil customerUtil;
     private PasswordEncoder passwordEncoder;
     private CustomerAddressRepository customerAddressRepository;
+    private AuthenticationManager authenticationManager;
+    private  Environment environment;
 
     @Autowired
     private CustomerService(JwtTokenProvider jwtTokenProvider, CustomerRepository customerRepository,
-                           PasswordEncoder passwordEncoder, CustomerAddressRepository customerAddressRepository) {
+                           PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager,
+                            Producer producer, Environment environment, CustomerAddressRepository addressRepository) {
         this.customerRepository = customerRepository;
         this.jwtTokenProvider = jwtTokenProvider;
-        this.notificationProducer = CommonsUtil.getNotificationProducer();
+        this.producer = producer;
         this.customerUtil = new CustomerUtil();
         this.passwordEncoder = passwordEncoder;
-        this.customerAddressRepository = customerAddressRepository;
+        this.customerAddressRepository = addressRepository;
+        this.authenticationManager=authenticationManager;
+        this.environment=environment;
     }
 
 
@@ -76,7 +83,7 @@ public class CustomerService {
     public CustomerDto loginCustomer(LoginDto loginDetails) throws NotFoundException {
 
         Optional<Customer> loggedInCustomer = customerRepository.findByEmail(loginDetails.getEmail());
-        if (loggedInCustomer.isPresent() && EcommAppApplication.context.getBean(BCryptPasswordEncoder.class)
+        if (loggedInCustomer.isPresent() && passwordEncoder
                 .matches(loginDetails.getPassword(), loggedInCustomer.get().getPassword())) {
 
             JwtAuthentication jwt = authenticateLogin(loginDetails);
@@ -150,10 +157,12 @@ public class CustomerService {
         userRegistered.getMode().add(NotificationType.Text_SMS.toString());
         userRegistered.getMode().add(NotificationType.EMAIL.toString());
         userRegistered.setCustomerDto(customerDto);
-        notificationProducer = CommonsUtil.getNotificationProducer();
         try {
-            notificationProducer.producerNotification(objectMapper.writeValueAsString(userRegistered),
-                    EcommAppApplication.environment.getRequiredProperty(CommonsUtil.NOTIFICATION_REGISTERED_TOPIC));
+            Properties props = producer.getProducerConfigs();
+            KafkaProducer<String, String > kafkaProducer= producer.getKafkaProducer(props);
+            producer.producerRecord(objectMapper.writeValueAsString(userRegistered),
+                    environment.getRequiredProperty(CommonsUtil.NOTIFICATION_REGISTERED_TOPIC),kafkaProducer);
+            producer.closeProducer(kafkaProducer);
         } catch (IOException ignored) {
         }
     }
@@ -165,7 +174,7 @@ public class CustomerService {
 
     private JwtAuthentication authenticateLogin(LoginDto loginDetails){
 
-        Authentication authentication = EcommAppApplication.context.getBean(AuthenticationManager.class).authenticate(
+        Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         loginDetails.getEmail(),
                         loginDetails.getPassword()
