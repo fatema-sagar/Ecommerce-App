@@ -1,7 +1,6 @@
 package com.ecommerce.ecommApp.orders.services;
 
-import com.ecommerce.ecommApp.EcommAppApplication;
-import com.ecommerce.ecommApp.commons.NotificationProducer;
+import com.ecommerce.ecommApp.commons.kafka.Producer;
 import com.ecommerce.ecommApp.commons.Util.CommonsUtil;
 import com.ecommerce.ecommApp.commons.Util.Communication;
 import com.ecommerce.ecommApp.commons.enums.NotificationType;
@@ -13,25 +12,32 @@ import com.ecommerce.ecommApp.commons.pojo.orders.OrdersDTO;
 import com.ecommerce.ecommApp.commons.pojo.products.Product;
 import com.ecommerce.ecommApp.orders.Models.Orders;
 import com.ecommerce.ecommApp.orders.repository.OrderRepository;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javassist.NotFoundException;
+import org.apache.kafka.clients.producer.KafkaProducer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
+import java.util.Properties;
 
 @Service
 public class OrderServices {
     @Autowired
     private OrderRepository orderRepository;
 
+    @Autowired
+    private Environment environment;
+
+    @Autowired
+    private Producer producer;
+
     /**
      * Get all orders for the given customer id
      *
-     * @param customerID
+     * @param customerID ID of the cutsomer whose order history is needed
      * @return list of order of the customer
      * @throws NotFoundException If no order exist for that particular customer
      */
@@ -87,9 +93,12 @@ public class OrderServices {
                 (Communication.sendGetRequest("http://" + Communication.getApplicationAddress() + "/customer/" + order.getCustomerID())
                         , CustomerDto.class);
         OrderPlaced orderPlaced = createOrderPlacedInstance(modes, order, customer);
-        NotificationProducer notificationProducer = CommonsUtil.getNotificationProducer();
-        notificationProducer.producerNotification(objectMapper.writeValueAsString(orderPlaced),
-                EcommAppApplication.environment.getRequiredProperty("notification.order.placed.topic"));
+        Producer producer = CommonsUtil.getProducer();
+        Properties props = producer.getProducerConfigs();
+        KafkaProducer<String, String > kafkaProducer= producer.getKafkaProducer(props);
+        producer.producerRecord(objectMapper.writeValueAsString(orderPlaced),
+                environment.getRequiredProperty(CommonsUtil.NOTIFICATION_ORDER_PLACED_TOPIC),kafkaProducer);
+        producer.closeProducer(kafkaProducer);
     }
 
     /**
