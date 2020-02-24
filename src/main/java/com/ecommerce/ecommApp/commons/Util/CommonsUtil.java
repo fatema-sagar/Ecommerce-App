@@ -1,12 +1,12 @@
 package com.ecommerce.ecommApp.commons.Util;
 
-import com.ecommerce.ecommApp.commons.NotificationProducer;
+import com.ecommerce.ecommApp.commons.kafka.Producer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class CommonsUtil {
 
     private static final ObjectMapper objectMapper;
-    private static final NotificationProducer notificationProducer;
+    private static final Producer PRODUCER;
     public static final String SERVER_PORT="server.port";
     public static final String NOTIFICATION_USER_REGISTERED_SERVICE = "User Registered";
     public static final String NOTIFICATION_ORDER_PLACED_SERVICE = "Order Placed";
@@ -29,12 +29,12 @@ public class CommonsUtil {
     public static final String WRONG_CUSTOMER_ID = "Wrong Customer Id";
 
     static {
-        notificationProducer = new NotificationProducer();
+        PRODUCER = new Producer();
         objectMapper = new ObjectMapper();
     }
 
-    public static NotificationProducer getNotificationProducer() {
-        return notificationProducer;
+    public static Producer getProducer() {
+        return PRODUCER;
     }
 
     public static ObjectMapper getObjectMapper() { return objectMapper; }
