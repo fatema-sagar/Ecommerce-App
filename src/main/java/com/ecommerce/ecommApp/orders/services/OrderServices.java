@@ -31,7 +31,7 @@ public class OrderServices {
     /**
      * Get all orders for the given customer id
      *
-     * @param customerID
+     * @param customerID ID of the cutsomer whose order history is needed
      * @return list of order of the customer
      * @throws NotFoundException If no order exist for that particular customer
      */

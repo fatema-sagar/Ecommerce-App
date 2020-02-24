@@ -28,6 +28,7 @@ public final class ElasticSearchUtil {
     private static final String INET_ADDRESS = "http://localhost:9200";
     private static final String _INDEX = "products";
     private static final String _TYPE = "_doc";
+    private static final String ENDPOINT = "%s/%s/%s/%s";
 
     /**
      * This method is called from the ProductService while adding the product to the database,
@@ -39,7 +40,7 @@ public final class ElasticSearchUtil {
         try {
             ObjectMapper objectMapper = CommonsUtil.getObjectMapper();
             String json = objectMapper.writeValueAsString(product);
-            String endpoint = String.format("%s/%s/%s/%s", INET_ADDRESS, _INDEX, _TYPE, product.getProductId());
+            String endpoint = String.format(ENDPOINT, INET_ADDRESS, _INDEX, _TYPE, product.getProductId());
             logger.info("Data inserted in elastic search : {} : {} " + endpoint, json);
             String response = Communication.sendHttpRequest(endpoint, json, RequestMethod.POST);
             logger.trace("Response : {} ", response);
@@ -60,7 +61,7 @@ public final class ElasticSearchUtil {
             ObjectMapper objectMapper = CommonsUtil.getObjectMapper();
             String productJson = objectMapper.writeValueAsString(product);
             String jsonBody = String.format("{\"doc\":%s}", productJson);
-            String endpoint = String.format("%s/%s/%s/%s", INET_ADDRESS, _INDEX, "_update", product.getProductId());
+            String endpoint = String.format(ENDPOINT, INET_ADDRESS, _INDEX, "_update", product.getProductId());
             Communication.sendHttpRequest(endpoint, jsonBody, RequestMethod.POST);
             logger.info("Data updated in elastic seach for product {}", product.getProductId());
             return true;
@@ -76,7 +77,7 @@ public final class ElasticSearchUtil {
      * @return It returns a boolean value whether the object is deleted from elasticsearch or not.
      */
     public static boolean deleteProduct(long product_id) {
-        String endpoint = String.format("%s/%s/%s/%s", INET_ADDRESS, _INDEX, _TYPE, product_id);
+        String endpoint = String.format(ENDPOINT, INET_ADDRESS, _INDEX, _TYPE, product_id);
         try {
             String response = Communication.sendDeleteRequest(endpoint);
             logger.trace("product deted for id : {} ", product_id);

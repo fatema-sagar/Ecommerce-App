@@ -32,15 +32,16 @@ public class CartService {
 
     /**
      * This function adds requested productIds  to the cart of the customer
-     * @param  payload CartItem as argument
+     *
+     * @param payload CartItem as argument
      * @return :List of Objects of Cart which are added to the cart of customer
      */
 
-    public Cart addToCart(CartItem payload) throws ElementNotFoundException  {
+    public Cart addToCart(CartItem payload) throws ElementNotFoundException {
         Cart cart = new Cart();
         CartIdentity cartIdentity;
-        if(customerRepository.existsById(payload.getCustomerId()) && productRepository.existsById(payload.getProductId()))
-         cartIdentity = new CartIdentity(payload.getCustomerId(), payload.getProductId());
+        if (customerRepository.existsById(payload.getCustomerId()) && productRepository.existsById(payload.getProductId()))
+            cartIdentity = new CartIdentity(payload.getCustomerId(), payload.getProductId());
         else throw new ElementNotFoundException("customerId or productId not present");
         cart.setCartIdentity(cartIdentity);
         cart.setQuantity(payload.getQuantity());
@@ -52,14 +53,15 @@ public class CartService {
     /**
      * This function deletes requested products from the Cart
      * Takes composite id CartIdentity as argument
-     * @param  identity
+     *
+     * @param identity
      * @return :Object of Cart which is deleted
      */
     public Cart deleteFromCart(CartIdentity identity) throws ElementNotFoundException {
         Cart cart = new Cart();
-       if(cartRepository.findById(identity).isPresent())
-         cart = cartRepository.findById(identity).get();
-       else throw new ElementNotFoundException("productId or customerId not present in the repository");
+        if (cartRepository.findById(identity).isPresent())
+            cart = cartRepository.findById(identity).get();
+        else throw new ElementNotFoundException("productId or customerId not present in the repository");
         cartRepository.delete(cart);
         return cart;
     }
@@ -67,6 +69,7 @@ public class CartService {
     /**
      * This function fetches list of Cart for a particular customer
      * Takes customerId as argument
+     *
      * @param customerId
      * @return
      */
@@ -76,9 +79,7 @@ public class CartService {
             Optional<List<Cart>> fetchCartItems = cartRepository.findByCustomerId(customerId);
             List<Cart> fetchedCartItems = fetchCartItems.get();
             return fetchedCartItems;
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             throw new CustomerNotFoundException("Customer with cartId= {} not found");
         }
     }
@@ -86,6 +87,7 @@ public class CartService {
     /**
      * This function updates particular cart item of a particular customer
      * Takes cartItem payload as argument
+     *
      * @param payload
      * @return :Updated cart of the customer
      */
@@ -93,10 +95,10 @@ public class CartService {
     public Cart updateCart(CartItem payload) throws ElementNotFoundException {
         List<Cart> check = cartRepository.existsByProductId(payload.getProductId());
         if (check.size() != 0) {
-            Cart cart=cartRepository.findById(new CartIdentity(payload.getCustomerId(),payload.getProductId())).get();
+            Cart cart = cartRepository.findById(new CartIdentity(payload.getCustomerId(), payload.getProductId())).get();
             int previousQuantity = cart.getQuantity();
-            Float previousCost = cart.getCost();
-            cart.setCost((payload.getQuantity()/previousQuantity)*previousCost);
+            float previousCost = cart.getCost();
+            cart.setCost((payload.getQuantity() / previousQuantity) * previousCost);
             cart.setQuantity(payload.getQuantity());
             return cartRepository.save(cart);
         } else {

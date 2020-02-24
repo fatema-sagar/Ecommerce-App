@@ -43,7 +43,7 @@ public class ProductController {
         try {
             return new ResponseEntity<>(productService.updateProduct(product), HttpStatus.OK);
         } catch (ElementNotFoundException e) {
-            return new ResponseEntity("Unable to update the product details" + e.getMessage(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Unable to update the product details" + e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -81,9 +81,9 @@ public class ProductController {
     private ResponseEntity<Object> getByProductId(@PathVariable long productId) {
         try {
             logger.info("Fetching element {} from Products.", productId);
-            return new ResponseEntity(productService.getProduct(productId), HttpStatus.OK);
+            return new ResponseEntity<>(productService.getProduct(productId), HttpStatus.OK);
         } catch (ElementNotFoundException e) {
-            return new ResponseEntity("ProductId not found" + e.getMessage(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("ProductId not found" + e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -91,9 +91,9 @@ public class ProductController {
     public ResponseEntity<Object> generateProducts() {
         try {
             productService.generateProducts();
-            return new ResponseEntity(new ResponseMessage("Products are Inserted", "GENERATED"), HttpStatus.CREATED);
+            return new ResponseEntity<>(new ResponseMessage("Products are Inserted", "GENERATED"), HttpStatus.CREATED);
         } catch (Exception ex) {
-            return new ResponseEntity(new ResponseMessage("Products are not Inserted", "ERROR"), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new ResponseMessage("Products are not Inserted", "ERROR"), HttpStatus.BAD_REQUEST);
         }
     }
 }
