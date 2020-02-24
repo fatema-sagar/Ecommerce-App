@@ -37,15 +37,17 @@ public class CustomerService {
     private NotificationProducer notificationProducer;
     private CustomerUtil customerUtil;
     private PasswordEncoder passwordEncoder;
+    private AuthenticationManager authenticationManager;
 
     @Autowired
     private CustomerService(JwtTokenProvider jwtTokenProvider, CustomerRepository customerRepository,
-                           PasswordEncoder passwordEncoder) {
+                           PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager) {
         this.customerRepository = customerRepository;
         this.jwtTokenProvider = jwtTokenProvider;
         this.notificationProducer = CommonsUtil.getNotificationProducer();
         this.customerUtil = new CustomerUtil();
         this.passwordEncoder = passwordEncoder;
+        this.authenticationManager=authenticationManager;
     }
 
 
@@ -71,7 +73,7 @@ public class CustomerService {
     public CustomerDto loginCustomer(LoginDto loginDetails) throws NotFoundException {
 
         Optional<Customer> loggedInCustomer = customerRepository.findByEmail(loginDetails.getEmail());
-        if (loggedInCustomer.isPresent() && EcommAppApplication.context.getBean(BCryptPasswordEncoder.class)
+        if (loggedInCustomer.isPresent() && passwordEncoder
                 .matches(loginDetails.getPassword(), loggedInCustomer.get().getPassword())) {
 
             JwtAuthentication jwt = authenticateLogin(loginDetails);
@@ -137,7 +139,7 @@ public class CustomerService {
 
     private JwtAuthentication authenticateLogin(LoginDto loginDetails){
 
-        Authentication authentication = EcommAppApplication.context.getBean(AuthenticationManager.class).authenticate(
+        Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         loginDetails.getEmail(),
                         loginDetails.getPassword()

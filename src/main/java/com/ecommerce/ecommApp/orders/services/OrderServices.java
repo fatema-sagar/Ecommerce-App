@@ -17,6 +17,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -27,6 +28,9 @@ import java.util.Optional;
 public class OrderServices {
     @Autowired
     private OrderRepository orderRepository;
+
+    @Autowired
+    private Environment environment;
 
     /**
      * Get all orders for the given customer id
@@ -89,7 +93,7 @@ public class OrderServices {
         OrderPlaced orderPlaced = createOrderPlacedInstance(modes, order, customer);
         NotificationProducer notificationProducer = CommonsUtil.getNotificationProducer();
         notificationProducer.producerNotification(objectMapper.writeValueAsString(orderPlaced),
-                EcommAppApplication.environment.getRequiredProperty("notification.order.placed.topic"));
+                environment.getRequiredProperty("notification.order.placed.topic"));
     }
 
     /**
