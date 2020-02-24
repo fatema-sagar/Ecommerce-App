@@ -2,6 +2,7 @@ package com.ecommerce.ecommApp.products.services;
 
 import com.ecommerce.ecommApp.commons.exceptions.CustomerNotFoundException;
 import com.ecommerce.ecommApp.commons.pojo.products.Cart;
+import com.ecommerce.ecommApp.customers.repository.CustomerRepository;
 import com.ecommerce.ecommApp.products.composite.CartIdentity;
 import com.ecommerce.ecommApp.commons.exceptions.ElementNotFoundException;
 import com.ecommerce.ecommApp.products.payload.CartItem;
@@ -21,6 +22,9 @@ import java.util.Optional;
 public class CartService {
 
     @Autowired
+    private CustomerRepository customerRepository;
+
+    @Autowired
     private CartRepository cartRepository;
 
     @Autowired
@@ -32,9 +36,12 @@ public class CartService {
      * @return :List of Objects of Cart which are added to the cart of customer
      */
 
-    public Cart addToCart(CartItem payload) {
+    public Cart addToCart(CartItem payload) throws ElementNotFoundException  {
         Cart cart = new Cart();
-        CartIdentity cartIdentity = new CartIdentity(payload.getCustomerId(), payload.getProductId());
+        CartIdentity cartIdentity;
+        if(customerRepository.existsById(payload.getCustomerId()) && productRepository.existsById(payload.getProductId()))
+         cartIdentity = new CartIdentity(payload.getCustomerId(), payload.getProductId());
+        else throw new ElementNotFoundException("customerId or productId not present");
         cart.setCartIdentity(cartIdentity);
         cart.setQuantity(payload.getQuantity());
         cart.setCost(payload.getCost());
@@ -48,8 +55,11 @@ public class CartService {
      * @param  identity
      * @return :Object of Cart which is deleted
      */
-    public Cart deleteFromCart(CartIdentity identity) {
-        Cart cart = cartRepository.findById(identity).get();
+    public Cart deleteFromCart(CartIdentity identity) throws ElementNotFoundException {
+        Cart cart = new Cart();
+       if(cartRepository.findById(identity).isPresent())
+         cart = cartRepository.findById(identity).get();
+       else throw new ElementNotFoundException("productId or customerId not present in the repository");
         cartRepository.delete(cart);
         return cart;
     }

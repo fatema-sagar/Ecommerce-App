@@ -1,7 +1,6 @@
 package com.ecommerce.ecommApp.customers.models;
 
 import lombok.Data;
-import org.springframework.stereotype.Component;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -9,7 +8,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-@Component
 @Entity
 @Table(name = "customer")
 @Data

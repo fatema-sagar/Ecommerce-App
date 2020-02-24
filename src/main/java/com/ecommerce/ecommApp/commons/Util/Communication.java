@@ -11,10 +11,20 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.*;
 
+/**
+ * This class is required to establish connection with the elasticsearch and provide primary communication
+ * of GET, POST, PUT and DELETE methods with the elasticsearch.
+ */
 public class Communication {
 
   private static final Logger logger = LoggerFactory.getLogger(Communication.class);
 
+  /**
+   * This method is used to send a Get Request to the elasticsearch to return all the elements.
+   * This method does not require any body to fetch the data from elasticsearch.
+   * @param endpoint The elasticsearch URL to read the data from.
+   * @return It returns a response from the elastic search.
+   */
   public static String sendGetRequest(String endpoint) {
     try {
       logger.info("Sending request for GET.");
@@ -34,8 +44,9 @@ public class Communication {
         in.close();
         return response.toString();
       }
-    } catch (IOException ex) {
-
+    } catch (IOException io) {
+      logger.error("An IOException occurred while receiving response from the Elasticsearch" +
+              "{}", io.getMessage());
     }
     return null;
   }
@@ -86,10 +97,18 @@ public class Communication {
         return response.toString();
       }
     } catch (IOException io) {
+      logger.error("An IOException occurred while receiving response from the Elasticsearch" +
+              "{}", io.getMessage());
       return null;
     }
   }
 
+  /**
+   * This method is used to delete a entity from the provided index of the elastic search.
+   * This method does not require the body and simply needs an ID to delete an entity.
+   * @param endpoint The request URL for DELETE method.
+   * @return Returns a response message.
+   */
   public static String sendDeleteRequest(String endpoint) {
     try {
       logger.info("Sending DELETE request to elasticsearch");
@@ -101,12 +120,17 @@ public class Communication {
       httpCon.setRequestMethod("DELETE");
       httpCon.connect();
       return httpCon.getResponseMessage();
-    } catch (IOException ex) {
-      logger.error("IOException occurred in DELETE request" + ex.getMessage());
+    } catch (IOException io) {
+      logger.error("IOException occurred in DELETE request" + io.getMessage());
       return null;
     }
   }
 
+  /**
+   * This method is required to establish a connection to the elasticsearch server.
+   * @return The Host address.
+   * @throws Exception In case the host is not available throws an UnknownHostException.
+   */
   public static String getApplicationAddress() throws Exception {
     try {
       InetAddress address = InetAddress.getLocalHost();
@@ -115,12 +139,6 @@ public class Communication {
     } catch (UnknownHostException ex) {
       throw new Exception("Host is not available");
     }
-  }
-  public static void main(String[] g) {
-//        System.out.println(sendGetRequest("https://jsonplaceholder.typicode.com/todos/2"));
-//        System.out.println(sendPostRequest("https://jsonplaceholder.typicode.com/posts","{\"title\":\"foo\",\"body\":\"bar\",\"userId\":1}"));
-//          System.out.println(sendHttpRequest("https://jsonplaceholder.typicode.com/posts","{\"title\":\"foo\",\"body\":\"bar\",\"userId\":1}"
-//                ,RequestMethod.POST));
   }
 
 }

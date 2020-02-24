@@ -5,7 +5,6 @@ import com.ecommerce.ecommApp.notifications.services.OrderCancelledService;
 import com.ecommerce.ecommApp.notifications.services.OrderPlacedService;
 import com.ecommerce.ecommApp.notifications.services.OrderStatusService;
 import com.ecommerce.ecommApp.notifications.services.UserRegisteredService;
-import com.ecommerce.ecommApp.products.services.ProductService;
 import com.twilio.Twilio;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +14,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.reactive.function.client.WebClient;
 
 @SpringBootApplication
 public class EcommAppApplication {
@@ -23,10 +23,6 @@ public class EcommAppApplication {
 
 	public static ConfigurableApplicationContext context;
 	public static Environment environment;
-	@Bean
-	BCryptPasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder();
-	}
 
 	public static void main(String[] args) {
 		context = SpringApplication.run(EcommAppApplication.class, args);
@@ -34,7 +30,7 @@ public class EcommAppApplication {
 		environment = context.getBean(Environment.class);
 		init();
 		log.trace("starting Notification services");
-//		startNotificationServices();
+  	startNotificationServices();
 	}
 
 	public static void startNotificationServices() {
@@ -55,4 +51,10 @@ public class EcommAppApplication {
 	private static void init() {
 		Twilio.init(environment.getRequiredProperty("twilio.sid"),environment.getRequiredProperty("twilio.access.token"));
 	}
+
+	@Bean
+	public WebClient.Builder getWebClientBuilder() {
+		return WebClient.builder();
+	}
+
 }

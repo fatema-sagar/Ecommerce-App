@@ -3,7 +3,6 @@ package com.ecommerce.ecommApp.customers.utils;
 import com.ecommerce.ecommApp.commons.pojo.ResponseMessage;
 import com.ecommerce.ecommApp.commons.pojo.customer.CustomerDto;
 import com.ecommerce.ecommApp.customers.models.Customer;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
