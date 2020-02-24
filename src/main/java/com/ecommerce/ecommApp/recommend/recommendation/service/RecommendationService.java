@@ -1,9 +1,9 @@
 package com.ecommerce.ecommApp.recommend.recommendation.service;
 
+import com.ecommerce.ecommApp.commons.exceptions.ElementNotFoundException;
 import com.ecommerce.ecommApp.commons.pojo.products.Product;
 import com.ecommerce.ecommApp.recommend.view.service.FetchViewedProduct;
 import com.ecommerce.ecommApp.products.ElasticSearchUtil;
-import com.ecommerce.ecommApp.commons.exceptions.ElementNotFoundException;
 import com.ecommerce.ecommApp.products.services.ProductService;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONException;
