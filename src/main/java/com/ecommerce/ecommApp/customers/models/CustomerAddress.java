@@ -33,6 +33,9 @@ public class CustomerAddress {
     @Column(name="type")
     private String type;
 
+    @Column(name="landmark")
+    private String landmark;
+
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "customer_id", nullable = false)
