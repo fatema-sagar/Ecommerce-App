@@ -1,5 +1,6 @@
 package com.ecommerce.ecommApp.invoice.invoiceSend.controller;
 
+import com.ecommerce.ecommApp.commons.Util.CommonsUtil;
 import com.ecommerce.ecommApp.invoice.invoiceSend.dto.SendInvoiceDto;
 import com.ecommerce.ecommApp.invoice.invoiceSend.service.SendInvoiceService;
 import com.sendgrid.Response;
@@ -13,14 +14,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Slf4j
 @Controller
-@RequestMapping("/send")
+@RequestMapping(CommonsUtil.INVOICE)
 public class InvoiceSendController {
 
     @Autowired
     private SendInvoiceService sendInvoiceService;
 
 
-    @RequestMapping("/invoice")
+    @RequestMapping(CommonsUtil.INVOICE_SEND)
     public ResponseEntity<Response> sendInvoice(@RequestBody SendInvoiceDto sendInvoiceDto) {
 
         log.trace("Called send invoice controller for email id {}", sendInvoiceDto.getTo());

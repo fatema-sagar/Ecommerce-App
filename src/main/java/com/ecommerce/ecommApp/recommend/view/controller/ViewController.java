@@ -1,5 +1,6 @@
 package com.ecommerce.ecommApp.recommend.view.controller;
 
+import com.ecommerce.ecommApp.commons.Util.CommonsUtil;
 import com.ecommerce.ecommApp.recommend.view.dto.ViewProductDto;
 import com.ecommerce.ecommApp.recommend.view.dto.response.ApiResponse;
 import com.ecommerce.ecommApp.recommend.view.service.ViewService;
@@ -14,13 +15,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import javax.validation.Valid;
 
 @Controller
-@RequestMapping("/view")
+@RequestMapping(CommonsUtil.VIEWED)
 public class ViewController {
 
     @Autowired
     private ViewService viewService;
 
-    @PostMapping("/product")
+    @PostMapping(CommonsUtil.VIEW_PRODUCT)
     public ResponseEntity<ApiResponse> viewProduct(@Valid  @RequestBody ViewProductDto viewProductDto) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new ApiResponse(HttpStatus.OK,

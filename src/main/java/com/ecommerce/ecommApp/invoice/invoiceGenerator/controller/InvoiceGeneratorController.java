@@ -1,5 +1,6 @@
 package com.ecommerce.ecommApp.invoice.invoiceGenerator.controller;
 
+import com.ecommerce.ecommApp.commons.Util.CommonsUtil;
 import com.ecommerce.ecommApp.invoice.invoiceGenerator.dto.InvoiceRequestDto;
 import com.ecommerce.ecommApp.invoice.invoiceGenerator.service.InvoiceGeneratorService;
 import com.ecommerce.ecommApp.recommend.view.dto.response.ApiResponse;
@@ -15,13 +16,13 @@ import javax.validation.Valid;
 
 @Slf4j
 @Controller
-@RequestMapping("/invoice")
+@RequestMapping(CommonsUtil.INVOICE)
 public class InvoiceGeneratorController {
 
     @Autowired
     private InvoiceGeneratorService invoiceGenerate;
 
-    @RequestMapping("/generator")
+    @RequestMapping(CommonsUtil.INVOICE_GENERATE)
     public ResponseEntity<ApiResponse> invoiceGenerator(@Valid @RequestBody InvoiceRequestDto invoiceRequestDto) {
 
         log.info("Invoice generator called with customer id : " + invoiceRequestDto.getCustomerId());
