@@ -6,11 +6,13 @@ import com.ecommerce.ecommApp.commons.Util.CommonsUtil;
 import com.ecommerce.ecommApp.commons.pojo.JwtAuthentication;
 import com.ecommerce.ecommApp.commons.pojo.customer.CustomerDto;
 import com.ecommerce.ecommApp.commons.pojo.notification.UserRegistered;
-import com.ecommerce.ecommApp.commons.security.*;
+import com.ecommerce.ecommApp.commons.security.JwtTokenProvider;
 import com.ecommerce.ecommApp.customers.dto.LoginDto;
 import com.ecommerce.ecommApp.customers.dto.RegistrationDto;
 import com.ecommerce.ecommApp.customers.exceptions.EmailExistsException;
 import com.ecommerce.ecommApp.customers.models.Customer;
+import com.ecommerce.ecommApp.customers.models.CustomerAddress;
+import com.ecommerce.ecommApp.customers.repository.CustomerAddressRepository;
 import com.ecommerce.ecommApp.customers.repository.CustomerRepository;
 import com.ecommerce.ecommApp.commons.enums.NotificationType;
 import com.ecommerce.ecommApp.customers.utils.CustomerUtil;
@@ -27,6 +29,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Properties;
@@ -39,18 +42,20 @@ public class CustomerService {
     private Producer producer;
     private CustomerUtil customerUtil;
     private PasswordEncoder passwordEncoder;
+    private CustomerAddressRepository customerAddressRepository;
     private AuthenticationManager authenticationManager;
     private  Environment environment;
 
     @Autowired
     private CustomerService(JwtTokenProvider jwtTokenProvider, CustomerRepository customerRepository,
                            PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager,
-                            Producer producer, Environment environment) {
+                            Producer producer, Environment environment, CustomerAddressRepository addressRepository) {
         this.customerRepository = customerRepository;
         this.jwtTokenProvider = jwtTokenProvider;
         this.producer = producer;
         this.customerUtil = new CustomerUtil();
         this.passwordEncoder = passwordEncoder;
+        this.customerAddressRepository = addressRepository;
         this.authenticationManager=authenticationManager;
         this.environment=environment;
     }
@@ -122,6 +127,29 @@ public class CustomerService {
         }
     }
 
+    public CustomerAddress addCustomerAddress(CustomerAddress addressDetails, String token){
+
+        Long customerId = jwtTokenProvider.getUserIdFromJWT(token);
+        if(customerRepository.findById(customerId).isPresent()) {
+
+            Customer customer = customerRepository.findById(customerId).get();
+            addressDetails.setCustomer(customer);
+            customerAddressRepository.save(addressDetails);
+            return addressDetails;
+        }
+        else
+            throw new NoSuchElementException(CommonsUtil.CUSTOMER_NOT_FOUND);
+    }
+
+    public List<CustomerAddress> getCustomerAddresses(String token){
+
+        Long customerId = jwtTokenProvider.getUserIdFromJWT(token);
+        if(customerRepository.findById(customerId).isPresent()){
+            Customer customer = customerRepository.findById(customerId).get();
+            return customerAddressRepository.findByCustomer(customer);
+        } else
+            throw new NoSuchElementException(CommonsUtil.CUSTOMER_NOT_FOUND);
+    }
     private void sendRegistrationNotification(CustomerDto customerDto) {
         ObjectMapper objectMapper = new ObjectMapper();
         UserRegistered userRegistered = new UserRegistered();
