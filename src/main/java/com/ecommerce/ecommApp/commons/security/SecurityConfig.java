@@ -15,6 +15,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.stereotype.Service;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 @EnableWebSecurity
@@ -28,15 +31,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private CustomUserDetailsService customUserDetailsService;
     private JwtAuthenticationEntryPoint unauthorizedHandler;
-    private JwtAuthenticationFilter jwtAuthenticationFilter;
+    private JwtTokenProvider tokenProvider;
 
     @Autowired
-    public SecurityConfig(CustomUserDetailsService customUserDetailsService,
-                          JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint,
-                          JwtAuthenticationFilter jwtAuthenticationFilter) {
-        this.customUserDetailsService = customUserDetailsService;
-        this.unauthorizedHandler = jwtAuthenticationEntryPoint;
-        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+    public SecurityConfig(CustomUserDetailsService userDetailsService, JwtAuthenticationEntryPoint entryPoint,
+                          JwtTokenProvider tokenProvider) {
+        this.customUserDetailsService = userDetailsService;
+        this.unauthorizedHandler = entryPoint;
+        this.tokenProvider = tokenProvider;
 
     }
 
@@ -72,13 +74,22 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers("/**")
+                .antMatchers("/login")
                 .permitAll()
                 .anyRequest()
-                .authenticated();
+                .authenticated()
+                .and()
+                .addFilter(new JwtAuthenticationFilter(authenticationManager(), tokenProvider))
+                .addFilter(new JwtAuthorizationFilter(authenticationManager(), tokenProvider, customUserDetailsService));
 
-        // Add custom JWT(Json Web Token) security filter
-        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", new CorsConfiguration().applyPermitDefaultValues());
+
+        return source;
     }
 }
 

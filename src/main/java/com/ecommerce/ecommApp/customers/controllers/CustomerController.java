@@ -31,13 +31,8 @@ import java.util.NoSuchElementException;
 @RestController
 class CustomerController {
 
-    private CustomerService customerService;
-    private JwtTokenProvider tokenProvider;
     @Autowired
-    private CustomerController(CustomerService customerService, JwtTokenProvider tokenProvider){
-        this.customerService = customerService;
-        this.tokenProvider = tokenProvider;
-    }
+    private CustomerService customerService;
 
     /**
      * Post method to register a customer
@@ -112,25 +107,16 @@ class CustomerController {
     /**
      *
      * @param address -{@link CustomerAddress} customer address details
-     * @param token - JWT authentication token
      * @return - Response entity of saved customer address
      */
-    @PostMapping("/customer/address")
+    @PostMapping("/customer/address/{id}")
     private ResponseEntity<Object> addAddress(@RequestBody @Valid CustomerAddress address,
-                                              @RequestHeader(name = "Authorization") String token){
+                                              @PathVariable(name = "id") Long customerId){
         try{
-            if(tokenProvider.validateToken(token)) {
-                CustomerAddress newAddress = customerService.addCustomerAddress(address,token);
+                CustomerAddress newAddress = customerService.addCustomerAddress(address,customerId);
                 return new ResponseEntity<>(newAddress, HttpStatus.OK);
-            }
-            else
-                throw new AccessDeniedException("Invalid Token");
-        }
-        catch (AccessDeniedException exception) {
-            return new ResponseEntity<>(new ResponseMessage("Cannot add Address. "+exception.getMessage(),"error"),
-                    HttpStatus.FORBIDDEN);
-        }
-        catch(NoSuchElementException exception){
+
+        } catch(NoSuchElementException exception){
             return new ResponseEntity<>(new ResponseMessage("Unsuccessful. "+exception.getMessage(),"error"),
                     HttpStatus.FORBIDDEN);
         }
@@ -138,18 +124,15 @@ class CustomerController {
 
     /**
      *
-     * @param token - Jwt Authentication Token to manage logged in users
      * @return - List<{@link CustomerAddress} in the form of Response Entity.
      */
-    @GetMapping("/customer/address")
-    private ResponseEntity<Object> getAddresses(@RequestHeader(name = "Authorization") String token){
+    @GetMapping("/customer/address/{id}")
+    private ResponseEntity<Object> getAddresses(@PathVariable(name = "id") Long customerId){
         try{
-            if(tokenProvider.validateToken(token)){
-                List<CustomerAddress> customerAddressList = customerService.getCustomerAddresses(token);
+
+                List<CustomerAddress> customerAddressList = customerService.getCustomerAddresses(customerId);
                 return new ResponseEntity<>(customerAddressList, HttpStatus.OK);
-            }
-            else
-                throw new AccessDeniedException("Invalid Token");
+
         }catch(Exception exception){
             return new ResponseEntity<>(new ResponseMessage("Unsuccessful. "+exception.getMessage(),"error"),
                     HttpStatus.FORBIDDEN);

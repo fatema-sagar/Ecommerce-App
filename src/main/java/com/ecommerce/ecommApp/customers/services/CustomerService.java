@@ -38,25 +38,20 @@ import java.util.Properties;
 public class CustomerService {
 
     private CustomerRepository customerRepository;
-    private JwtTokenProvider jwtTokenProvider;
     private Producer producer;
     private CustomerUtil customerUtil;
     private PasswordEncoder passwordEncoder;
     private CustomerAddressRepository customerAddressRepository;
-    private AuthenticationManager authenticationManager;
     private  Environment environment;
 
     @Autowired
-    private CustomerService(JwtTokenProvider jwtTokenProvider, CustomerRepository customerRepository,
-                           PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager,
+    private CustomerService(CustomerRepository customerRepository, PasswordEncoder passwordEncoder,
                             Producer producer, Environment environment, CustomerAddressRepository addressRepository) {
         this.customerRepository = customerRepository;
-        this.jwtTokenProvider = jwtTokenProvider;
         this.producer = producer;
         this.customerUtil = new CustomerUtil();
         this.passwordEncoder = passwordEncoder;
         this.customerAddressRepository = addressRepository;
-        this.authenticationManager=authenticationManager;
         this.environment=environment;
     }
 
@@ -86,9 +81,7 @@ public class CustomerService {
         if (loggedInCustomer.isPresent() && passwordEncoder
                 .matches(loginDetails.getPassword(), loggedInCustomer.get().getPassword())) {
 
-            JwtAuthentication jwt = authenticateLogin(loginDetails);
             CustomerDto customer = customerUtil.convertToPojo(loggedInCustomer.get());
-            customer.setJwt(jwt);
             return customer;
         } else {
             throw new NotFoundException(CommonsUtil.CUSTOMER_NOT_FOUND);
@@ -127,9 +120,8 @@ public class CustomerService {
         }
     }
 
-    public CustomerAddress addCustomerAddress(CustomerAddress addressDetails, String token){
+    public CustomerAddress addCustomerAddress(CustomerAddress addressDetails, Long customerId){
 
-        Long customerId = jwtTokenProvider.getUserIdFromJWT(token);
         if(customerRepository.findById(customerId).isPresent()) {
 
             Customer customer = customerRepository.findById(customerId).get();
@@ -141,9 +133,8 @@ public class CustomerService {
             throw new NoSuchElementException(CommonsUtil.CUSTOMER_NOT_FOUND);
     }
 
-    public List<CustomerAddress> getCustomerAddresses(String token){
+    public List<CustomerAddress> getCustomerAddresses(Long customerId){
 
-        Long customerId = jwtTokenProvider.getUserIdFromJWT(token);
         if(customerRepository.findById(customerId).isPresent()){
             Customer customer = customerRepository.findById(customerId).get();
             return customerAddressRepository.findByCustomer(customer);
@@ -170,19 +161,6 @@ public class CustomerService {
     private boolean emailExists(String email) {
         Optional<Customer> customer = customerRepository.findByEmail(email);
         return customer.isPresent();
-    }
-
-    private JwtAuthentication authenticateLogin(LoginDto loginDetails){
-
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        loginDetails.getEmail(),
-                        loginDetails.getPassword()
-                )
-        );
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        String jwt = jwtTokenProvider.generateToken(authentication);
-        return new JwtAuthentication(jwt);
     }
 
 }
