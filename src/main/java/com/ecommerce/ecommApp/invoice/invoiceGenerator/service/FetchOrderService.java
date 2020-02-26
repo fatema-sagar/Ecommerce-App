@@ -21,7 +21,7 @@ import java.util.Collections;
 
 @Slf4j
 @Service
-public class FetchOrderService extends Thread {
+public class FetchOrderService {
 
     private Consumer consumer;
     private KafkaConsumer kafkaConsumer;
@@ -50,20 +50,13 @@ public class FetchOrderService extends Thread {
     }
 
     /**
-     * this thread use for fetching the order from  order placed topic
-     */
-    @Override
-    public void run() {
-        this.fetchOrder();
-    }
-
-    /**
      * method for fetching the record from order placed topic
      * then convert to OrdersDto which contain the details of order
      * call the invoiceGenerate method of invoiceGenerateService for generate the invoice
      */
-    private void fetchOrder() {
+    public void fetchOrder() {
 
+        log.info("Start the fetch service for consume the record from topic");
         kafkaConsumer.subscribe(Collections.singleton(
                 environment.getProperty(CommonsUtil.NOTIFICATION_ORDER_PLACED_TOPIC)));
 
