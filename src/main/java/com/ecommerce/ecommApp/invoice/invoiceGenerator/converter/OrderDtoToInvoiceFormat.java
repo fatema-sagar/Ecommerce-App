@@ -28,7 +28,6 @@ public class OrderDtoToInvoiceFormat {
      */
     public InvoiceFormatDto convertToInvoiceFormatDto(OrdersDTO ordersDTO) {
 
-        List<InvoiceFormatDto> list = new ArrayList<>();
 
             InvoiceFormatDto invoiceFormatDto = new InvoiceFormatDto();
             InvoiceDetails invoiceDetails = new InvoiceDetails();
@@ -54,8 +53,6 @@ public class OrderDtoToInvoiceFormat {
                 invoiceFormatDto.setSoldBy("Amit");
                 invoiceFormatDto.setInvoiceDetails(invoiceDetails);
                 invoiceFormatDto.setTitle("Amazon.in");
-
-                list.add(invoiceFormatDto);
 
             } catch (ElementNotFoundException e) {
                 log.error("Element not found exception : " + e.getMessage() + "\nCause : " + e.getCause());
