@@ -29,6 +29,11 @@ public class RecommendationService {
     private ProductService productService;
 
 
+    /**
+     * method used to fetch the recommended product for user
+     * @param customerId for filter the view product of same user
+     * @return set of product what is recommended for user
+     */
     public Set<Product> fetchRecommendedProduct(Long customerId) {
 
         List<Long> viewProductList;
@@ -46,6 +51,11 @@ public class RecommendationService {
         return products;
     }
 
+    /**
+     * method used to fetch the similar product
+     * @param product product what we have to search in elastic search for recommended product
+     * @return set of recommended product
+     */
     private Set<Product> searchProductElasticSearch(Product product) {
         Set<Product> products = new HashSet<>();
         JSONObject jsonObject = new JSONObject();

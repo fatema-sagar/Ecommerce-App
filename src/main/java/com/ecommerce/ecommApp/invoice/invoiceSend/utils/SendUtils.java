@@ -12,5 +12,4 @@ public class SendUtils {
     public static String VENDOR_EMAIL = "verma1511amit@gmail.com";
     public static String CONTENT_MESSAGE = "Product Invoice";
     public static String SUBJECT = "Invoice";
-    public static String SEND_CONTROLLER_PATH = "/send/invoice";
 }

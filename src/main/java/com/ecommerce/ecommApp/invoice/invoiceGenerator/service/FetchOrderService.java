@@ -30,6 +30,13 @@ public class FetchOrderService extends Thread {
     private OrderServices orderServices;
     private InvoiceGeneratorService invoiceGeneratorService;
 
+    /**
+     * constructor for initialize the local variable
+     * @param consumer provide KafkaConsumer
+     * @param environment for access the application properties value
+     * @param orderServices for getting the details of user order
+     * @param invoiceGeneratorService for generate the invoice
+     */
     @Autowired
     public FetchOrderService(Consumer consumer, Environment environment, OrderServices orderServices,
                              InvoiceGeneratorService invoiceGeneratorService) {
@@ -42,11 +49,19 @@ public class FetchOrderService extends Thread {
         this.invoiceGeneratorService = invoiceGeneratorService;
     }
 
+    /**
+     * this thread use for fetching the order from  order placed topic
+     */
     @Override
     public void run() {
         this.fetchOrder();
     }
 
+    /**
+     * method for fetching the record from order placed topic
+     * then convert to OrdersDto which contain the details of order
+     * call the invoiceGenerate method of invoiceGenerateService for generate the invoice
+     */
     private void fetchOrder() {
 
         kafkaConsumer.subscribe(Collections.singleton(

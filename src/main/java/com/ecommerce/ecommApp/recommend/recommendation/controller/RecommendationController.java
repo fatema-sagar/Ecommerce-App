@@ -21,6 +21,11 @@ public class RecommendationController {
     @Autowired
     private RecommendationService recommendationService;
 
+    /**
+     * get api for fetching the recommended product
+     * @param customerId request param of customer id
+     * @return list of recommended products
+     */
     @GetMapping(CommonsUtil.FETCH_RECOMMENDATION)
     public ResponseEntity<ApiResponse> fetchRecommendation(@RequestParam( value = "id", required = true) Long customerId) {
         Set<Product> products = recommendationService.fetchRecommendedProduct(customerId);

@@ -10,6 +10,10 @@ public class HeaderFooterService extends PdfPageEventHelper {
     private String header;
     private PdfTemplate total;
 
+    /**
+     * use to set the header of document
+     * @param header contain message
+     */
     public void setHeader(String header) {
         this.header = header;
     }

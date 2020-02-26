@@ -28,12 +28,20 @@ public class FetchViewProductsStream {
     private Environment environment;
     private ObjectMapper objectMapper;
 
+    /**
+     * constructor used to initialize the local variable
+     * @param environment used to access the application properties value
+     */
     @Autowired
     public FetchViewProductsStream(Environment environment) {
         this.objectMapper = CommonsUtil.getObjectMapper();
         this.environment = environment;
     }
 
+    /**
+     * used to get the properties for kafka stream
+     * @return object of properties
+     */
     private Properties getStreamProperties() {
         Properties properties = new Properties();
 
@@ -48,6 +56,11 @@ public class FetchViewProductsStream {
         return properties;
     }
 
+    /**
+     * used to start the stream process
+     * @param customerId for filter the view product for same user
+     * @return list of  ids of view product
+     */
     public List<Long> start(Long customerId) {
         List<Long> viewProducts = new ArrayList<>();
         Properties properties = getStreamProperties();
@@ -68,6 +81,13 @@ public class FetchViewProductsStream {
         return viewProducts;
     }
 
+    /**
+     * create the topology for running the stream process
+     * @param properties
+     * @param list list of view products id
+     * @param customerId user id for filter the user record
+     * @return kafka stream object for start the topology
+     */
     private KafkaStreams createTopology(Properties properties, List<Long> list, Long customerId) {
 
         StreamsBuilder builder = new StreamsBuilder();
@@ -87,6 +107,11 @@ public class FetchViewProductsStream {
         return new KafkaStreams(builder.build(), properties);
     }
 
+    /**
+     * get the key from record
+     * @param value view product record
+     * @return product id
+     */
     private Long selectKey(String  value) {
         try {
             ViewProductDto viewProductDto = objectMapper.readValue(value, ViewProductDto.class);
@@ -96,6 +121,12 @@ public class FetchViewProductsStream {
         }
     }
 
+    /**
+     * used to validate the view for user
+     * @param value view product
+     * @param customerId user id for filter the view product
+     * @return return true if view is valid otherwise false
+     */
     private Boolean isValidView(String value, Long customerId) {
         try {
             ViewProductDto viewProductDto = objectMapper.readValue(value, ViewProductDto.class);

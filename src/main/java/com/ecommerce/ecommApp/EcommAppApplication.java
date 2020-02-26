@@ -51,6 +51,9 @@ public class EcommAppApplication {
         orderStatusThread.start();
     }
 
+    /**
+     * used to start the invoice send thread
+     */
     private void startInvoiceSendService() {
         FetchOrderService fetchOrderService = context.getBean(FetchOrderService.class);
         fetchOrderService.setName("Invoice Send");
