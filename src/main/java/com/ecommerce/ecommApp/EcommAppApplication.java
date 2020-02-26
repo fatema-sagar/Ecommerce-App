@@ -33,7 +33,7 @@ public class EcommAppApplication {
         appApplication.init();
         log.trace("starting Notification services");
 //		appApplication.startNotificationServices();
-        appApplication.startInvoiceSendService();
+//        appApplication.startInvoiceSendService();
     }
 
     private void startNotificationServices() {

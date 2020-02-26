@@ -28,30 +28,43 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) {
 
-        CustomerLoginDto customerLoginDto = new CustomerLoginDto();
+        LoginRequest loginRequest = new LoginRequest();
 
         try {
-            customerLoginDto = new ObjectMapper()
-                    .readValue(request.getInputStream(), CustomerLoginDto.class);
-            log.info("Email id {} and password is {}", customerLoginDto.getEmailId(), customerLoginDto.getPassword() );
+            loginRequest = new ObjectMapper()
+                    .readValue(request.getInputStream(), LoginRequest.class);
+            log.info("Email id {} and password is {}", loginRequest.getEmailId(), loginRequest.getPassword() );
 
         } catch (IOException e) {
-            customerLoginDto.setEmailId("");
-            customerLoginDto.setPassword("");
+            loginRequest.setEmailId("");
+            loginRequest.setPassword("");
             e.printStackTrace();
         }
 
         UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(customerLoginDto.getEmailId(), customerLoginDto.getPassword(), new ArrayList<>());
+                new UsernamePasswordAuthenticationToken(loginRequest.getEmailId(), loginRequest.getPassword(), new ArrayList<>());
 
         return authenticationManager.authenticate(authenticationToken);
     }
 
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response,
-                                            FilterChain filterChain, Authentication authentication) {
+                                            FilterChain filterChain, Authentication authentication) throws IOException {
 
         String token = tokenProvider.generateToken(authentication, new ArrayList<>());
+
+        CustomerPrincipal customerDetails = (CustomerPrincipal) authentication.getPrincipal();
+        LoginResponse loginResponse = new LoginResponse();
+
+        loginResponse.setCustomerId(customerDetails.getId());
+        loginResponse.setCustomerName(customerDetails.getName());
+        loginResponse.setEmailId(customerDetails.getEmail());
+        loginResponse.setHeader(SecurityConstants.TOKEN_HEADER);
+        loginResponse.setToken(SecurityConstants.TOKEN_PREFIX + token);
+
         response.addHeader(SecurityConstants.TOKEN_HEADER, SecurityConstants.TOKEN_PREFIX + token);
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        response.getWriter().write(new ObjectMapper().writeValueAsString(loginResponse));
     }
 }

@@ -1,38 +1,27 @@
 package com.ecommerce.ecommApp.customers.services;
 
-import com.ecommerce.ecommApp.EcommAppApplication;
-import com.ecommerce.ecommApp.commons.kafka.Producer;
 import com.ecommerce.ecommApp.commons.Util.CommonsUtil;
-import com.ecommerce.ecommApp.commons.pojo.JwtAuthentication;
+import com.ecommerce.ecommApp.commons.enums.NotificationType;
+import com.ecommerce.ecommApp.commons.kafka.Producer;
 import com.ecommerce.ecommApp.commons.pojo.customer.CustomerDto;
 import com.ecommerce.ecommApp.commons.pojo.notification.UserRegistered;
-import com.ecommerce.ecommApp.commons.security.JwtTokenProvider;
-import com.ecommerce.ecommApp.customers.dto.LoginDto;
 import com.ecommerce.ecommApp.customers.dto.RegistrationDto;
 import com.ecommerce.ecommApp.customers.exceptions.EmailExistsException;
 import com.ecommerce.ecommApp.customers.models.Customer;
 import com.ecommerce.ecommApp.customers.models.CustomerAddress;
 import com.ecommerce.ecommApp.customers.repository.CustomerAddressRepository;
 import com.ecommerce.ecommApp.customers.repository.CustomerRepository;
-import com.ecommerce.ecommApp.commons.enums.NotificationType;
 import com.ecommerce.ecommApp.customers.utils.CustomerUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javassist.NotFoundException;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
-import java.util.Properties;
+import java.util.*;
 
 @Service
 public class CustomerService {
@@ -73,19 +62,6 @@ public class CustomerService {
         CustomerDto customerDto = customerUtil.convertToPojo(customer);
         sendRegistrationNotification(customerDto);
         return customerDto;
-    }
-
-    public CustomerDto loginCustomer(LoginDto loginDetails) throws NotFoundException {
-
-        Optional<Customer> loggedInCustomer = customerRepository.findByEmail(loginDetails.getEmail());
-        if (loggedInCustomer.isPresent() && passwordEncoder
-                .matches(loginDetails.getPassword(), loggedInCustomer.get().getPassword())) {
-
-            CustomerDto customer = customerUtil.convertToPojo(loggedInCustomer.get());
-            return customer;
-        } else {
-            throw new NotFoundException(CommonsUtil.CUSTOMER_NOT_FOUND);
-        }
     }
 
     public CustomerDto getCustomerDetails(Long customerId) throws NotFoundException {
