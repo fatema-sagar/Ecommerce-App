@@ -13,10 +13,14 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.stereotype.Service;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 @EnableWebSecurity
+@Service
 @EnableGlobalMethodSecurity(
         securedEnabled = true,
         jsr250Enabled = true,
@@ -24,15 +28,17 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 )
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Autowired
-    CustomUserDetailsService customUserDetailsService;
-
-    @Autowired
+    private CustomUserDetailsService customUserDetailsService;
     private JwtAuthenticationEntryPoint unauthorizedHandler;
+    private JwtTokenProvider tokenProvider;
 
-    @Bean
-    public JwtAuthenticationFilter jwtAuthenticationFilter() {
-        return new JwtAuthenticationFilter();
+    @Autowired
+    public SecurityConfig(CustomUserDetailsService userDetailsService, JwtAuthenticationEntryPoint entryPoint,
+                          JwtTokenProvider tokenProvider) {
+        this.customUserDetailsService = userDetailsService;
+        this.unauthorizedHandler = entryPoint;
+        this.tokenProvider = tokenProvider;
+
     }
 
     @Override
@@ -67,12 +73,34 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers("/**")
+                .antMatchers("/register")
                 .permitAll()
                 .anyRequest()
-                .authenticated();
+                .authenticated()
+                .and()
+                .addFilter(new JwtAuthenticationFilter(authenticationManager(), tokenProvider))
+                .addFilter(new JwtAuthorizationFilter(authenticationManager(), tokenProvider, customUserDetailsService));
 
-        // Add custom JWT(Json Web Token) security filter
-        http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", new CorsConfiguration().applyPermitDefaultValues());
+
+        return source;
     }
 }
+
+/*
+    /register
+    /login
+    /product/filterBy
+    /product/search
+    /product/search
+    /display
+    /category
+    /product/{}
+    /viewed/product
+ */
+

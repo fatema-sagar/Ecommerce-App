@@ -2,8 +2,6 @@ package com.ecommerce.ecommApp.customers.controllers;
 
 import com.ecommerce.ecommApp.commons.pojo.ResponseMessage;
 import com.ecommerce.ecommApp.commons.pojo.customer.CustomerDto;
-import com.ecommerce.ecommApp.commons.security.JwtTokenProvider;
-import com.ecommerce.ecommApp.customers.dto.LoginDto;
 import com.ecommerce.ecommApp.customers.dto.RegistrationDto;
 import com.ecommerce.ecommApp.customers.exceptions.EmailExistsException;
 import com.ecommerce.ecommApp.customers.models.CustomerAddress;
@@ -12,16 +10,9 @@ import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.nio.file.AccessDeniedException;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -31,13 +22,8 @@ import java.util.NoSuchElementException;
 @RestController
 class CustomerController {
 
-    private CustomerService customerService;
-    private JwtTokenProvider tokenProvider;
     @Autowired
-    private CustomerController(CustomerService customerService, JwtTokenProvider tokenProvider){
-        this.customerService = customerService;
-        this.tokenProvider = tokenProvider;
-    }
+    private CustomerService customerService;
 
     /**
      * Post method to register a customer
@@ -55,24 +41,6 @@ class CustomerController {
         catch (EmailExistsException exception){
             return new ResponseEntity<>(new ResponseMessage("Registration unsuccessful. ","error"),
                     HttpStatus.BAD_REQUEST);
-        }
-    }
-
-    /**
-     * Post request to login a customer
-     * @param loginDetails - login credentials of customer
-     * @return - {@link ResponseEntity}
-     */
-    @PostMapping("/login")
-    private ResponseEntity<Object> login(@RequestBody @Valid LoginDto loginDetails){
-
-        try{
-            CustomerDto customerDetails = customerService.loginCustomer(loginDetails);
-            return new ResponseEntity<>(customerDetails,HttpStatus.OK);
-        }
-        catch (NotFoundException exception){
-            return new ResponseEntity<>(new ResponseMessage("Login Unsuccessful. ","error"),
-                    HttpStatus.FORBIDDEN);
         }
     }
 
@@ -112,25 +80,16 @@ class CustomerController {
     /**
      *
      * @param address -{@link CustomerAddress} customer address details
-     * @param token - JWT authentication token
      * @return - Response entity of saved customer address
      */
-    @PostMapping("/customer/address")
+    @PostMapping("/customer/address/{id}")
     private ResponseEntity<Object> addAddress(@RequestBody @Valid CustomerAddress address,
-                                              @RequestHeader(name = "Authorization") String token){
+                                              @PathVariable(name = "id") Long customerId){
         try{
-            if(tokenProvider.validateToken(token)) {
-                CustomerAddress newAddress = customerService.addCustomerAddress(address,token);
+                CustomerAddress newAddress = customerService.addCustomerAddress(address,customerId);
                 return new ResponseEntity<>(newAddress, HttpStatus.OK);
-            }
-            else
-                throw new AccessDeniedException("Invalid Token");
-        }
-        catch (AccessDeniedException exception) {
-            return new ResponseEntity<>(new ResponseMessage("Cannot add Address. "+exception.getMessage(),"error"),
-                    HttpStatus.FORBIDDEN);
-        }
-        catch(NoSuchElementException exception){
+
+        } catch(NoSuchElementException exception){
             return new ResponseEntity<>(new ResponseMessage("Unsuccessful. "+exception.getMessage(),"error"),
                     HttpStatus.FORBIDDEN);
         }
@@ -138,18 +97,15 @@ class CustomerController {
 
     /**
      *
-     * @param token - Jwt Authentication Token to manage logged in users
      * @return - List<{@link CustomerAddress} in the form of Response Entity.
      */
-    @GetMapping("/customer/address")
-    private ResponseEntity<Object> getAddresses(@RequestHeader(name = "Authorization") String token){
+    @GetMapping("/customer/address/{id}")
+    private ResponseEntity<Object> getAddresses(@PathVariable(name = "id") Long customerId){
         try{
-            if(tokenProvider.validateToken(token)){
-                List<CustomerAddress> customerAddressList = customerService.getCustomerAddresses(token);
+
+                List<CustomerAddress> customerAddressList = customerService.getCustomerAddresses(customerId);
                 return new ResponseEntity<>(customerAddressList, HttpStatus.OK);
-            }
-            else
-                throw new AccessDeniedException("Invalid Token");
+
         }catch(Exception exception){
             return new ResponseEntity<>(new ResponseMessage("Unsuccessful. "+exception.getMessage(),"error"),
                     HttpStatus.FORBIDDEN);

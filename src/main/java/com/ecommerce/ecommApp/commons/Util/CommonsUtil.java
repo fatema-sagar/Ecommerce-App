@@ -2,6 +2,7 @@ package com.ecommerce.ecommApp.commons.Util;
 
 import com.ecommerce.ecommApp.commons.kafka.Producer;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.kafka.common.protocol.types.Field;
 
 public class CommonsUtil {
 
@@ -27,6 +28,31 @@ public class CommonsUtil {
     public static final String EMAIL_EXISTS = "There is an account with this email address:";
     public static final String CUSTOMER_NOT_FOUND = "Customer Not Found";
     public static final String WRONG_CUSTOMER_ID = "Wrong Customer Id";
+
+    // endpoint for invoice generator
+    public static final String INVOICE = "/invoice";
+    public static final String INVOICE_GENERATE = "/generate";
+
+    // endpoint for invoice send
+    public static final String INVOICE_SEND = "/send";
+
+    // endpoint for recommendation
+    public static final String RECOMMENDATION = "/recommendation";
+    public static final String FETCH_RECOMMENDATION = "/fetch";
+
+    // endpoint for view product
+    public static final String VIEWED = "/viewed";
+    public static final String VIEW_PRODUCT = "/product";
+
+    public static final String JWT_SECRET = "app.jwtSecret";
+    public static final String JWT_EXPIRATION_TIME = "app.jwtExpirationInMs";
+
+
+
+
+
+
+
 
     static {
         producer = new Producer();

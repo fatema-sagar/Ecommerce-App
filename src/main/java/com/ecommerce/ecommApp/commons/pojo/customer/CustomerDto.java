@@ -24,7 +24,4 @@ public class CustomerDto {
     @JsonProperty("gender")
     private String gender;
 
-    @JsonProperty("jwt")
-    private JwtAuthentication jwt;
-
 }

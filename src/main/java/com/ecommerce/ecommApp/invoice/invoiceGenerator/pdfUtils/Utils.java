@@ -16,7 +16,6 @@ public class Utils {
     public static final String[] PDF_METADATA = {"Invoice", "Amit Verma", "Order Invoice"};
 
     public static final String INVOICE_FOLDER = "src/main/resources/invoice/";
-
-
+    public static final String GROUP_ID = "group-4";
 
 }

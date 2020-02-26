@@ -1,5 +1,6 @@
 package com.ecommerce.ecommApp.commons.security;
 
+import com.ecommerce.ecommApp.commons.Util.CommonsUtil;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -8,23 +9,29 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.SignatureException;
 import io.jsonwebtoken.UnsupportedJwtException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
+import java.util.List;
 
 @Slf4j
 @Component
 public class JwtTokenProvider {
 
-    @Value("${app.jwtSecret}")
     private String jwtSecret;
+    private Long jwtExpirationInMs;
 
-    @Value("${app.jwtExpirationInMs}")
-    private int jwtExpirationInMs;
+    @Autowired
+    public JwtTokenProvider(Environment environment) {
+        this.jwtSecret = environment.getProperty(CommonsUtil.JWT_SECRET);
+        this.jwtExpirationInMs = Long.valueOf(environment.getProperty(CommonsUtil.JWT_EXPIRATION_TIME));
+    }
 
-    public String generateToken(Authentication authentication) {
+    public String generateToken(Authentication authentication, List<String> roles) {
 
         CustomerPrincipal userPrincipal = (CustomerPrincipal) authentication.getPrincipal();
 
@@ -32,10 +39,14 @@ public class JwtTokenProvider {
         Date expiryDate = new Date(now.getTime() + jwtExpirationInMs);
 
         return Jwts.builder()
+                .setHeaderParam("typ", SecurityConstants.TOKEN_TYPE)
+                .setIssuer(SecurityConstants.TOKEN_ISSUER)
+                .setAudience(SecurityConstants.TOKEN_AUDIENCE)
                 .setSubject(Long.toString(userPrincipal.getId()))
                 .setIssuedAt(new Date())
                 .setExpiration(expiryDate)
                 .signWith(SignatureAlgorithm.HS512, jwtSecret)
+                .claim("rol", roles)
                 .compact();
     }
 

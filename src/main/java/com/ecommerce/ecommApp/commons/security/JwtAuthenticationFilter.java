@@ -1,63 +1,70 @@
 package com.ecommerce.ecommApp.commons.security;
 
-import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
-import org.springframework.util.StringUtils;
-import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
 
-@Slf4j @NoArgsConstructor
-public class JwtAuthenticationFilter extends OncePerRequestFilter {
+@Slf4j
+public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private JwtTokenProvider tokenProvider;
-    private CustomUserDetailsService customUserDetailsService;
+    private AuthenticationManager authenticationManager;
 
-    @Autowired
-    JwtAuthenticationFilter(JwtTokenProvider jwtTokenProvider, CustomUserDetailsService customUserDetailsService){
-        this.tokenProvider = jwtTokenProvider;
-        this.customUserDetailsService = customUserDetailsService;
+    public JwtAuthenticationFilter(AuthenticationManager authenticationManager, JwtTokenProvider tokenProvider) {
+        this.authenticationManager = authenticationManager;
+        this.tokenProvider = tokenProvider;
+
     }
+
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-            throws ServletException, IOException {
+    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) {
+
+        LoginRequest loginRequest = new LoginRequest();
+
         try {
-            String jwt = getJwtFromRequest(request);
+            loginRequest = new ObjectMapper()
+                    .readValue(request.getInputStream(), LoginRequest.class);
+            log.info("Email id {} and password is {}", loginRequest.getEmailId(), loginRequest.getPassword() );
 
-            if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
-
-                Long customerId = tokenProvider.getUserIdFromJWT(jwt);
-                UserDetails userDetails = customUserDetailsService.loadUserById(customerId);
-
-                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken
-                        (userDetails, null,null);
-                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-            }
-        } catch (Exception ex) {
-            log.error("Could not set user authentication in security context", ex);
+        } catch (IOException e) {
+            loginRequest.setEmailId("");
+            loginRequest.setPassword("");
+            e.printStackTrace();
         }
 
-        filterChain.doFilter(request, response);
+        UsernamePasswordAuthenticationToken authenticationToken =
+                new UsernamePasswordAuthenticationToken(loginRequest.getEmailId(), loginRequest.getPassword(), new ArrayList<>());
+
+        return authenticationManager.authenticate(authenticationToken);
     }
 
-    private String getJwtFromRequest(HttpServletRequest request) {
-        String bearerToken = request.getHeader("Authorization");
-        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
-            return bearerToken.substring(7);
-        }
-        return null;
+    @Override
+    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response,
+                                            FilterChain filterChain, Authentication authentication) throws IOException {
+
+        String token = tokenProvider.generateToken(authentication, new ArrayList<>());
+
+        CustomerPrincipal customerDetails = (CustomerPrincipal) authentication.getPrincipal();
+        LoginResponse loginResponse = new LoginResponse();
+
+        loginResponse.setCustomerId(customerDetails.getId());
+        loginResponse.setCustomerName(customerDetails.getName());
+        loginResponse.setEmailId(customerDetails.getEmail());
+        loginResponse.setHeader(SecurityConstants.TOKEN_HEADER);
+        loginResponse.setToken(SecurityConstants.TOKEN_PREFIX + token);
+
+        response.addHeader(SecurityConstants.TOKEN_HEADER, SecurityConstants.TOKEN_PREFIX + token);
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        response.getWriter().write(new ObjectMapper().writeValueAsString(loginResponse));
     }
 }
