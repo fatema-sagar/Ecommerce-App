@@ -17,9 +17,9 @@ public class CustomUserDetailsService implements UserDetailsService {
     private CustomerPrincipal customerPrincipal;
 
     @Autowired
-    public CustomUserDetailsService(CustomerRepository customerRepository) {
+    public CustomUserDetailsService(CustomerRepository customerRepository, CustomerPrincipal customerPrincipal) {
         this.customerRepository = customerRepository;
-        this.customerPrincipal = new CustomerPrincipal();
+        this.customerPrincipal = customerPrincipal;
     }
 
     @Override

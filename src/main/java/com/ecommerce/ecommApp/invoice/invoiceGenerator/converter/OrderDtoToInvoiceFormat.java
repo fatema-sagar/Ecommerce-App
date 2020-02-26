@@ -21,11 +21,10 @@ public class OrderDtoToInvoiceFormat {
     @Autowired
     private ProductService productService;
 
-    public List<InvoiceFormatDto> convertToInvoiceFormatDto(List<OrdersDTO> ordersDTOList) {
+    public InvoiceFormatDto convertToInvoiceFormatDto(OrdersDTO ordersDTO) {
 
         List<InvoiceFormatDto> list = new ArrayList<>();
 
-        ordersDTOList.forEach(ordersDTO -> {
             InvoiceFormatDto invoiceFormatDto = new InvoiceFormatDto();
             InvoiceDetails invoiceDetails = new InvoiceDetails();
             try {
@@ -55,9 +54,10 @@ public class OrderDtoToInvoiceFormat {
 
             } catch (ElementNotFoundException e) {
                 log.error("Element not found exception : " + e.getMessage() + "\nCause : " + e.getCause());
+                throw new RuntimeException("Product not found in data base with productID" + ordersDTO.getProductID() +
+                        "Message : " + e.getMessage() + "Cause : " + e.getCause());
             }
 
-        });
-        return list;
+        return invoiceFormatDto;
     }
 }
