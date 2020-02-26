@@ -1,6 +1,7 @@
 package com.ecommerce.ecommApp;
 
 import com.ecommerce.ecommApp.commons.Util.CommonsUtil;
+import com.ecommerce.ecommApp.invoice.Invoice;
 import com.ecommerce.ecommApp.invoice.invoiceGenerator.service.FetchOrderService;
 import com.ecommerce.ecommApp.notifications.services.OrderCancelledService;
 import com.ecommerce.ecommApp.notifications.services.OrderPlacedService;
@@ -51,11 +52,14 @@ public class EcommAppApplication {
         orderStatusThread.start();
     }
 
+    /**
+     * used to start the invoice send thread
+     */
     private void startInvoiceSendService() {
-        FetchOrderService fetchOrderService = context.getBean(FetchOrderService.class);
-        fetchOrderService.setName("Invoice Send");
-        log.info("Start invoice generate send service ");
-        fetchOrderService.start();
+        Invoice invoice = context.getBean(Invoice.class);
+        invoice.setName("Invoice service");
+        log.info("Start invoice generate and send service ");
+        invoice.start();
     }
 
     private void init() {

@@ -25,6 +25,13 @@ public class InvoiceGeneratorService {
     private CustomerService customerService;
     private SendInvoiceService sendInvoiceService;
 
+    /**
+     * constructor for initialize the local variable
+     * @param pdfGenerateService
+     * @param orderDtoToInvoiceFormat
+     * @param customerService
+     * @param sendInvoiceService
+     */
     @Autowired
     public InvoiceGeneratorService(PdfGenerateService pdfGenerateService,
                                    OrderDtoToInvoiceFormat orderDtoToInvoiceFormat, CustomerService customerService,
@@ -36,7 +43,10 @@ public class InvoiceGeneratorService {
 
     }
 
-
+    /**
+     * method for generate the invoice in pdf format
+     * @param ordersDTO contain the details of order
+     */
     public void invoiceGenerate(OrdersDTO ordersDTO)  {
 
         InvoiceFormatDto invoiceFormatDto = toInvoiceFormat.convertToInvoiceFormatDto(ordersDTO);
@@ -52,6 +62,12 @@ public class InvoiceGeneratorService {
         log.info("Send invoice for customerId {} with status code {}", invoiceFormatDto.getCustomerId(), response.getStatusCode());
     }
 
+    /**
+     * method for creating the object SendInvoiceDto which contain the details to be send
+     * @param filePath file path of invoice
+     * @param customerId unique id of user
+     * @return object of SendInvoiceDto contains message, file, email of sender, email of recipient  etc...
+     */
     private SendInvoiceDto getDto(String filePath, Long customerId)  {
 
         CustomerDto customer = null;

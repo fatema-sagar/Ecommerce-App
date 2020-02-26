@@ -29,6 +29,12 @@ public class FetchViewedProduct {
     private KafkaConsumer<String, String> kafkaConsumer;
     private ObjectMapper objectMapper;
 
+    /**
+     * method for getting the list of view product
+     * initialize the kafkaConsumer variable for fetching the record from topic
+     * @param customerId used to fetch the record of particular user
+     * @return list of ViewProductDto which contains the products
+     */
     public List<ViewProductDto> getViewProduct(String customerId) {
 
         objectMapper = CommonsUtil.getObjectMapper();
@@ -39,6 +45,15 @@ public class FetchViewedProduct {
         return list;
     }
 
+    /**
+     * fetch the record from topic and convert to ViewProductDto
+     * loop will be break after consume the all record from topic
+     * loop variable used to wait for some interaction before break
+     * @param kafkaConsumer used to consume the record from topic
+     * @param topic which topic we have to consume the record
+     * @param customerId used to separate the record of user
+     * @return list of ViewProductDto which contains the products details
+     */
     private List<ViewProductDto> fetchViewProduct(KafkaConsumer kafkaConsumer, String topic, String customerId) {
 
         // subscribe the topic

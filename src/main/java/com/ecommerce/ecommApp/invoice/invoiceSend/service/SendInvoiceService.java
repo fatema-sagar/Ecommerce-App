@@ -26,6 +26,11 @@ public class SendInvoiceService {
     @Autowired
     private SendGridAPI sendGridAPI;
 
+    /**
+     * this method send the invoice to user email
+     * @param sendInvoiceDto the invoice details send to be user
+     * @return Response after send the invoice to user
+     */
 
     public Response sendInvoice(SendInvoiceDto sendInvoiceDto)  {
 
@@ -60,6 +65,11 @@ public class SendInvoiceService {
         return response;
     }
 
+    /**
+     * this method create object of attachment file
+     * @param file the file to be attach with the object of attachment
+     * @return the object of Attachment
+     */
     private Attachments getAttachments(File file)  {
 
         Attachments attachment = new Attachments();
@@ -78,6 +88,12 @@ public class SendInvoiceService {
         return attachment;
     }
 
+    /**
+     * method convert bytes to Base64 encoder
+     * @param input array of bytes for convert Base64 encoder
+     * @return encoded byte to string
+
+     */
     private String convertFileToBase64(byte[] input) {
         return Base64.getEncoder().encodeToString(input);
     }
