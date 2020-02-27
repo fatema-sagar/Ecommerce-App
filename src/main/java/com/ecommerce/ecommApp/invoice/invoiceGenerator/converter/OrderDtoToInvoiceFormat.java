@@ -21,6 +21,11 @@ public class OrderDtoToInvoiceFormat {
     @Autowired
     private ProductService productService;
 
+    /**
+     * method to convert the orders details to invoice format
+     * @param ordersDTO contain the details of order
+     * @return object of invoice format contain the details of invoice document
+     */
     public InvoiceFormatDto convertToInvoiceFormatDto(OrdersDTO ordersDTO) {
 
         List<InvoiceFormatDto> list = new ArrayList<>();

@@ -25,6 +25,11 @@ public class ViewService {
     private ObjectMapper objectMapper;
     private Environment environment;
 
+    /**
+     * constructor for initialize the loca variable
+     * @param producer object of producer which provide the kafka producer
+     * @param environment Object of environment for access the value of application properties
+     */
     @Autowired
     public ViewService(Producer producer, Environment environment) {
         this.environment = environment;
@@ -33,6 +38,11 @@ public class ViewService {
         this.objectMapper = CommonsUtil.getObjectMapper();
     }
 
+    /**
+     * method for produce the view product
+     * @param viewProductDto contains the details of product and user
+     * @return object of ApiResponse which contain the status and message
+     */
     public ApiResponse viewProduct(ViewProductDto viewProductDto) {
 
         try {

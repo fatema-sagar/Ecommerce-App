@@ -21,6 +21,11 @@ public class ViewController {
     @Autowired
     private ViewService viewService;
 
+    /**
+     * post api for store the view product for same user
+     * @param viewProductDto RequestBody contain product id and customer id
+     * @return ResponseEntity of viewed product
+     */
     @PostMapping(CommonsUtil.VIEW_PRODUCT)
     public ResponseEntity<ApiResponse> viewProduct(@Valid  @RequestBody ViewProductDto viewProductDto) {
         return ResponseEntity.status(HttpStatus.OK)
