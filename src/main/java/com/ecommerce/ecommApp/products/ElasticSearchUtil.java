@@ -5,6 +5,7 @@ import com.ecommerce.ecommApp.commons.Util.Communication;
 import com.ecommerce.ecommApp.commons.pojo.products.Product;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.elasticsearch.ElasticsearchException;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -12,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,6 +28,7 @@ public final class ElasticSearchUtil {
     private static final String INET_ADDRESS = "http://localhost:9200";
     private static final String _INDEX = "products";
     private static final String _TYPE = "_doc";
+    private static final String ENDPOINT = "%s/%s/%s/%s";
 
     /**
      * This method is called from the ProductService while adding the product to the database,
@@ -37,7 +40,7 @@ public final class ElasticSearchUtil {
         try {
             ObjectMapper objectMapper = CommonsUtil.getObjectMapper();
             String json = objectMapper.writeValueAsString(product);
-            String endpoint = String.format("%s/%s/%s/%s", INET_ADDRESS, _INDEX, _TYPE, product.getProductId());
+            String endpoint = String.format(ENDPOINT, INET_ADDRESS, _INDEX, _TYPE, product.getProductId());
             logger.info("Data inserted in elastic search : {} : {} " + endpoint, json);
             String response = Communication.sendHttpRequest(endpoint, json, RequestMethod.POST);
             logger.trace("Response : {} ", response);
@@ -58,7 +61,7 @@ public final class ElasticSearchUtil {
             ObjectMapper objectMapper = CommonsUtil.getObjectMapper();
             String productJson = objectMapper.writeValueAsString(product);
             String jsonBody = String.format("{\"doc\":%s}", productJson);
-            String endpoint = String.format("%s/%s/%s/%s", INET_ADDRESS, _INDEX, "_update", product.getProductId());
+            String endpoint = String.format(ENDPOINT, INET_ADDRESS, _INDEX, "_update", product.getProductId());
             Communication.sendHttpRequest(endpoint, jsonBody, RequestMethod.POST);
             logger.info("Data updated in elastic seach for product {}", product.getProductId());
             return true;
@@ -74,7 +77,7 @@ public final class ElasticSearchUtil {
      * @return It returns a boolean value whether the object is deleted from elasticsearch or not.
      */
     public static boolean deleteProduct(long product_id) {
-        String endpoint = String.format("%s/%s/%s/%s", INET_ADDRESS, _INDEX, _TYPE, product_id);
+        String endpoint = String.format(ENDPOINT, INET_ADDRESS, _INDEX, _TYPE, product_id);
         try {
             String response = Communication.sendDeleteRequest(endpoint);
             logger.trace("product deted for id : {} ", product_id);
@@ -102,7 +105,7 @@ public final class ElasticSearchUtil {
      * @param jsonBody The String formatted json body to search in elastic search.
      * @return List of Products matching the search text or else returns null.
      */
-    public static List<Product> searchProduct(String jsonBody) {
+    public static List<Product> searchProduct(String jsonBody) throws ElasticsearchException {
         List<Product> allProducts = new ArrayList<>();
         try {
 
@@ -114,9 +117,8 @@ public final class ElasticSearchUtil {
             allProducts = extractFromResponse(response);
             return allProducts;
         } catch (Exception ex) {
-            ex.getMessage();
+            throw new ElasticsearchException("Elasticsearch is not running "+ ex.getMessage());
         }
-        return allProducts;
     }
 
     /**

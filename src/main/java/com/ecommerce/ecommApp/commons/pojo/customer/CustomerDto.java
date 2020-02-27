@@ -1,7 +1,7 @@
 package com.ecommerce.ecommApp.commons.pojo.customer;
 
+import com.ecommerce.ecommApp.commons.pojo.JwtAuthentication;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Builder;
 import lombok.Data;
 
 @Data

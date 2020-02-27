@@ -1,12 +1,13 @@
 package com.ecommerce.ecommApp.commons.Util;
 
-import com.ecommerce.ecommApp.commons.NotificationProducer;
+import com.ecommerce.ecommApp.commons.kafka.Producer;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.kafka.common.protocol.types.Field;
 
 public class CommonsUtil {
 
     private static final ObjectMapper objectMapper;
-    private static final NotificationProducer notificationProducer;
+    private static final Producer producer;
     public static final String SERVER_PORT="server.port";
     public static final String NOTIFICATION_USER_REGISTERED_SERVICE = "User Registered";
     public static final String NOTIFICATION_ORDER_PLACED_SERVICE = "Order Placed";
@@ -22,17 +23,44 @@ public class CommonsUtil {
     public static final String NOTIFICATION_ORDER_STATUS_TOPIC = "notification.order.status.topic";
     public static final String NOTIFICATION_ORDER_CANCEL_TOPIC = "notification.order.cancel.topic";
 
+    public static final String VIEW_PRODUCT_TOPIC = "view.product.topic";
+
     public static final String EMAIL_EXISTS = "There is an account with this email address:";
     public static final String CUSTOMER_NOT_FOUND = "Customer Not Found";
     public static final String WRONG_CUSTOMER_ID = "Wrong Customer Id";
 
+    // endpoint for invoice generator
+    public static final String INVOICE = "/invoice";
+    public static final String INVOICE_GENERATE = "/generate";
+
+    // endpoint for invoice send
+    public static final String INVOICE_SEND = "/send";
+
+    // endpoint for recommendation
+    public static final String RECOMMENDATION = "/recommendation";
+    public static final String FETCH_RECOMMENDATION = "/fetch";
+
+    // endpoint for view product
+    public static final String VIEWED = "/viewed";
+    public static final String VIEW_PRODUCT = "/product";
+
+    public static final String JWT_SECRET = "app.jwtSecret";
+    public static final String JWT_EXPIRATION_TIME = "app.jwtExpirationInMs";
+
+
+
+
+
+
+
+
     static {
-        notificationProducer = new NotificationProducer();
+        producer = new Producer();
         objectMapper = new ObjectMapper();
     }
 
-    public static NotificationProducer getNotificationProducer() {
-        return notificationProducer;
+    public static Producer getProducer() {
+        return producer;
     }
 
     public static ObjectMapper getObjectMapper() { return objectMapper; }
