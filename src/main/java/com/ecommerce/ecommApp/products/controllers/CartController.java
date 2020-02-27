@@ -3,6 +3,8 @@ package com.ecommerce.ecommApp.products.controllers;
 import com.ecommerce.ecommApp.commons.exceptions.CustomerNotFoundException;
 import com.ecommerce.ecommApp.commons.pojo.ResponseMessage;
 import com.ecommerce.ecommApp.commons.pojo.products.Cart;
+import com.ecommerce.ecommApp.orders.Models.Orders;
+import com.ecommerce.ecommApp.orders.services.OrderServices;
 import com.ecommerce.ecommApp.products.composite.CartIdentity;
 import com.ecommerce.ecommApp.products.payload.CartItem;
 import com.ecommerce.ecommApp.products.services.CartService;
@@ -19,6 +21,7 @@ import java.util.List;
  */
 @RestController
 public class CartController {
+
 
     @Autowired
     private CartService cartService;
@@ -92,7 +95,18 @@ public class CartController {
         }
     }
 
-
+    @RequestMapping(value="/checkoutCart",method = RequestMethod.POST)
+    private ResponseEntity<Object> checkoutCart(@RequestParam Long productId,@RequestParam Long customerId) {
+        try {
+            Orders order = cartService.checkoutCart(productId, customerId);
+            return new ResponseEntity<>(new ResponseMessage("cartItem successfully checked out and Order successfully placed" + order,
+                    "CHECKEDOUT"), HttpStatus.OK);
+        } catch (Exception ex) {
+            return new ResponseEntity<>(new ResponseMessage("order not placed for customerId" + customerId
+                    +" due to : " + ex.getMessage()
+                    , "ERROR"), HttpStatus.NOT_ACCEPTABLE);
+        }
+    }
 
 }
 

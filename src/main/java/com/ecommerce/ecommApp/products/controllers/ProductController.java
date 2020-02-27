@@ -32,6 +32,7 @@ public class ProductController {
     @RequestMapping(path = "/add", method = RequestMethod.POST)
     private ResponseEntity<Object> addProduct(@RequestBody Product product) {
         try {
+            System.out.println("hello");
             return new ResponseEntity<Object>(productService.createProduct(product), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>("Unable to add product to the db.."+ e.getMessage(), HttpStatus.BAD_REQUEST);
