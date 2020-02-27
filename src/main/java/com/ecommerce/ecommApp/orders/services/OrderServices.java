@@ -12,6 +12,7 @@ import com.ecommerce.ecommApp.commons.pojo.orders.OrdersDTO;
 import com.ecommerce.ecommApp.commons.pojo.products.Product;
 import com.ecommerce.ecommApp.orders.Models.Orders;
 import com.ecommerce.ecommApp.orders.repository.OrderRepository;
+import com.ecommerce.ecommApp.products.services.ProductService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javassist.NotFoundException;
 import org.apache.kafka.clients.producer.KafkaProducer;
@@ -28,6 +29,9 @@ import java.util.Properties;
 public class OrderServices {
     @Autowired
     private OrderRepository orderRepository;
+
+    @Autowired
+    private ProductService productService;
 
     @Autowired
     private Environment environment;
@@ -65,6 +69,7 @@ public class OrderServices {
             orderRepository.save(order);
             notifyUser(Arrays.asList(NotificationType.Text_SMS.toString(), NotificationType.EMAIL.toString()), order);
         }
+        productService.deductProducts(productsOrdered);
     }
 
     /**
