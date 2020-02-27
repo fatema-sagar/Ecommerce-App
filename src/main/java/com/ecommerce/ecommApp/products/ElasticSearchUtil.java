@@ -95,7 +95,7 @@ public final class ElasticSearchUtil {
     public static List<Product> getAllProducts() {
         List<Product> allProducts;
         String endPoint = String.format("%s/%s/%s?q=*", INET_ADDRESS, _INDEX, "_search");
-        String response = Communication.sendGetRequest(endPoint);
+        String response = Communication.sendGetRequest(endPoint,null);
         allProducts = extractFromResponse(response);
         return allProducts;
     }

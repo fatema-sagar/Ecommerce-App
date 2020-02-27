@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
@@ -33,6 +34,9 @@ public class OrderServices {
 
     @Autowired
     private Producer producer;
+
+    @Autowired
+    private HttpServletRequest httpServletRequest;
 
     /**
      * Get all orders for the given customer id
@@ -89,8 +93,10 @@ public class OrderServices {
      */
     private void notifyUser(List<String> modes, Orders order) throws Exception {
         ObjectMapper objectMapper = CommonsUtil.getObjectMapper();
+        String token = httpServletRequest.getHeader("Authorization");
+        System.out.println(token);
         CustomerDto customer = objectMapper.readValue
-                (Communication.sendGetRequest("http://" + Communication.getApplicationAddress() + "/customer/" + order.getCustomerID())
+                (Communication.sendGetRequest("http://" + Communication.getApplicationAddress() + "/customer/" + order.getCustomerID(),token)
                         , CustomerDto.class);
         OrderPlaced orderPlaced = createOrderPlacedInstance(modes, order, customer);
         Producer producer = CommonsUtil.getProducer();
@@ -130,7 +136,8 @@ public class OrderServices {
      * @throws Exception
      */
     private Product fetchProduct(Long productId) throws Exception {
-        String data = Communication.sendGetRequest("http://" + Communication.getApplicationAddress() + "/product/" + productId);
+        String token = httpServletRequest.getHeader("Authorization");
+        String data = Communication.sendGetRequest("http://" + Communication.getApplicationAddress() + "/product/" + productId,token);
         ObjectMapper objectMapper = CommonsUtil.getObjectMapper();
         return objectMapper.readValue(data, Product.class);
     }
