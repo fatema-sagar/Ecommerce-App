@@ -1,8 +1,9 @@
 package com.ecommerce.ecommApp.products.services;
 
 import com.ecommerce.ecommApp.commons.pojo.products.Product;
-import com.ecommerce.ecommApp.products.ElasticSearchUtil;
+import com.ecommerce.ecommApp.products.elasticsearch.ElasticSearchUtil;
 import com.ecommerce.ecommApp.commons.exceptions.ElementNotFoundException;
+import com.ecommerce.ecommApp.products.elasticsearch.ElasticsearchObject;
 import com.ecommerce.ecommApp.products.repositories.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,6 +15,8 @@ public class FeatureService {
 
     @Autowired
     private ProductRepository productRepository;
+
+    ElasticSearchUtil elasticSearchUtil = ElasticsearchObject.getElasticsearchObject();
 
     /**
      * This method is used to return all the items of a particular category.
@@ -36,7 +39,7 @@ public class FeatureService {
      * @throws ElementNotFoundException
      */
     public List<Product> getSearchedElements(String searchQuery) throws ElementNotFoundException {
-        List<Product> searchedProducts = ElasticSearchUtil.searchProduct(searchQuery);
+        List<Product> searchedProducts = elasticSearchUtil.searchProduct(searchQuery);
         if (searchedProducts.size() != 0) {
             return searchedProducts;
         } else {

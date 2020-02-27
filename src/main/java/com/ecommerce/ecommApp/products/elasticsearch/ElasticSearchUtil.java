@@ -1,4 +1,4 @@
-package com.ecommerce.ecommApp.products;
+package com.ecommerce.ecommApp.products.elasticsearch;
 
 import com.ecommerce.ecommApp.commons.Util.CommonsUtil;
 import com.ecommerce.ecommApp.commons.Util.Communication;
@@ -13,7 +13,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,7 +21,7 @@ import java.util.List;
  * It is used to format the data in the manner which is accepted by the Request methods.
  * @Author Sagar Bindal and Fatema Sagar.
  */
-public final class ElasticSearchUtil {
+public class ElasticSearchUtil {
 
     private static final Logger logger = LoggerFactory.getLogger(ElasticSearchUtil.class);
     private static final String INET_ADDRESS = "http://localhost:9200";
@@ -36,7 +35,7 @@ public final class ElasticSearchUtil {
      * @param product The product object which has to be added to the elasticsearch.
      * @return It returns a boolean value whether the object is added to elasticsearch or not.
      */
-    public static boolean insertProduct(Product product) {
+    public boolean insertProduct(Product product) {
         try {
             ObjectMapper objectMapper = CommonsUtil.getObjectMapper();
             String json = objectMapper.writeValueAsString(product);
@@ -56,7 +55,7 @@ public final class ElasticSearchUtil {
      * @param product The existing Product which has to be updated in elasticsearch.
      * @return It returns a boolean value whether the object is updated to elasticsearch or not.
      */
-    public static boolean updateProduct(Product product) {
+    public boolean updateProduct(Product product) {
         try {
             ObjectMapper objectMapper = CommonsUtil.getObjectMapper();
             String productJson = objectMapper.writeValueAsString(product);
@@ -76,7 +75,7 @@ public final class ElasticSearchUtil {
      * @param product_id The product which has to be deleted from the elasticsearch identity.
      * @return It returns a boolean value whether the object is deleted from elasticsearch or not.
      */
-    public static boolean deleteProduct(long product_id) {
+    public boolean deleteProduct(long product_id) {
         String endpoint = String.format(ENDPOINT, INET_ADDRESS, _INDEX, _TYPE, product_id);
         try {
             String response = Communication.sendDeleteRequest(endpoint);
@@ -92,7 +91,7 @@ public final class ElasticSearchUtil {
      * This method is used to return all the Products added to the elasticsearch.
      * @return List of all Products available in Elasticsearch.
      */
-    public static List<Product> getAllProducts() {
+    public List<Product> getAllProducts() {
         List<Product> allProducts;
         String endPoint = String.format("%s/%s/%s?q=*", INET_ADDRESS, _INDEX, "_search");
         String response = Communication.sendGetRequest(endPoint);
@@ -105,7 +104,7 @@ public final class ElasticSearchUtil {
      * @param jsonBody The String formatted json body to search in elastic search.
      * @return List of Products matching the search text or else returns null.
      */
-    public static List<Product> searchProduct(String jsonBody) throws ElasticsearchException {
+    public List<Product> searchProduct(String jsonBody) throws ElasticsearchException {
         List<Product> allProducts = new ArrayList<>();
         try {
 
@@ -127,7 +126,7 @@ public final class ElasticSearchUtil {
      * @param response The response received from elasticsearch.
      * @return List of Products extracted from the response.
      */
-    private static List<Product> extractFromResponse(String response) {
+    private List<Product> extractFromResponse(String response) {
         ObjectMapper objectMapper = CommonsUtil.getObjectMapper();
         List<Product> allProducts = new ArrayList<>();
         JSONObject jsonObject;
@@ -148,14 +147,6 @@ public final class ElasticSearchUtil {
             logger.error("JSON Error"+ e.getMessage());
             return null;
         }
-    }
-
-    public static void main(String[] args) throws JSONException {
-        String json = "{\"search_text\":\"jeans\",\"price\":{\"lte\":500,\"gte\":13},\"category\":\"bottoms\"}";
-        QueryBuilder queryBuilder = new QueryBuilder(json);
-        String jsonBody = queryBuilder.build();
-        searchProduct(jsonBody);
-        getAllProducts();
     }
 
 }
