@@ -38,7 +38,7 @@ public class OrderDtoToInvoiceFormat {
                 invoiceDetails.setBrand(product.getBrand());
                 invoiceDetails.setOrderId(ordersDTO.getOrderID());
                 invoiceDetails.setPrice(product.getPrice());
-                invoiceDetails.setProduct_description(product.getProductDescription());
+                invoiceDetails.setProductDescription(product.getProductDescription());
                 invoiceDetails.setProductId(ordersDTO.getProductID());
                 invoiceDetails.setProductImage(product.getImage());
                 invoiceDetails.setProductName(product.getName());
