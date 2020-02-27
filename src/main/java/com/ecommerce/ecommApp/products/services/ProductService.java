@@ -2,9 +2,10 @@ package com.ecommerce.ecommApp.products.services;
 
 import com.ecommerce.ecommApp.commons.pojo.orders.ItemsDTO;
 import com.ecommerce.ecommApp.commons.pojo.products.Product;
-import com.ecommerce.ecommApp.products.ElasticSearchUtil;
+import com.ecommerce.ecommApp.products.elasticsearch.ElasticSearchUtil;
 import com.ecommerce.ecommApp.commons.exceptions.ElementNotFoundException;
 import com.ecommerce.ecommApp.commons.exceptions.NotEnoughQuantityException;
+import com.ecommerce.ecommApp.products.elasticsearch.ElasticsearchObject;
 import com.ecommerce.ecommApp.products.repositories.ProductRepository;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -15,7 +16,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
 import java.net.URISyntaxException;
@@ -32,6 +32,8 @@ public class ProductService {
     @Autowired
     ProductRepository productRepository;
 
+    ElasticSearchUtil elasticSearchUtil = ElasticsearchObject.getElasticsearchObject();
+
     public List<Product> getProductsList() {
         return productRepository.findAll();
     }
@@ -46,7 +48,7 @@ public class ProductService {
         try {
             logger.info("Adding the following Product {} to the db..", product);
             Product generatedProduct = productRepository.save(product);
-            ElasticSearchUtil.insertProduct(generatedProduct);
+            elasticSearchUtil.insertProduct(generatedProduct);
             return generatedProduct;
         } catch (ElasticsearchException ex) {
             throw new ElasticsearchException("Seems like elastic search is not up !! " +
@@ -65,7 +67,7 @@ public class ProductService {
     public Product updateProduct(Product product) throws ElementNotFoundException {
         if (productRepository.existsById(product.getProductId())) {
             logger.info("Updated Product: {}", product);
-            ElasticSearchUtil.updateProduct(product);
+            elasticSearchUtil.updateProduct(product);
             return productRepository.save(product);
         } else {
             throw new ElementNotFoundException("Product ID is not available");
@@ -86,7 +88,7 @@ public class ProductService {
                 if (invent.getQuantity() >= element.getQuantity()) {
                     invent.setQuantity(invent.getQuantity() - element.getQuantity());
                     productRepository.save(invent);
-                    ElasticSearchUtil.updateProduct(invent);
+                    elasticSearchUtil.updateProduct(invent);
                 } else {
                     throw new NotEnoughQuantityException("The product you are trying to update does not have enough quantity");
                 }
@@ -108,7 +110,7 @@ public class ProductService {
         if (productRepository.existsById(product.getProductId())) {
             Product existingProduct = productRepository.findById(product.getProductId()).get();
             existingProduct.setQuantity(existingProduct.getQuantity() + product.getQuantity());
-            ElasticSearchUtil.updateProduct(existingProduct);
+            elasticSearchUtil.updateProduct(existingProduct);
             return productRepository.save(existingProduct);
         } else {
             throw new ElementNotFoundException("Unable to update the quantity for the product, as it is not available with the database.");
