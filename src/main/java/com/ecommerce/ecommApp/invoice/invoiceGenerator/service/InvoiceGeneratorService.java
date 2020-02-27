@@ -47,9 +47,10 @@ public class InvoiceGeneratorService {
      * method for generate the invoice in pdf format
      * @param ordersDTO contain the details of order
      */
-    public void invoiceGenerate(OrdersDTO ordersDTO)  {
+    public Response invoiceGenerate(OrdersDTO ordersDTO)  {
 
         InvoiceFormatDto invoiceFormatDto = toInvoiceFormat.convertToInvoiceFormatDto(ordersDTO);
+
         log.trace("Convert record to invoice format for customerId {} and productId {}", invoiceFormatDto.getCustomerId(),
                 invoiceFormatDto.getInvoiceDetails().getProductId());
 
@@ -57,9 +58,11 @@ public class InvoiceGeneratorService {
         log.info("Generate invoice for customer id {} with pid {}", invoiceFormatDto.getCustomerId(),
                 invoiceFormatDto.getInvoiceDetails().getProductId());
 
-            Response response = sendInvoiceService.sendInvoice(getDto(filePath, invoiceFormatDto.getCustomerId()));
+        Response response = sendInvoiceService.sendInvoice(getDto(filePath, invoiceFormatDto.getCustomerId()));
+        log.info("Send invoice for customerId {} with status code {}", invoiceFormatDto.getCustomerId(),
+                response.getStatusCode());
 
-        log.info("Send invoice for customerId {} with status code {}", invoiceFormatDto.getCustomerId(), response.getStatusCode());
+        return response;
     }
 
     /**

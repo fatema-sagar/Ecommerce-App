@@ -8,6 +8,7 @@ import com.ecommerce.ecommApp.invoice.invoiceGenerator.pdfUtils.Utils;
 import com.ecommerce.ecommApp.orders.services.OrderServices;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sendgrid.Response;
 import javassist.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -71,9 +72,9 @@ public class FetchOrderService {
 
                         OrderPlaced orderPlaced = objectMapper.readValue(record.value(), OrderPlaced.class);
                         OrdersDTO ordersDTO = orderServices.getOrderDetails(orderPlaced.getOrderID());
-                            invoiceGeneratorService.invoiceGenerate(ordersDTO);
-                        log.info("Invoice send for customerId {} with productId {}", ordersDTO.getCustomerID(),
-                                ordersDTO.getProductID());
+                        Response response = invoiceGeneratorService.invoiceGenerate(ordersDTO);
+                        log.info("Invoice send for customerId {} with productId {} with response {}", ordersDTO.getCustomerID(),
+                                ordersDTO.getProductID(), response.getStatusCode());
 
                     } catch (JsonProcessingException e) {
 
