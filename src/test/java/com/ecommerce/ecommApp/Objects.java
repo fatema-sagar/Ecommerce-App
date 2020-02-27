@@ -5,9 +5,10 @@ import com.ecommerce.ecommApp.commons.pojo.orders.OrdersDTO;
 import com.ecommerce.ecommApp.commons.pojo.products.Product;
 import com.ecommerce.ecommApp.invoice.invoiceGenerator.dto.InvoiceDetails;
 import com.ecommerce.ecommApp.invoice.invoiceGenerator.dto.InvoiceFormatDto;
-import org.apache.kafka.common.protocol.types.Field;
+import com.ecommerce.ecommApp.invoice.invoiceSend.dto.SendInvoiceDto;
+import com.ecommerce.ecommApp.recommend.view.dto.ViewProductDto;
 
-import javax.persistence.criteria.CriteriaBuilder;
+import java.io.File;
 import java.util.UUID;
 
 public class Objects {
@@ -93,5 +94,26 @@ public class Objects {
         customerDto.setNumber(Long.valueOf(1234567890));
         customerDto.setWhatsapp(Long.valueOf(1234567890));
         return customerDto;
+    }
+
+    public SendInvoiceDto getSendInvoiceDto() {
+
+        SendInvoiceDto sendInvoiceDto = new SendInvoiceDto();
+
+        sendInvoiceDto.setContentMessage("Message");
+        sendInvoiceDto.setCustomerName("Amit");
+        sendInvoiceDto.setSubject("Invoice");
+        sendInvoiceDto.setTo("verma1910@gmail.com");
+        sendInvoiceDto.setFile(new File("src/test/java/com/ecommerce/" +
+                "ecommApp/invoice/invoiceSend/service/SendInvoiceServiceTest.java"));
+        return sendInvoiceDto;
+    }
+
+    public ViewProductDto getViewProductDto() {
+
+        ViewProductDto viewProductDto = new ViewProductDto();
+        viewProductDto.setCustomerId(1L);
+        viewProductDto.setProductId(1L);
+        return viewProductDto;
     }
 }

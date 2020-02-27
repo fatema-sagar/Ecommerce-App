@@ -46,16 +46,17 @@ public class ViewService {
     public ApiResponse viewProduct(ViewProductDto viewProductDto) {
 
         try {
+
             String data = objectMapper.writeValueAsString(viewProductDto);
             Properties properties = producer.getProducerConfigs();
             KafkaProducer kafkaProducer = producer.getKafkaProducer(properties);
             producer.producerRecord(data, viewTopic, kafkaProducer);
+
         } catch (JsonProcessingException e) {
+
             log.error("JsonProcessingException : " + e.getMessage());
             throw new RuntimeException("Object convert exception  " + e.getOriginalMessage());
-        } catch (Exception e) {
-            log.error("Exception" + e.getMessage());
-            throw new RuntimeException("Unknown exception " + e.getMessage() + "\nCause " + e.getCause());
+
         }
         return new ApiResponse(HttpStatus.OK, "Saved view product");
     }
