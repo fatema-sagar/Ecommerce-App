@@ -104,7 +104,7 @@ public class OrderServices {
                 (Communication.sendGetRequest("http://" + Communication.getApplicationAddress() + "/customer/" + order.getCustomerID(),token)
                         , CustomerDto.class);
         OrderPlaced orderPlaced = createOrderPlacedInstance(modes, order, customer);
-        Producer producer = CommonsUtil.getProducer();
+//        Producer producer = CommonsUtil.getProducer();
         Properties props = producer.getProducerConfigs();
         KafkaProducer<String, String > kafkaProducer= producer.getKafkaProducer(props);
         producer.producerRecord(objectMapper.writeValueAsString(orderPlaced),

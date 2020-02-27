@@ -20,8 +20,8 @@ public class Producer {
 
     public Properties getProducerConfigs() {
         Properties props = new Properties();
-       // props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, environment.getRequiredProperty(CommonsUtil.KAFKA_BOOTSTRAP_SERVERS));
-        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,"localhost:9092");
+        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, environment.getRequiredProperty(CommonsUtil.KAFKA_BOOTSTRAP_SERVERS));
+//        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,"kafka.bootstrap.server");
         props.put(ProducerConfig.CLIENT_ID_CONFIG, "id : " + UUID.randomUUID().toString());
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
