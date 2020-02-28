@@ -5,6 +5,7 @@ import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
@@ -22,11 +23,17 @@ import static org.junit.Assert.assertNotNull;
 public class ConsumerTest {
 
     private static final String TEST_TOPIC = "testTopic";
+    private com.ecommerce.ecommApp.commons.kafka.Consumer consumer;
 
 
     @ClassRule
     public static EmbeddedKafkaRule embeddedKafkaRule =
             new EmbeddedKafkaRule(1, true, TEST_TOPIC);
+
+    @Before
+    public void setUp() {
+        this.consumer = new com.ecommerce.ecommApp.commons.kafka.Consumer();
+    }
 
     @Test
     public void testReceivingKafkaEvents() {

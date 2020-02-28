@@ -23,7 +23,7 @@ public class Consumer {
     private Environment environment;
 
     // get the consumer properties
-    private Properties getProperties(String groupId) {
+    public Properties getProperties(String groupId) {
         Properties properties = new Properties();
         properties.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, environment.getProperty(CommonsUtil.KAFKA_BOOTSTRAP_SERVERS));
         properties.setProperty(ConsumerConfig.GROUP_ID_CONFIG, groupId);
@@ -33,8 +33,8 @@ public class Consumer {
         return properties;
     }
 
-    public KafkaConsumer getKafkaConsumer(String groupId) {
-        KafkaConsumer<String, String> kafkaConsumer = new KafkaConsumer<>(getProperties(groupId));
+    public KafkaConsumer getKafkaConsumer(Properties properties) {
+        KafkaConsumer<String, String> kafkaConsumer = new KafkaConsumer<>(properties);
         return kafkaConsumer;
     }
 

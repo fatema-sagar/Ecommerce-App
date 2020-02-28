@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.util.Collections;
+import java.util.Properties;
 
 @Slf4j
 @Service
@@ -46,7 +47,8 @@ public class FetchOrderService {
         this.environment = environment;
         this.objectMapper = CommonsUtil.getObjectMapper();
         this.orderServices = orderServices;
-        this.kafkaConsumer = consumer.getKafkaConsumer(Utils.GROUP_ID);
+        Properties properties = consumer.getProperties(Utils.GROUP_ID);
+        this.kafkaConsumer = consumer.getKafkaConsumer(properties);
         this.invoiceGeneratorService = invoiceGeneratorService;
     }
 

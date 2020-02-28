@@ -39,7 +39,8 @@ public class FetchViewedProduct {
 
         objectMapper = CommonsUtil.getObjectMapper();
         List<ViewProductDto> list;
-        kafkaConsumer = consumer.getKafkaConsumer(UUID.randomUUID().toString());
+        Properties properties = consumer.getProperties(UUID.randomUUID().toString());
+        kafkaConsumer = consumer.getKafkaConsumer(properties);
         list = fetchViewProduct(kafkaConsumer, environment.getProperty(CommonsUtil.VIEW_PRODUCT_TOPIC), customerId);
 
         return list;
