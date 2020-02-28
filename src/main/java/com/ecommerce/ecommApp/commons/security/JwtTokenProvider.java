@@ -24,6 +24,7 @@ public class JwtTokenProvider {
 
     private String jwtSecret;
     private Long jwtExpirationInMs;
+    private long customerId;
 
     @Autowired
     public JwtTokenProvider(Environment environment) {
@@ -55,8 +56,17 @@ public class JwtTokenProvider {
                 .setSigningKey(jwtSecret)
                 .parseClaimsJws(token)
                 .getBody();
+        customerId = Long.parseLong(claims.getSubject());
 
         return Long.parseLong(claims.getSubject());
+    }
+
+    public long getCustomerId() {
+        return customerId;
+    }
+
+    public void setCustomerId(long customerId) {
+        this.customerId = customerId;
     }
 
     public boolean validateToken(String authToken) {

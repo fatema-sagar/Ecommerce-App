@@ -6,6 +6,7 @@ import com.ecommerce.ecommApp.commons.pojo.orders.OrdersDTO;
 import com.ecommerce.ecommApp.orders.Models.Orders;
 import com.ecommerce.ecommApp.orders.services.OrderServices;
 import javassist.NotFoundException;
+import org.apache.kafka.common.protocol.types.Field;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Iterator;
 import java.util.List;
 
 @RestController
@@ -39,7 +41,6 @@ public class OrderController {
 
     /**
      * Stores and places orders when a customer hit checkout.
-     * @param orderedProducts The list of Items the customer wants to order
      * @param customerID
      * @return Success message
      * @throws Exception
@@ -84,6 +85,16 @@ public class OrderController {
             return new ResponseEntity<>(new ResponseMessage("Order not found", "Error"), HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
             return new ResponseEntity<>(new ResponseMessage("The following error occurred " + e.getMessage(), "Error"), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping("/buynow")
+    private ResponseEntity<ResponseMessage> orderNow(@RequestBody ItemsDTO itemsDTO) {
+        try {
+            Orders orders = orderService.buyNow(itemsDTO);
+            return new ResponseEntity<>(new ResponseMessage(orders.toString(), "New order placed"), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(new ResponseMessage("Order cannot placed" + e.getMessage(), "Error"), HttpStatus.BAD_REQUEST);
         }
     }
 

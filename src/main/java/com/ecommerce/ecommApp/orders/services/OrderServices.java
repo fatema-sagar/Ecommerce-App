@@ -11,6 +11,7 @@ import com.ecommerce.ecommApp.commons.pojo.orders.ItemsDTO;
 import com.ecommerce.ecommApp.commons.pojo.orders.OrdersDTO;
 import com.ecommerce.ecommApp.commons.pojo.products.Cart;
 import com.ecommerce.ecommApp.commons.pojo.products.Product;
+import com.ecommerce.ecommApp.commons.security.JwtTokenProvider;
 import com.ecommerce.ecommApp.orders.Models.Orders;
 import com.ecommerce.ecommApp.orders.repository.OrderRepository;
 import com.ecommerce.ecommApp.products.services.ProductService;
@@ -46,6 +47,9 @@ public class OrderServices {
 
     @Autowired
     private HttpServletRequest httpServletRequest;
+
+    @Autowired
+    JwtTokenProvider jwtTokenProvider;
 
     /**
      * Get all orders for the given customer id
@@ -233,4 +237,19 @@ public class OrderServices {
         return "Order status changed from " + initial + " to " + updateOrder.getStatus();
     }
 
+    public Orders buyNow(ItemsDTO itemsDTO) throws Exception {
+        String token = httpServletRequest.getHeader("Authorization");
+        long customerId = jwtTokenProvider.getCustomerId();
+        ObjectMapper objectMapper = CommonsUtil.getObjectMapper();
+        CustomerDto customer = objectMapper.readValue
+                (Communication.sendGetRequest("http://" + Communication.getApplicationAddress() + "/customer/" + customerId ,token)
+                        , CustomerDto.class);
+        Orders order = new Orders();
+        order.setCustomerID(customer.getId());
+        order.setProductID(itemsDTO.getProductID());
+        order.setQuantity(itemsDTO.getQuantity());
+        order.setTotalCost(itemsDTO.getCost());
+        order.setOrderStatus(OrderStatus.Placed.toString());
+        return orderRepository.save(order);
+    }
 }
