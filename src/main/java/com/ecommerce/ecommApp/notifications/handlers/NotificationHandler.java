@@ -3,8 +3,7 @@ package com.ecommerce.ecommApp.notifications.handlers;
 import com.ecommerce.ecommApp.EcommAppApplication;
 import com.ecommerce.ecommApp.commons.Util.CommonsUtil;
 import com.ecommerce.ecommApp.commons.enums.NotificationType;
-import com.ecommerce.ecommApp.commons.pojo.notification.OrderCancelled;
-import com.ecommerce.ecommApp.commons.pojo.notification.OrderPlaced;
+import com.ecommerce.ecommApp.commons.pojo.notification.OrderDetails;
 import com.ecommerce.ecommApp.commons.pojo.notification.UserRegistered;
 import com.sendgrid.Method;
 import com.sendgrid.Request;
@@ -59,13 +58,13 @@ public class NotificationHandler implements Handler {
                 sendSmsNotification(((UserRegistered)(object)).getCustomerDto().getNumber(),message);
                 break;
             case CommonsUtil.NOTIFICATION_ORDER_CANCELLED_SERVICE:
-                sendSmsNotification(((OrderCancelled)(object)).getCustomerDto().getNumber(),message);
+                sendSmsNotification(((OrderDetails)(object)).getCustomerDto().getNumber(),message);
                 break;
             case CommonsUtil.NOTIFICATION_ORDER_STATUS_SERVICE:
                 sendSmsNotification(((UserRegistered)(object)).getCustomerDto().getNumber(),message);
                 break;
             case CommonsUtil.NOTIFICATION_ORDER_PLACED_SERVICE:
-                sendSmsNotification(((OrderPlaced)(object)).getCustomerDto().getNumber(),message);
+                sendSmsNotification(((OrderDetails)(object)).getCustomerDto().getNumber(),message);
                 break;
         }
     }
@@ -79,13 +78,13 @@ public class NotificationHandler implements Handler {
                 sendEmailNotificaton(((UserRegistered) (object)).getCustomerDto().getEmail(), notifyingService, message);
                 break;
             case CommonsUtil.NOTIFICATION_ORDER_CANCELLED_SERVICE:
-                sendEmailNotificaton(((OrderCancelled) (object)).getCustomerDto().getEmail(), notifyingService, message);
+                sendEmailNotificaton(((OrderDetails) (object)).getCustomerDto().getEmail(), notifyingService, message);
                 break;
             case CommonsUtil.NOTIFICATION_ORDER_STATUS_SERVICE:
                 sendEmailNotificaton(((UserRegistered) (object)).getCustomerDto().getEmail(), notifyingService, message);
                 break;
             case CommonsUtil.NOTIFICATION_ORDER_PLACED_SERVICE:
-                sendEmailNotificaton(((OrderPlaced) (object)).getCustomerDto().getEmail(), notifyingService, message);
+                sendEmailNotificaton(((OrderDetails) (object)).getCustomerDto().getEmail(), notifyingService, message);
                 break;
         }
     }

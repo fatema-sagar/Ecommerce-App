@@ -25,14 +25,17 @@ public class Communication {
    * @param endpoint The elasticsearch URL to read the data from.
    * @return It returns a response from the elastic search.
    */
-  public static String sendGetRequest(String endpoint) {
+  public static String sendGetRequest(String endpoint, String jwtToken) {
     try {
       logger.info("Sending request for GET.");
       URL url = new URL(endpoint);
       HttpURLConnection con = (HttpURLConnection) url.openConnection();
       con.setRequestMethod(RequestMethod.GET.toString());
+      logger.info("Sending request to "+endpoint);
+      if(jwtToken!=null)
+        con.setRequestProperty("Authorization",jwtToken);
       int responseCode = con.getResponseCode();
-      System.out.println("response code : " + responseCode);
+      logger.info("response code : " + responseCode);
       if (responseCode == HttpURLConnection.HTTP_OK) {
         BufferedReader in = new BufferedReader(new InputStreamReader(
                 con.getInputStream()));
@@ -45,8 +48,8 @@ public class Communication {
         return response.toString();
       }
     } catch (IOException io) {
-      logger.error("An IOException occurred while receiving response from the Elasticsearch" +
-              "{}", io.getMessage());
+      logger.error("An IOException occurred while receiving response from the Endpoint" +
+              "{}", io.getMessage()+" "+endpoint);
     }
     return null;
   }
@@ -134,7 +137,7 @@ public class Communication {
   public static String getApplicationAddress() throws Exception {
     try {
       InetAddress address = InetAddress.getLocalHost();
-      return address.getHostAddress() + ":" + EcommAppApplication.environment.
+      return "localhost"+":" + EcommAppApplication.environment.
               getRequiredProperty(CommonsUtil.SERVER_PORT);
     } catch (UnknownHostException ex) {
       throw new Exception("Host is not available");

@@ -33,7 +33,6 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         try {
             loginRequest = new ObjectMapper()
                     .readValue(request.getInputStream(), LoginRequest.class);
-            log.info("Email id {} and password is {}", loginRequest.getEmailId(), loginRequest.getPassword() );
 
         } catch (IOException e) {
             loginRequest.setEmailId("");

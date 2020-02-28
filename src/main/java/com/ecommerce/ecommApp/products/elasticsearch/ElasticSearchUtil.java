@@ -94,7 +94,7 @@ public class ElasticSearchUtil {
     public List<Product> getAllProducts() {
         List<Product> allProducts;
         String endPoint = String.format("%s/%s/%s?q=*", INET_ADDRESS, _INDEX, "_search");
-        String response = Communication.sendGetRequest(endPoint);
+        String response = Communication.sendGetRequest(endPoint,null);
         allProducts = extractFromResponse(response);
         return allProducts;
     }
@@ -104,10 +104,9 @@ public class ElasticSearchUtil {
      * @param jsonBody The String formatted json body to search in elastic search.
      * @return List of Products matching the search text or else returns null.
      */
-    public static List<Product> searchProduct(String jsonBody) throws ElasticsearchException {
+    public List<Product> searchProduct(String jsonBody) throws ElasticsearchException {
         List<Product> allProducts = new ArrayList<>();
         try {
-
             logger.info("Searching all products");
             String endpoint = String.format("%s/%s/%s", INET_ADDRESS, _INDEX, "_search");
             QueryBuilder queryBuilder = new QueryBuilder(jsonBody);

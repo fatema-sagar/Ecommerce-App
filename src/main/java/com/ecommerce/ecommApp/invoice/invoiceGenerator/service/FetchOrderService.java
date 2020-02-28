@@ -2,7 +2,7 @@ package com.ecommerce.ecommApp.invoice.invoiceGenerator.service;
 
 import com.ecommerce.ecommApp.commons.Util.CommonsUtil;
 import com.ecommerce.ecommApp.commons.kafka.Consumer;
-import com.ecommerce.ecommApp.commons.pojo.notification.OrderPlaced;
+import com.ecommerce.ecommApp.commons.pojo.notification.OrderDetails;
 import com.ecommerce.ecommApp.commons.pojo.orders.OrdersDTO;
 import com.ecommerce.ecommApp.invoice.invoiceGenerator.pdfUtils.Utils;
 import com.ecommerce.ecommApp.orders.services.OrderServices;
@@ -72,11 +72,12 @@ public class FetchOrderService {
                 records.forEach(record -> {
                     try {
 
-                        OrderPlaced orderPlaced = objectMapper.readValue(record.value(), OrderPlaced.class);
-                        OrdersDTO ordersDTO = orderServices.getOrderDetails(orderPlaced.getOrderID());
-                        Response response = invoiceGeneratorService.invoiceGenerate(ordersDTO);
-                        log.info("Invoice send for customerId {} with productId {} with response {}", ordersDTO.getCustomerID(),
-                                ordersDTO.getProductID(), response.getStatusCode());
+
+                        OrderDetails orderDetails = objectMapper.readValue(record.value(), OrderDetails.class);
+                        OrdersDTO ordersDTO = orderServices.getOrderDetails(orderDetails.getOrderID());
+                            invoiceGeneratorService.invoiceGenerate(ordersDTO);
+                        log.info("Invoice send for customerId {} with productId {}", ordersDTO.getCustomerID(),
+                                ordersDTO.getProductID());
 
                     } catch (JsonProcessingException e) {
 
