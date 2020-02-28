@@ -37,7 +37,7 @@ public class OrderDtoToInvoiceFormatTest {
     }
 
     @Test
-    public void convertToInvoiceFormatDtoTest() throws ElementNotFoundException {
+    public void convertToInvoiceFormatDtoTest() throws ElementNotFoundException, InterruptedException {
 
         OrdersDTO ordersDTO = objects.getOrderDto();
         Product product = objects.getProduct();
@@ -51,7 +51,7 @@ public class OrderDtoToInvoiceFormatTest {
     }
 
     @Test(expected = RuntimeException.class)
-    public void productNotFountException() throws ElementNotFoundException {
+    public void productNotFountException() throws ElementNotFoundException, InterruptedException {
 
         OrdersDTO ordersDTO = objects.getOrderDto();
 

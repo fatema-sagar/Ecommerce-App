@@ -41,7 +41,7 @@ public class RecommendationServiceTest {
     }
 
     @Test
-    public void fetchRecommendedProductTest() throws ElementNotFoundException {
+    public void fetchRecommendedProductTest() throws ElementNotFoundException, InterruptedException {
         Product product = objects.getProduct();
 
         List<Long> viewProductList = new ArrayList<>();
@@ -57,7 +57,7 @@ public class RecommendationServiceTest {
     }
 
     @Test
-    public void fetchRecommendedProductExceptionTest_1() throws ElementNotFoundException {
+    public void fetchRecommendedProductExceptionTest_1() throws ElementNotFoundException, InterruptedException {
 
         List<Long> viewProductList = new ArrayList<>();
         viewProductList.add(1L);
@@ -72,7 +72,7 @@ public class RecommendationServiceTest {
     }
 
     @Test(expected = NullPointerException.class)
-    public void fetchRecommendedProductExceptionTest_2() throws ElementNotFoundException {
+    public void fetchRecommendedProductExceptionTest_2() throws ElementNotFoundException, InterruptedException {
 
         List<Long> viewProductList = new ArrayList<>();
         viewProductList.add(1L);
