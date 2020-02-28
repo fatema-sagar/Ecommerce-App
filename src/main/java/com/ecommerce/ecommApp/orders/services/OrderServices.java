@@ -6,7 +6,7 @@ import com.ecommerce.ecommApp.commons.Util.Communication;
 import com.ecommerce.ecommApp.commons.enums.NotificationType;
 import com.ecommerce.ecommApp.commons.enums.OrderStatus;
 import com.ecommerce.ecommApp.commons.pojo.customer.CustomerDto;
-import com.ecommerce.ecommApp.commons.pojo.notification.OrderPlaced;
+import com.ecommerce.ecommApp.commons.pojo.notification.OrderDetails;
 import com.ecommerce.ecommApp.commons.pojo.orders.ItemsDTO;
 import com.ecommerce.ecommApp.commons.pojo.orders.OrdersDTO;
 import com.ecommerce.ecommApp.commons.pojo.products.Cart;
@@ -28,8 +28,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
-
-import static java.rmi.server.LogStream.log;
 
 @Slf4j
 @Service
@@ -136,10 +134,10 @@ public class OrderServices {
         CustomerDto customer = objectMapper.readValue
                 (Communication.sendGetRequest("http://" + Communication.getApplicationAddress() + "/customer/" + order.getCustomerID(),token)
                         , CustomerDto.class);
-        OrderPlaced orderPlaced = createOrderPlacedInstance(modes, order, customer);
+        OrderDetails orderDetails = createOrderPlacedInstance(modes, order, customer);
         Properties props = producer.getProducerConfigs();
         KafkaProducer<String, String > kafkaProducer= producer.getKafkaProducer(props);
-        producer.producerRecord(objectMapper.writeValueAsString(orderPlaced),
+        producer.producerRecord(objectMapper.writeValueAsString(orderDetails),
                 environment.getRequiredProperty(CommonsUtil.NOTIFICATION_ORDER_PLACED_TOPIC),kafkaProducer);
         producer.closeProducer(kafkaProducer);
     }
@@ -153,14 +151,14 @@ public class OrderServices {
      * @return Instance of orderPlaced containing relevant details
      * @throws Exception
      */
-    private OrderPlaced createOrderPlacedInstance(List<String> modes, Orders order, CustomerDto customer) throws Exception {
-        OrderPlaced orderPlaced = new OrderPlaced();
+    private OrderDetails createOrderPlacedInstance(List<String> modes, Orders order, CustomerDto customer) throws Exception {
+        OrderDetails orderPlaced = new OrderDetails();
         orderPlaced.setMode(modes);
         orderPlaced.setCustomerDto(customer);
         orderPlaced.setOrderID(order.getOrderID());
         Product product = fetchProduct(order.getProductID());
         orderPlaced.setProductName(product.getName());
-        orderPlaced.setQuandity(order.getQuantity());
+        orderPlaced.setQuantity(order.getQuantity());
         orderPlaced.setTotalCost(order.getTotalCost());
         return orderPlaced;
     }

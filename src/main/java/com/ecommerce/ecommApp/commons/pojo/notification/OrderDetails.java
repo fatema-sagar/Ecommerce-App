@@ -7,7 +7,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class OrderPlaced
+public class OrderDetails
 {
     @JsonProperty("mode")
     private List<String> mode;
@@ -18,8 +18,8 @@ public class OrderPlaced
     @JsonProperty("product_name")
     private String productName;
 
-    @JsonProperty("quandity")
-    private Integer quandity;
+    @JsonProperty("quantity")
+    private Integer quantity;
 
     @JsonProperty("total_cost")
     private Float totalCost;
@@ -27,9 +27,16 @@ public class OrderPlaced
     @JsonProperty("customerDto")
     private CustomerDto customerDto;
 
-    public String toString()
-    {
-        return String.format("order %s placed for %s %s with CustomerDto Id %s ",getOrderID(),getQuandity(),getProductName(), getCustomerDto().getId());
+    @Override
+    public String toString() {
+        return "OrderDetails{" +
+                "mode=" + mode +
+                ", OrderID='" + OrderID + '\'' +
+                ", productName='" + productName + '\'' +
+                ", quantity=" + quantity +
+                ", totalCost=" + totalCost +
+                ", customerDto=" + customerDto +
+                '}';
     }
 }
 
