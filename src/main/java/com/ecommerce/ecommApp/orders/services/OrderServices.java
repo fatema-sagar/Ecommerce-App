@@ -9,22 +9,29 @@ import com.ecommerce.ecommApp.commons.pojo.customer.CustomerDto;
 import com.ecommerce.ecommApp.commons.pojo.notification.OrderPlaced;
 import com.ecommerce.ecommApp.commons.pojo.orders.ItemsDTO;
 import com.ecommerce.ecommApp.commons.pojo.orders.OrdersDTO;
+import com.ecommerce.ecommApp.commons.pojo.products.Cart;
 import com.ecommerce.ecommApp.commons.pojo.products.Product;
 import com.ecommerce.ecommApp.orders.Models.Orders;
 import com.ecommerce.ecommApp.orders.repository.OrderRepository;
 import com.ecommerce.ecommApp.products.services.ProductService;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javassist.NotFoundException;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
+import static java.rmi.server.LogStream.log;
+
+@Slf4j
 @Service
 public class OrderServices {
     @Autowired
@@ -60,16 +67,32 @@ public class OrderServices {
      * Function to add order to the orders database
      *
      * @param customerID      ID of the customer placing the order
-     * @param productsOrdered Th elist of Items that are ordered by the customer
      * @throws Exception
      */
-    public void placeOrder(Long customerID, List<ItemsDTO> productsOrdered) throws Exception {
+    public void placeOrder(Long customerID) throws Exception {
+
+        List<Cart>  cart = fetchCartOfCustomer(customerID);
+        List<ItemsDTO> productsOrdered = convertToItemsDto(cart);
         for (ItemsDTO item : productsOrdered) {
             Orders order = getOrderInstance(customerID, item);
             orderRepository.save(order);
             notifyUser(Arrays.asList(NotificationType.Text_SMS.toString(), NotificationType.EMAIL.toString()), order);
         }
         productService.deductProducts(productsOrdered);
+    }
+
+    private List<ItemsDTO> convertToItemsDto(List<Cart> cartProducts){
+
+        List<ItemsDTO> items = new ArrayList<>();
+        for(Cart cartProduct: cartProducts){
+
+            ItemsDTO cartItem = new ItemsDTO();
+            cartItem.setCost(cartProduct.getCost());
+            cartItem.setProductID(cartProduct.getCartIdentity().getProductId());
+            cartItem.setQuantity(cartProduct.getQuantity());
+            items.add(cartItem);
+        }
+        return items;
     }
 
     /**
@@ -89,6 +112,16 @@ public class OrderServices {
         return orders;
     }
 
+    private List<Cart> fetchCartOfCustomer(Long customerId) throws Exception {
+
+        String token = httpServletRequest.getHeader("Authorization");
+        String data = Communication.sendGetRequest("http://" + Communication.getApplicationAddress() + "/carts/" + customerId,token);
+        ObjectMapper objectMapper = CommonsUtil.getObjectMapper();
+        List<Cart> items = objectMapper.readValue(data, new TypeReference<List<Cart>>(){});
+        OrderServices.log.info(items.toString());
+        return items;
+    }
+
     /**
      * Utility function to add the order to the Kafka notification channel
      *
@@ -104,7 +137,6 @@ public class OrderServices {
                 (Communication.sendGetRequest("http://" + Communication.getApplicationAddress() + "/customer/" + order.getCustomerID(),token)
                         , CustomerDto.class);
         OrderPlaced orderPlaced = createOrderPlacedInstance(modes, order, customer);
-//        Producer producer = CommonsUtil.getProducer();
         Properties props = producer.getProducerConfigs();
         KafkaProducer<String, String > kafkaProducer= producer.getKafkaProducer(props);
         producer.producerRecord(objectMapper.writeValueAsString(orderPlaced),

@@ -31,6 +31,7 @@ public class Communication {
       URL url = new URL(endpoint);
       HttpURLConnection con = (HttpURLConnection) url.openConnection();
       con.setRequestMethod(RequestMethod.GET.toString());
+      logger.info("Sending request to "+endpoint);
       if(jwtToken!=null)
         con.setRequestProperty("Authorization",jwtToken);
       int responseCode = con.getResponseCode();

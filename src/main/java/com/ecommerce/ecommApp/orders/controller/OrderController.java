@@ -45,9 +45,9 @@ public class OrderController {
      * @throws Exception
      */
     @RequestMapping(path = "/{customerID}", method = RequestMethod.POST)
-    private ResponseEntity<ResponseMessage> placeOrder(@RequestBody List<ItemsDTO> orderedProducts, @PathVariable long customerID) throws Exception {
+    private ResponseEntity<ResponseMessage> placeOrder(@PathVariable long customerID) throws Exception {
         try {
-            orderService.placeOrder(customerID, orderedProducts);
+            orderService.placeOrder(customerID);
             return new ResponseEntity<>(new ResponseMessage("Success order placed", "created"), HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(new ResponseMessage("Error in placing order", "Error"), HttpStatus.BAD_REQUEST);
