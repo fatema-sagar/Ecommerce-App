@@ -117,6 +117,7 @@ public class NotificationHandler implements Handler {
             log.error("Twilio API Exception : Error in sending message to {}", number);
         }
     }
+    
 
     /**
      * This method send email notification to the particular email using the SendGrid SDK.
