@@ -14,6 +14,9 @@ public interface CartRepository extends JpaRepository<Cart, CartIdentity> {
     @Query(nativeQuery = true, value = "select * from cart where customer_id=?1 ")
     Optional<List<Cart>> findByCustomerId(long customerId);
 
+    @Query(nativeQuery = true, value = "select * from cart where customer_id=?1 and product_id=?2 ")
+    Optional<Cart> findUniqueCartItem(long customerId,long productId);
+
     @Query(value = "SELECT * FROM cart WHERE product_id=?1", nativeQuery = true)
     List<Cart> existsByProductId(long productId);
 

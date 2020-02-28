@@ -2,8 +2,9 @@ package com.ecommerce.ecommApp.recommend.recommendation.service;
 
 import com.ecommerce.ecommApp.commons.exceptions.ElementNotFoundException;
 import com.ecommerce.ecommApp.commons.pojo.products.Product;
+import com.ecommerce.ecommApp.products.elasticsearch.ElasticsearchObject;
 import com.ecommerce.ecommApp.recommend.view.service.FetchViewedProduct;
-import com.ecommerce.ecommApp.products.ElasticSearchUtil;
+import com.ecommerce.ecommApp.products.elasticsearch.ElasticSearchUtil;
 import com.ecommerce.ecommApp.products.services.ProductService;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONException;
@@ -28,6 +29,7 @@ public class RecommendationService {
     @Autowired
     private ProductService productService;
 
+    ElasticSearchUtil elasticSearchUtil = ElasticsearchObject.getElasticsearchObject();
 
     /**
      * method used to fetch the recommended product for user
@@ -44,7 +46,7 @@ public class RecommendationService {
             try {
                 Product product = productService.getProduct(Long.valueOf(productId));
                 products.addAll(searchProductElasticSearch(product));
-            } catch (ElementNotFoundException e) {
+            } catch (ElementNotFoundException | InterruptedException e) {
                 log.warn("Element not fount ");
             }
         });
@@ -61,19 +63,16 @@ public class RecommendationService {
         JSONObject jsonObject = new JSONObject();
 
         try {
-
             jsonObject.put("productId", product.getProductId());
-            products.addAll(ElasticSearchUtil.searchProduct(jsonObject.toString()));
+            products.addAll(elasticSearchUtil.searchProduct(jsonObject.toString()));
             jsonObject.remove("productId");
             jsonObject.put("brand", product.getBrand());
-            products.addAll(ElasticSearchUtil.searchProduct(jsonObject.toString()));
+            products.addAll(elasticSearchUtil.searchProduct(jsonObject.toString()));
             jsonObject.put("category", product.getCategory());
-            products.addAll(ElasticSearchUtil.searchProduct(jsonObject.toString()));
-
+            products.addAll(elasticSearchUtil.searchProduct(jsonObject.toString()));
         } catch (JSONException e) {
             e.printStackTrace();
         }
        return products;
     }
-
 }

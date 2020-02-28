@@ -3,14 +3,20 @@ package com.ecommerce.ecommApp.products.services;
 import com.ecommerce.ecommApp.commons.exceptions.CustomerNotFoundException;
 import com.ecommerce.ecommApp.commons.pojo.products.Cart;
 import com.ecommerce.ecommApp.customers.repository.CustomerRepository;
+import com.ecommerce.ecommApp.orders.Models.Orders;
+import com.ecommerce.ecommApp.orders.repository.OrderRepository;
+import com.ecommerce.ecommApp.orders.services.OrderServices;
 import com.ecommerce.ecommApp.products.composite.CartIdentity;
 import com.ecommerce.ecommApp.commons.exceptions.ElementNotFoundException;
 import com.ecommerce.ecommApp.products.payload.CartItem;
 import com.ecommerce.ecommApp.products.repositories.CartRepository;
 import com.ecommerce.ecommApp.products.repositories.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+//import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.criteria.Order;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,6 +26,13 @@ import java.util.Optional;
  */
 @Service
 public class CartService {
+
+    @Autowired
+    private OrderServices orderServices;
+
+    @Autowired
+    private OrderRepository orderRepository;
+
 
     @Autowired
     private CustomerRepository customerRepository;
@@ -74,8 +87,11 @@ public class CartService {
      * @return
      */
 
+    @Cacheable("cart")
     public List<Cart> getCart(Long customerId) throws CustomerNotFoundException {
         try {
+            System.out.println("Going to sleep for 5 Secs.. to simulate backend call.");
+            Thread.sleep(1000*5);
             Optional<List<Cart>> fetchCartItems = cartRepository.findByCustomerId(customerId);
             List<Cart> fetchedCartItems = fetchCartItems.get();
             return fetchedCartItems;
@@ -104,6 +120,27 @@ public class CartService {
         } else {
             throw new ElementNotFoundException("Product not found in the cart.");
         }
+    }
+
+    public Orders checkoutCart(Long productId,Long customerId){
+        Orders order = new Orders();
+
+        Optional<List<Cart>> carts   = cartRepository.findByCustomerId(customerId);
+        List<Cart> toBeOrderedCart = carts.get();
+
+        for (Cart cart: toBeOrderedCart
+             ) {
+            order.setCustomerID(customerId);
+            order.setProductID(productId);
+            order.setQuantity(cart.getQuantity());
+            order.setTotalCost(cart.getCost());
+            order.setOrderStatus("orderPlaced");
+            orderRepository.save(order);
+
+        }
+        return order;
+
+
     }
 
 }

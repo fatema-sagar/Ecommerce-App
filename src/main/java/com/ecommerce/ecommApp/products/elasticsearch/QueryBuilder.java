@@ -1,4 +1,4 @@
-package com.ecommerce.ecommApp.products;
+package com.ecommerce.ecommApp.products.elasticsearch;
 
 import org.json.JSONArray;
 import org.json.JSONException;

@@ -24,21 +24,22 @@ public class ProductController {
 
     private static final Logger logger = LoggerFactory.getLogger(ProductController.class);
 
-    @RequestMapping(path = "/display", method = RequestMethod.GET)
+    @RequestMapping(path="/display",method = RequestMethod.GET)
     private List<Product> getAllProducts() {
         return productService.getProductsList();
     }
 
-    @RequestMapping(path = "/add", method = RequestMethod.POST)
+    @RequestMapping(method = RequestMethod.POST)
     private ResponseEntity<Object> addProduct(@RequestBody Product product) {
         try {
+            System.out.println("hello");
             return new ResponseEntity<Object>(productService.createProduct(product), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>("Unable to add product to the db.."+ e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 
-    @RequestMapping(path = "/update", method = RequestMethod.PUT)
+    @RequestMapping(method = RequestMethod.PUT)
     private ResponseEntity<Object> updateProduct(@RequestBody Product product) {
         try {
             return new ResponseEntity<>(productService.updateProduct(product), HttpStatus.OK);
@@ -81,9 +82,11 @@ public class ProductController {
     private ResponseEntity<Object> getByProductId(@PathVariable long productId) {
         try {
             logger.info("Fetching element {} from Products.", productId);
-            return new ResponseEntity<>(productService.getProduct(productId), HttpStatus.OK);
-        } catch (ElementNotFoundException e) {
-            return new ResponseEntity<>("ProductId not found" + e.getMessage(), HttpStatus.BAD_REQUEST);
+
+            return new ResponseEntity(productService.getProduct(productId), HttpStatus.OK);
+        } catch (ElementNotFoundException | InterruptedException e) {
+            return new ResponseEntity("ProductId not found" + e.getMessage(), HttpStatus.BAD_REQUEST);
+
         }
     }
 

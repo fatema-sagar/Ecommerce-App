@@ -57,7 +57,7 @@ public class OrderDtoToInvoiceFormat {
 
                 list.add(invoiceFormatDto);
 
-            } catch (ElementNotFoundException e) {
+            } catch (ElementNotFoundException | InterruptedException e) {
                 log.error("Element not found exception : " + e.getMessage() + "\nCause : " + e.getCause());
                 throw new RuntimeException("Product not found in data base with productID" + ordersDTO.getProductID() +
                         "Message : " + e.getMessage() + "Cause : " + e.getCause());
