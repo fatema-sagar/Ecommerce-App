@@ -104,7 +104,7 @@ public class ElasticSearchUtil {
      * @param jsonBody The String formatted json body to search in elastic search.
      * @return List of Products matching the search text or else returns null.
      */
-    public List<Product> searchProduct(String jsonBody) throws ElasticsearchException {
+    public static List<Product> searchProduct(String jsonBody) throws ElasticsearchException {
         List<Product> allProducts = new ArrayList<>();
         try {
 
@@ -126,7 +126,7 @@ public class ElasticSearchUtil {
      * @param response The response received from elasticsearch.
      * @return List of Products extracted from the response.
      */
-    private List<Product> extractFromResponse(String response) {
+    private static List<Product> extractFromResponse(String response) {
         ObjectMapper objectMapper = CommonsUtil.getObjectMapper();
         List<Product> allProducts = new ArrayList<>();
         JSONObject jsonObject;

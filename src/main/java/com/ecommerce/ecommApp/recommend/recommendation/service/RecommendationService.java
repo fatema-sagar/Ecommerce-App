@@ -46,7 +46,7 @@ public class RecommendationService {
             try {
                 Product product = productService.getProduct(Long.valueOf(productId));
                 products.addAll(searchProductElasticSearch(product));
-            } catch (ElementNotFoundException e) {
+            } catch (ElementNotFoundException | InterruptedException e) {
                 log.warn("Element not fount ");
             }
         });
