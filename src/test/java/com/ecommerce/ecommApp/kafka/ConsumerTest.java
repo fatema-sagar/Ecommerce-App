@@ -1,14 +1,17 @@
 package com.ecommerce.ecommApp.kafka;
 
-import org.apache.kafka.clients.consumer.Consumer;
+import com.ecommerce.ecommApp.commons.kafka.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.Producer;
+import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.common.serialization.StringDeserializer;
+import org.apache.kafka.common.serialization.StringSerializer;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.test.rule.EmbeddedKafkaRule;
 import org.springframework.kafka.test.utils.KafkaTestUtils;
@@ -16,6 +19,7 @@ import org.springframework.kafka.test.utils.KafkaTestUtils;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -23,7 +27,7 @@ import static org.junit.Assert.assertNotNull;
 public class ConsumerTest {
 
     private static final String TEST_TOPIC = "testTopic";
-    private com.ecommerce.ecommApp.commons.kafka.Consumer consumer;
+    private Consumer consumer;
 
 
     @ClassRule
@@ -32,36 +36,39 @@ public class ConsumerTest {
 
     @Before
     public void setUp() {
-        this.consumer = new com.ecommerce.ecommApp.commons.kafka.Consumer();
+        this.consumer = new Consumer();
     }
 
     @Test
-    public void testReceivingKafkaEvents() {
+    public void testKafkaConsumer() {
 
-        Consumer<Integer, String> consumer = configureConsumer();
-        Producer<Integer, String> producer = configureProducer();
+        KafkaConsumer<String, String> kafkaConsumer = configureConsumer();
+        Producer<String, String> producer = configureProducer();
 
-        producer.send(new ProducerRecord<>(TEST_TOPIC, 123, "my-test-value"));
+        producer.send(new ProducerRecord<>(TEST_TOPIC, "123", "my-test-value"));
 
-        ConsumerRecord<Integer, String> singleRecord = KafkaTestUtils.getSingleRecord(consumer, TEST_TOPIC);
+        ConsumerRecord<String, String> singleRecord = KafkaTestUtils.getSingleRecord(kafkaConsumer, TEST_TOPIC);
         assertNotNull(singleRecord);
         assertEquals("my-test-value", singleRecord.value());
 
-        consumer.close();
+        consumer.closeConsumer(kafkaConsumer);
         producer.close();
     }
 
-    private Consumer<Integer, String> configureConsumer() {
+    private KafkaConsumer<String, String> configureConsumer() {
         Map<String, Object> consumerProps = KafkaTestUtils.consumerProps("testGroup", "true", embeddedKafkaRule.getEmbeddedKafka());
         consumerProps.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
-        Consumer<Integer, String> consumer = new DefaultKafkaConsumerFactory<Integer, String>(consumerProps)
-                .createConsumer();
+        Properties properties = new Properties();
+        properties.putAll(consumerProps);
+        properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        KafkaConsumer<String, String> consumer = this.consumer.getKafkaConsumer(properties);
         consumer.subscribe(Collections.singleton(TEST_TOPIC));
         return consumer;
     }
 
-    private Producer<Integer, String> configureProducer() {
+    private Producer<String, String> configureProducer() {
         Map<String, Object> producerProps = new HashMap<>(KafkaTestUtils.producerProps(embeddedKafkaRule.getEmbeddedKafka()));
-        return new DefaultKafkaProducerFactory<Integer, String>(producerProps).createProducer();
+        producerProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+        return new DefaultKafkaProducerFactory<String, String>(producerProps).createProducer();
     }
 }

@@ -71,7 +71,7 @@ public class FetchViewedProduct {
                     log.info("Key : " + consumerRecord.key() + "\nvalues : " + consumerRecord.value());
                     try {
                         ViewProductDto viewProductDto = objectMapper.readValue(consumerRecord.value(), ViewProductDto.class);
-                        if(viewProductDto.getCustomerId().equals(customerId))
+                        if(viewProductDto.getCustomerId().toString().equals(customerId))
                             list.add(viewProductDto);
                     } catch (JsonProcessingException e) {
                         e.printStackTrace();

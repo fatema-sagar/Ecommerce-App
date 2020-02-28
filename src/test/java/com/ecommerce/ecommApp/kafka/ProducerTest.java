@@ -41,13 +41,13 @@ public class ProducerTest {
 
 
     @Test
-    public void testReceivingKafkaEvents() {
-        Consumer<Integer, String> consumer = configureConsumer();
+    public void testKafkaProducer() {
+        Consumer<String, String> consumer = configureConsumer();
         KafkaProducer<String, String> kafkaProducer = configureProducer();
 
         producer.producerRecord("my-test-value", TEST_TOPIC, kafkaProducer);
 
-        ConsumerRecord<Integer, String> singleRecord = KafkaTestUtils.getSingleRecord(consumer, TEST_TOPIC);
+        ConsumerRecord<String, String> singleRecord = KafkaTestUtils.getSingleRecord(consumer, TEST_TOPIC);
         assertNotNull(singleRecord);
         assertEquals("my-test-value", singleRecord.value());
 
@@ -55,10 +55,10 @@ public class ProducerTest {
         producer.closeProducer(kafkaProducer);
     }
 
-    private Consumer<Integer, String> configureConsumer() {
+    private Consumer<String, String> configureConsumer() {
         Map<String, Object> consumerProps = KafkaTestUtils.consumerProps("testGroup", "true", embeddedKafkaRule.getEmbeddedKafka());
         consumerProps.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
-        Consumer<Integer, String> consumer = new DefaultKafkaConsumerFactory<Integer, String>(consumerProps)
+        Consumer<String, String> consumer = new DefaultKafkaConsumerFactory<String, String>(consumerProps)
                 .createConsumer();
         consumer.subscribe(Collections.singleton(TEST_TOPIC));
         return consumer;
