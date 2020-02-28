@@ -24,7 +24,7 @@ public class ProductController {
 
     private static final Logger logger = LoggerFactory.getLogger(ProductController.class);
 
-    @RequestMapping(method = RequestMethod.GET)
+    @RequestMapping(path="/display",method = RequestMethod.GET)
     private List<Product> getAllProducts() {
         return productService.getProductsList();
     }
