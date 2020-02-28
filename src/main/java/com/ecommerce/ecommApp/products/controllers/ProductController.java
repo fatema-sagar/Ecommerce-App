@@ -24,12 +24,12 @@ public class ProductController {
 
     private static final Logger logger = LoggerFactory.getLogger(ProductController.class);
 
-    @RequestMapping(path = "/display", method = RequestMethod.GET)
+    @RequestMapping(method = RequestMethod.GET)
     private List<Product> getAllProducts() {
         return productService.getProductsList();
     }
 
-    @RequestMapping(path = "/add", method = RequestMethod.POST)
+    @RequestMapping(method = RequestMethod.POST)
     private ResponseEntity<Object> addProduct(@RequestBody Product product) {
         try {
             System.out.println("hello");
@@ -39,7 +39,7 @@ public class ProductController {
         }
     }
 
-    @RequestMapping(path = "/update", method = RequestMethod.PUT)
+    @RequestMapping(method = RequestMethod.PUT)
     private ResponseEntity<Object> updateProduct(@RequestBody Product product) {
         try {
             return new ResponseEntity<>(productService.updateProduct(product), HttpStatus.OK);
