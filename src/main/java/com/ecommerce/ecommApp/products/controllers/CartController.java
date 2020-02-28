@@ -73,7 +73,7 @@ public class CartController {
         } catch (CustomerNotFoundException ex) {
             return new ResponseEntity<>(new ResponseMessage("Customer Not present for Customer Id : " + customerId, "ERROR"), HttpStatus.NOT_FOUND);
         } catch (Exception ex) {
-            return new ResponseEntity<>(new ResponseMessage("Error in Retriving cart : " + ex.getMessage(), "ERROR"), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new ResponseMessage("Error in Retrieving cart : " + ex.getMessage(), "ERROR"), HttpStatus.NOT_FOUND);
         }
     }
 

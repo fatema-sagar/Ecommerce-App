@@ -7,7 +7,6 @@ import org.apache.kafka.common.protocol.types.Field;
 public class CommonsUtil {
 
     private static final ObjectMapper objectMapper;
-    private static final Producer producer;
     public static final String SERVER_PORT="server.port";
     public static final String NOTIFICATION_USER_REGISTERED_SERVICE = "User Registered";
     public static final String NOTIFICATION_ORDER_PLACED_SERVICE = "Order Placed";
@@ -47,20 +46,8 @@ public class CommonsUtil {
     public static final String JWT_SECRET = "app.jwtSecret";
     public static final String JWT_EXPIRATION_TIME = "app.jwtExpirationInMs";
 
-
-
-
-
-
-
-
     static {
-        producer = new Producer();
         objectMapper = new ObjectMapper();
-    }
-
-    public static Producer getProducer() {
-        return producer;
     }
 
     public static ObjectMapper getObjectMapper() { return objectMapper; }
