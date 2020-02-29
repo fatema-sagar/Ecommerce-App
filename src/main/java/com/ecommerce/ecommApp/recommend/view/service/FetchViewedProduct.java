@@ -39,7 +39,8 @@ public class FetchViewedProduct {
 
         objectMapper = CommonsUtil.getObjectMapper();
         List<ViewProductDto> list;
-        kafkaConsumer = consumer.getKafkaConsumer(UUID.randomUUID().toString());
+        Properties properties = consumer.getProperties(UUID.randomUUID().toString());
+        kafkaConsumer = consumer.getKafkaConsumer(properties);
         list = fetchViewProduct(kafkaConsumer, environment.getProperty(CommonsUtil.VIEW_PRODUCT_TOPIC), customerId);
 
         return list;
@@ -70,7 +71,7 @@ public class FetchViewedProduct {
                     log.info("Key : " + consumerRecord.key() + "\nvalues : " + consumerRecord.value());
                     try {
                         ViewProductDto viewProductDto = objectMapper.readValue(consumerRecord.value(), ViewProductDto.class);
-                        if(viewProductDto.getCustomerId().equals(customerId))
+                        if(viewProductDto.getCustomerId().toString().equals(customerId))
                             list.add(viewProductDto);
                     } catch (JsonProcessingException e) {
                         e.printStackTrace();

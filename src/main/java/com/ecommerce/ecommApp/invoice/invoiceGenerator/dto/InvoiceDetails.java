@@ -26,7 +26,7 @@ public class InvoiceDetails {
     private String brand;
 
     @JsonProperty(value = "product_description")
-    private String product_description;
+    private String productDescription;
 
     @JsonProperty(value = "product_image")
     private String productImage;

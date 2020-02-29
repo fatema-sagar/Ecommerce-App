@@ -2,7 +2,6 @@ package com.ecommerce.ecommApp.commons.Util;
 
 import com.ecommerce.ecommApp.commons.kafka.Producer;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.kafka.common.protocol.types.Field;
 
 public class CommonsUtil {
 

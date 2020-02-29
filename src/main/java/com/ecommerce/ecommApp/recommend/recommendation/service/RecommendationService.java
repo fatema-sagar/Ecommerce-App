@@ -72,6 +72,7 @@ public class RecommendationService {
             products.addAll(elasticSearchUtil.searchProduct(jsonObject.toString()));
         } catch (JSONException e) {
             e.printStackTrace();
+            throw new RuntimeException("Json exception with message : " + e.getMessage());
         }
        return products;
     }

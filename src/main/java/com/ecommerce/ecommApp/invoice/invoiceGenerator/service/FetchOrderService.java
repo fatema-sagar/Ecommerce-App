@@ -8,6 +8,7 @@ import com.ecommerce.ecommApp.invoice.invoiceGenerator.pdfUtils.Utils;
 import com.ecommerce.ecommApp.orders.services.OrderServices;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sendgrid.Response;
 import javassist.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.util.Collections;
+import java.util.Properties;
 
 @Slf4j
 @Service
@@ -45,7 +47,6 @@ public class FetchOrderService {
         this.environment = environment;
         this.objectMapper = CommonsUtil.getObjectMapper();
         this.orderServices = orderServices;
-        this.kafkaConsumer = consumer.getKafkaConsumer(Utils.GROUP_ID);
         this.invoiceGeneratorService = invoiceGeneratorService;
     }
 
@@ -55,6 +56,9 @@ public class FetchOrderService {
      * call the invoiceGenerate method of invoiceGenerateService for generate the invoice
      */
     public void fetchOrder() {
+
+        Properties properties = consumer.getProperties(Utils.GROUP_ID);
+        this.kafkaConsumer = consumer.getKafkaConsumer(properties);
 
         log.info("Start the fetch service for consume the record from topic");
         kafkaConsumer.subscribe(Collections.singleton(
@@ -68,6 +72,7 @@ public class FetchOrderService {
             if (records.count() > 0) {
                 records.forEach(record -> {
                     try {
+
 
                         OrderDetails orderDetails = objectMapper.readValue(record.value(), OrderDetails.class);
                         OrdersDTO ordersDTO = orderServices.getOrderDetails(orderDetails.getOrderID());
