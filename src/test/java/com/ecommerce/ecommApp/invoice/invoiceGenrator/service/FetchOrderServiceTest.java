@@ -26,6 +26,7 @@ import org.junit.rules.TestWatcher;
 import org.junit.rules.Timeout;
 import org.junit.runner.Description;
 import org.junit.runner.RunWith;
+import org.junit.runner.notification.Failure;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.Statement;
 import org.junit.runners.model.TestTimedOutException;
@@ -69,19 +70,16 @@ public class FetchOrderServiceTest {
     private static final String TEST_TOPIC = "testTopic";
     private Objects objects;
     private ObjectMapper objectMapper;
-
-//    @Rule
-//    public Timeout globalTimeout = Timeout.seconds(5);
+    private static final int MIN_TIMEOUT = 5000;
 
 
     @ClassRule
     public static EmbeddedKafkaRule embeddedKafkaRule =
             new EmbeddedKafkaRule(1, true, TEST_TOPIC);
 
-    private static final int MIN_TIMEOUT = 5000;
-
+    @SuppressWarnings("deprecation")
     @Rule
-    public Timeout timeout = new Timeout(MIN_TIMEOUT) {
+    public Timeout timeout = new Timeout(MIN_TIMEOUT, TimeUnit.MILLISECONDS) {
         public Statement apply(Statement base, Description description) {
             return new FailOnTimeout(base, MIN_TIMEOUT) {
                 @Override
@@ -95,6 +93,7 @@ public class FetchOrderServiceTest {
         }
     };
 
+
     @Before
     public void setUp() throws JsonProcessingException {
         MockitoAnnotations.initMocks(this);
@@ -104,6 +103,7 @@ public class FetchOrderServiceTest {
         this.producer = configureProducer();
         producer.send(new ProducerRecord<>(TEST_TOPIC, "123", objectMapper.writeValueAsString(orderDetails)));
         when(consumer.getKafkaConsumer(any())).thenReturn(getKafkaConsumer());
+
     }
 
     @After
@@ -123,7 +123,6 @@ public class FetchOrderServiceTest {
     }
 
 
-
     private KafkaConsumer<String, String> getKafkaConsumer() {
         Map<String, Object> consumerProps = KafkaTestUtils.consumerProps("testGroup", "true", embeddedKafkaRule.getEmbeddedKafka());
         consumerProps.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
@@ -139,7 +138,6 @@ public class FetchOrderServiceTest {
         producerProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         return new DefaultKafkaProducerFactory<String, String>(producerProps).createProducer();
     }
-
 
 }
 
