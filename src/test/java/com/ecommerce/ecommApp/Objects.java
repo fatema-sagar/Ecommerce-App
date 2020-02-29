@@ -1,6 +1,7 @@
 package com.ecommerce.ecommApp;
 
 import com.ecommerce.ecommApp.commons.pojo.customer.CustomerDto;
+import com.ecommerce.ecommApp.commons.pojo.notification.OrderDetails;
 import com.ecommerce.ecommApp.commons.pojo.orders.OrdersDTO;
 import com.ecommerce.ecommApp.commons.pojo.products.Product;
 import com.ecommerce.ecommApp.invoice.invoiceGenerator.dto.InvoiceDetails;
@@ -9,6 +10,8 @@ import com.ecommerce.ecommApp.invoice.invoiceSend.dto.SendInvoiceDto;
 import com.ecommerce.ecommApp.recommend.view.dto.ViewProductDto;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class Objects {
@@ -115,5 +118,18 @@ public class Objects {
         viewProductDto.setCustomerId(1L);
         viewProductDto.setProductId(1L);
         return viewProductDto;
+    }
+
+    public OrderDetails getOrderDetails() {
+        OrderDetails orderDetails = new OrderDetails();
+        List<String> list = new ArrayList<>();
+        list.add("Cash");
+        orderDetails.setOrderID("1");
+        orderDetails.setProductName("t-shirt");
+        orderDetails.setQuantity(1);
+        orderDetails.setTotalCost(500F);
+        orderDetails.setCustomerDto(getCustomerDto());
+        orderDetails.setMode(list);
+        return orderDetails;
     }
 }

@@ -47,8 +47,6 @@ public class FetchOrderService {
         this.environment = environment;
         this.objectMapper = CommonsUtil.getObjectMapper();
         this.orderServices = orderServices;
-        Properties properties = consumer.getProperties(Utils.GROUP_ID);
-        this.kafkaConsumer = consumer.getKafkaConsumer(properties);
         this.invoiceGeneratorService = invoiceGeneratorService;
     }
 
@@ -58,6 +56,9 @@ public class FetchOrderService {
      * call the invoiceGenerate method of invoiceGenerateService for generate the invoice
      */
     public void fetchOrder() {
+
+        Properties properties = consumer.getProperties(Utils.GROUP_ID);
+        this.kafkaConsumer = consumer.getKafkaConsumer(properties);
 
         log.info("Start the fetch service for consume the record from topic");
         kafkaConsumer.subscribe(Collections.singleton(
