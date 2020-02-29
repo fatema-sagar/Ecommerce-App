@@ -10,6 +10,7 @@ import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.StreamsConfig;
+import org.apache.kafka.streams.Topology;
 import org.apache.kafka.streams.kstream.Consumed;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -30,6 +31,7 @@ public class FetchViewProductsStream {
 
     /**
      * constructor used to initialize the local variable
+     *
      * @param environment used to access the application properties value
      */
     @Autowired
@@ -40,6 +42,7 @@ public class FetchViewProductsStream {
 
     /**
      * used to get the properties for kafka stream
+     *
      * @return object of properties
      */
     private Properties getStreamProperties() {
@@ -58,13 +61,14 @@ public class FetchViewProductsStream {
 
     /**
      * used to start the stream process
+     *
      * @param customerId for filter the view product for same user
      * @return list of  ids of view product
      */
     public List<Long> start(Long customerId) {
         List<Long> viewProducts = new ArrayList<>();
         Properties properties = getStreamProperties();
-        KafkaStreams kafkaStreams = createTopology(properties, viewProducts, customerId);
+        KafkaStreams kafkaStreams = new KafkaStreams(createTopology(viewProducts, customerId), properties);
 
         kafkaStreams.cleanUp();
         kafkaStreams.start();
@@ -83,17 +87,16 @@ public class FetchViewProductsStream {
 
     /**
      * create the topology for running the stream process
-     * @param properties
-     * @param list list of view products id
+     *
+     * @param list       list of view products id
      * @param customerId user id for filter the user record
      * @return kafka stream object for start the topology
      */
-    private KafkaStreams createTopology(Properties properties, List<Long> list, Long customerId) {
+    public Topology createTopology(List<Long> list, Long customerId) {
 
         StreamsBuilder builder = new StreamsBuilder();
         Serdes.StringSerde stringSerde = new Serdes.StringSerde();
         Serdes.LongSerde longSerde = new Serdes.LongSerde();
-        JsonSerde jsonSerde = new JsonSerde();
 
         builder
                 .stream(environment.getProperty(CommonsUtil.VIEW_PRODUCT_TOPIC), Consumed.with(longSerde, stringSerde))
@@ -102,17 +105,18 @@ public class FetchViewProductsStream {
                 .groupByKey()
                 .count()
                 .toStream()
-                .foreach( (productId, value) -> list.add(productId));
+                .foreach((productId, value) -> list.add(productId));
 
-        return new KafkaStreams(builder.build(), properties);
+        return builder.build();
     }
 
     /**
      * get the key from record
+     *
      * @param value view product record
      * @return product id
      */
-    private Long selectKey(String  value) {
+    private Long selectKey(String value) {
         try {
             ViewProductDto viewProductDto = objectMapper.readValue(value, ViewProductDto.class);
             return viewProductDto.getProductId();
@@ -123,14 +127,15 @@ public class FetchViewProductsStream {
 
     /**
      * used to validate the view for user
-     * @param value view product
+     *
+     * @param value      view product
      * @param customerId user id for filter the view product
      * @return return true if view is valid otherwise false
      */
     private Boolean isValidView(String value, Long customerId) {
         try {
             ViewProductDto viewProductDto = objectMapper.readValue(value, ViewProductDto.class);
-            if( viewProductDto.getCustomerId().equals(customerId)) {
+            if (viewProductDto.getCustomerId().equals(customerId)) {
                 return true;
             }
             return false;
