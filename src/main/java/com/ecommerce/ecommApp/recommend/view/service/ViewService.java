@@ -2,8 +2,8 @@ package com.ecommerce.ecommApp.recommend.view.service;
 
 import com.ecommerce.ecommApp.commons.Util.CommonsUtil;
 import com.ecommerce.ecommApp.commons.kafka.Producer;
+import com.ecommerce.ecommApp.commons.pojo.ResponseMessage;
 import com.ecommerce.ecommApp.recommend.view.dto.ViewProductDto;
-import com.ecommerce.ecommApp.recommend.view.dto.response.ApiResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -41,9 +41,9 @@ public class ViewService {
     /**
      * method for produce the view product
      * @param viewProductDto contains the details of product and user
-     * @return object of ApiResponse which contain the status and message
+     * @return object of ResponseMessage which contain the status and message
      */
-    public ApiResponse viewProduct(ViewProductDto viewProductDto) {
+    public ResponseMessage viewProduct(ViewProductDto viewProductDto) {
 
         try {
 
@@ -58,6 +58,6 @@ public class ViewService {
             throw new RuntimeException("Object convert exception  " + e.getOriginalMessage());
 
         }
-        return new ApiResponse(HttpStatus.OK, "Saved view product");
+        return new ResponseMessage(HttpStatus.OK, "Saved view product");
     }
 }
