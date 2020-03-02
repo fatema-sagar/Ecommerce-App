@@ -2,9 +2,8 @@ package com.ecommerce.ecommApp.recommend.view.controller;
 
 import com.ecommerce.ecommApp.Objects;
 import com.ecommerce.ecommApp.commons.Util.CommonsUtil;
-import com.ecommerce.ecommApp.commons.pojo.products.Product;
+import com.ecommerce.ecommApp.commons.pojo.ResponseMessage;
 import com.ecommerce.ecommApp.recommend.view.dto.ViewProductDto;
-import com.ecommerce.ecommApp.recommend.view.dto.response.ApiResponse;
 import com.ecommerce.ecommApp.recommend.view.service.ViewService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
@@ -23,15 +22,9 @@ import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import static org.elasticsearch.core.internal.io.IOUtils.UTF_8;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -66,9 +59,9 @@ public class ViewControllerTest {
     public void viewProductTest() throws Exception {
 
         ViewProductDto viewProductDto = objects.getViewProductDto();
-        ApiResponse apiResponse = new ApiResponse(HttpStatus.OK, "Successfully viewed");
+        ResponseMessage ResponseMessage = new ResponseMessage(HttpStatus.OK, "Successfully viewed");
 
-        when(viewService.viewProduct(any())).thenReturn(apiResponse);
+        when(viewService.viewProduct(any())).thenReturn(ResponseMessage);
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .post(CommonsUtil.VIEWED + CommonsUtil.VIEW_PRODUCT)
@@ -81,9 +74,9 @@ public class ViewControllerTest {
                 .andExpect(status().is2xxSuccessful())
                 .andReturn();
 
-        ApiResponse response = objectMapper.readValue(result.getResponse().getContentAsString(), ApiResponse.class);
+        ResponseMessage response = objectMapper.readValue(result.getResponse().getContentAsString(), ResponseMessage.class);
         assertEquals(200, result.getResponse().getStatus());
-        assertEquals(HttpStatus.OK, response.getStatus());
+        assertEquals(HttpStatus.OK, response.getHttpStatus());
     }
 
     @Test
