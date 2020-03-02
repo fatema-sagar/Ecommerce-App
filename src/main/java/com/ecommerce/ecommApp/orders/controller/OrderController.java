@@ -35,7 +35,7 @@ public class OrderController {
         try {
             return new ResponseEntity<>(orderService.getAllOrder(customerID), HttpStatus.OK);
         } catch (NotFoundException err) {
-            return new ResponseEntity<>(new ResponseMessage("No order forund for customer id:" + customerID, "Error"), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new ResponseMessage("No order found for customer id:" + customerID, "Error"), HttpStatus.NOT_FOUND);
         }
     }
 

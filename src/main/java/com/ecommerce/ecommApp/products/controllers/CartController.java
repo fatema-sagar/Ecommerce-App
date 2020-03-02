@@ -82,7 +82,7 @@ public class CartController {
      *
      * @return : Object of ResponseMessage class with a proper HTTP request status
      */
-    @RequestMapping(value = "/carts", method = RequestMethod.PUT)
+    @RequestMapping(value = "/carts/increaseProduct", method = RequestMethod.PUT)
     private ResponseEntity<Object> updateCustomerCart(@RequestBody CartItem updateCart) {
         try {
             Cart cart = cartService.updateCart(updateCart);
@@ -95,6 +95,31 @@ public class CartController {
         }
     }
 
+    /**
+     * This is an Rest Api endpoint mapping which will handle decreasing of an item already
+     * present in the cart for a particular customer.
+     * @param updateCart
+     * @return
+     */
+    @RequestMapping(value = "/carts/decreaseProduct", method = RequestMethod.PUT)
+    private ResponseEntity<Object> decreaseProductInCart(@RequestBody CartItem updateCart) {
+        try {
+            Cart cart = cartService.decreaseProducts(updateCart);
+            return new ResponseEntity<>(new ResponseMessage("Cart Item Successfully Updated for customerId " + updateCart.getCustomerId()
+                    , "UPDATED"), HttpStatus.OK);
+        } catch (Exception ex) {
+            return new ResponseEntity<>(new ResponseMessage("Cart Item is Not Updated for customerId " + updateCart.getCustomerId()
+                    + " due to : " + ex.getMessage()
+                    , "ERROR"), HttpStatus.NOT_ACCEPTABLE);
+        }
+    }
+
+    /**
+     * This method is used to checkout the complete cart to place the order.
+     * @param productId
+     * @param customerId
+     * @return
+     */
     @RequestMapping(value="/checkoutCart",method = RequestMethod.POST)
     private ResponseEntity<Object> checkoutCart(@RequestParam Long productId,@RequestParam Long customerId) {
         try {
