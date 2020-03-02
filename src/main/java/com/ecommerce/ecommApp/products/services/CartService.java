@@ -138,7 +138,6 @@ public class CartService {
 
     public Orders checkoutCart(Long productId,Long customerId){
         Orders order = new Orders();
-
         Optional<List<Cart>> carts   = cartRepository.findByCustomerId(customerId);
         List<Cart> toBeOrderedCart = carts.get();
 
@@ -150,11 +149,30 @@ public class CartService {
             order.setTotalCost(cart.getCost());
             order.setOrderStatus("orderPlaced");
             orderRepository.save(order);
-
         }
         return order;
-
-
     }
 
+    /**
+     * This function updates the quantity of a particular cart item of a customer.
+     * Takes cartItem payload as argument
+     * @param cartItem
+     * @return : Updated cart of the customer
+     */
+    public Cart decreaseProducts(CartItem cartItem) throws NotEnoughQuantityException, ElementNotFoundException {
+        List<Cart> check = cartRepository.existsByProductId(cartItem.getProductId());
+        if (check.size() != 0) {
+            Cart cart = cartRepository.findById(new CartIdentity(cartItem.getCustomerId(), cartItem.getProductId())).get();
+            Product product = productRepository.findById(cartItem.getProductId()).get();
+            if (cart.getQuantity() > cartItem.getQuantity()) {
+                cart.setQuantity(cart.getQuantity() - cartItem.getQuantity());
+                cart.setCost(cart.getQuantity() * product.getPrice());
+                return cartRepository.save(cart);
+            } else {
+                throw new NotEnoughQuantityException("Sorry for the inconvenience, but only the previous selected quantity is available");
+            }
+        } else {
+            throw new ElementNotFoundException("Product not found in the cart.");
+        }
+    }
 }
