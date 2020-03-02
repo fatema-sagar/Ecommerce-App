@@ -82,7 +82,7 @@ public class CartController {
      *
      * @return : Object of ResponseMessage class with a proper HTTP request status
      */
-    @RequestMapping(value = "/carts", method = RequestMethod.PUT)
+    @RequestMapping(value = "/carts/increaseProduct", method = RequestMethod.PUT)
     private ResponseEntity<Object> updateCustomerCart(@RequestBody CartItem updateCart) {
         try {
             Cart cart = cartService.updateCart(updateCart);
@@ -95,6 +95,12 @@ public class CartController {
         }
     }
 
+    /**
+     * This method is used to checkout the complete cart to place the order.
+     * @param productId
+     * @param customerId
+     * @return
+     */
     @RequestMapping(value="/checkoutCart",method = RequestMethod.POST)
     private ResponseEntity<Object> checkoutCart(@RequestParam Long productId,@RequestParam Long customerId) {
         try {

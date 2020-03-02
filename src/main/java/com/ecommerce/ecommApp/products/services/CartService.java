@@ -1,7 +1,9 @@
 package com.ecommerce.ecommApp.products.services;
 
 import com.ecommerce.ecommApp.commons.exceptions.CustomerNotFoundException;
+import com.ecommerce.ecommApp.commons.exceptions.NotEnoughQuantityException;
 import com.ecommerce.ecommApp.commons.pojo.products.Cart;
+import com.ecommerce.ecommApp.commons.pojo.products.Product;
 import com.ecommerce.ecommApp.customers.repository.CustomerRepository;
 import com.ecommerce.ecommApp.orders.Models.Orders;
 import com.ecommerce.ecommApp.orders.repository.OrderRepository;
@@ -55,10 +57,12 @@ public class CartService {
         CartIdentity cartIdentity;
         if (customerRepository.existsById(payload.getCustomerId()) && productRepository.existsById(payload.getProductId()))
             cartIdentity = new CartIdentity(payload.getCustomerId(), payload.getProductId());
-        else throw new ElementNotFoundException("customerId or productId not present");
+        else
+            throw new ElementNotFoundException("customerId or productId not present");
         cart.setCartIdentity(cartIdentity);
         cart.setQuantity(payload.getQuantity());
-        cart.setCost(payload.getCost());
+        Product product = productRepository.findById(payload.getProductId()).get();
+        cart.setCost(product.getPrice() * payload.getQuantity());
         cartRepository.save(cart);
         return cart;
     }
@@ -101,25 +105,35 @@ public class CartService {
     }
 
     /**
-     * This function updates particular cart item of a particular customer
+     * This function updates the quantity of a particular cart item of a customer.
      * Takes cartItem payload as argument
      *
      * @param payload
      * @return :Updated cart of the customer
      */
 
-    public Cart updateCart(CartItem payload) throws ElementNotFoundException {
+    public Cart updateCart(CartItem payload) throws ElementNotFoundException, NotEnoughQuantityException {
         List<Cart> check = cartRepository.existsByProductId(payload.getProductId());
         if (check.size() != 0) {
             Cart cart = cartRepository.findById(new CartIdentity(payload.getCustomerId(), payload.getProductId())).get();
-            int previousQuantity = cart.getQuantity();
-            float previousCost = cart.getCost();
-            cart.setCost((payload.getQuantity() / previousQuantity) * previousCost);
-            cart.setQuantity(payload.getQuantity());
-            return cartRepository.save(cart);
+            long productId = payload.getProductId();
+            Product product = productRepository.findById(productId).get();
+            if (checkProductAvailability(product, payload)) {
+                cart.setQuantity(cart.getQuantity() + payload.getQuantity());
+                cart.setCost(cart.getQuantity() * product.getPrice());
+                return cartRepository.save(cart);
+            } else {
+                throw new NotEnoughQuantityException("Sorry for the inconvenience, but only the previous selected quantity is available");
+            }
         } else {
             throw new ElementNotFoundException("Product not found in the cart.");
         }
+    }
+
+    private boolean checkProductAvailability(Product product, CartItem payload) {
+        if (product.getProductId() == payload.getProductId() && product.getQuantity() >= payload.getQuantity())
+            return true;
+        return false;
     }
 
     public Orders checkoutCart(Long productId,Long customerId){
