@@ -1,8 +1,8 @@
 package com.ecommerce.ecommApp.recommend.view.service;
 
 import com.ecommerce.ecommApp.commons.kafka.Producer;
+import com.ecommerce.ecommApp.commons.pojo.ResponseMessage;
 import com.ecommerce.ecommApp.recommend.view.dto.ViewProductDto;
-import com.ecommerce.ecommApp.recommend.view.dto.response.ApiResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.kafka.clients.producer.KafkaProducer;
@@ -54,9 +54,9 @@ public class ViewServiceTest {
         when(producer.getProducerConfigs()).thenReturn(properties);
         when(producer.getKafkaProducer(any())).thenReturn(kafkaProducer);
 
-        ApiResponse response = viewService.viewProduct(viewProductDto);
+        ResponseMessage response = viewService.viewProduct(viewProductDto);
 
-        assertEquals(HttpStatus.OK, response.getStatus());
+        assertEquals(HttpStatus.OK, response.getHttpStatus());
         verify(producer, times(1)).getProducerConfigs();
         verify(producer, times(1)).getKafkaProducer(any());
     }

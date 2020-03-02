@@ -1,8 +1,8 @@
 package com.ecommerce.ecommApp.recommend.view.controller;
 
 import com.ecommerce.ecommApp.commons.Util.CommonsUtil;
+import com.ecommerce.ecommApp.commons.pojo.ResponseMessage;
 import com.ecommerce.ecommApp.recommend.view.dto.ViewProductDto;
-import com.ecommerce.ecommApp.recommend.view.dto.response.ApiResponse;
 import com.ecommerce.ecommApp.recommend.view.service.ViewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -27,9 +27,9 @@ public class ViewController {
      * @return ResponseEntity of viewed product
      */
     @PostMapping(CommonsUtil.VIEW_PRODUCT)
-    public ResponseEntity<ApiResponse> viewProduct(@Valid  @RequestBody ViewProductDto viewProductDto) {
+    public ResponseEntity<ResponseMessage> viewProduct(@Valid  @RequestBody ViewProductDto viewProductDto) {
         return ResponseEntity.status(HttpStatus.OK)
-                .body(new ApiResponse(HttpStatus.OK,
+                .body(new ResponseMessage(HttpStatus.OK,
                         "ok",viewService.viewProduct(viewProductDto)));
     }
 

@@ -1,9 +1,9 @@
 package com.ecommerce.ecommApp.recommend.recommendation.controller;
 
 import com.ecommerce.ecommApp.commons.Util.CommonsUtil;
+import com.ecommerce.ecommApp.commons.pojo.ResponseMessage;
 import com.ecommerce.ecommApp.commons.pojo.products.Product;
 import com.ecommerce.ecommApp.recommend.recommendation.service.RecommendationService;
-import com.ecommerce.ecommApp.recommend.view.dto.response.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,8 +27,8 @@ public class RecommendationController {
      * @return list of recommended products
      */
     @GetMapping(CommonsUtil.FETCH_RECOMMENDATION)
-    public ResponseEntity<ApiResponse> fetchRecommendation(@RequestParam( value = "id", required = true) Long customerId) {
+    public ResponseEntity<ResponseMessage> fetchRecommendation(@RequestParam( value = "id", required = true) Long customerId) {
         Set<Product> products = recommendationService.fetchRecommendedProduct(customerId);
-        return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK, "Recommended Product", products));
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(HttpStatus.OK, "Recommended Product", products));
     }
 }

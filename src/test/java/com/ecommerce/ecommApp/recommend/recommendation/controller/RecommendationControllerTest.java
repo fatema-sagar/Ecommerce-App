@@ -2,9 +2,9 @@ package com.ecommerce.ecommApp.recommend.recommendation.controller;
 
 import com.ecommerce.ecommApp.Objects;
 import com.ecommerce.ecommApp.commons.Util.CommonsUtil;
+import com.ecommerce.ecommApp.commons.pojo.ResponseMessage;
 import com.ecommerce.ecommApp.commons.pojo.products.Product;
 import com.ecommerce.ecommApp.recommend.recommendation.service.RecommendationService;
-import com.ecommerce.ecommApp.recommend.view.dto.response.ApiResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
@@ -80,9 +80,9 @@ public class RecommendationControllerTest {
                 .andExpect(status().is2xxSuccessful())
                 .andReturn();
 
-        ApiResponse apiResponse = objectMapper.readValue(result.getResponse().getContentAsString(), ApiResponse.class);
+        ResponseMessage ResponseMessage = objectMapper.readValue(result.getResponse().getContentAsString(), ResponseMessage.class);
         assertEquals(200, result.getResponse().getStatus());
-        assertTrue(((List<Product>)apiResponse.getData()).size() > 0);
+        assertTrue(((List<Product>)ResponseMessage.getData()).size() > 0);
 
     }
 
