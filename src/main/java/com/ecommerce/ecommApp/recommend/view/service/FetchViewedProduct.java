@@ -1,7 +1,7 @@
 package com.ecommerce.ecommApp.recommend.view.service;
 
 import com.ecommerce.ecommApp.commons.Util.CommonsUtil;
-import com.ecommerce.ecommApp.commons.kafka.Consumer;
+import com.ecommerce.ecommApp.commons.kafka.ConsumerBuilder;
 import com.ecommerce.ecommApp.recommend.view.dto.ViewProductDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -24,7 +24,7 @@ public class FetchViewedProduct {
     private Environment environment;
 
     @Autowired
-    private Consumer consumer;
+    private ConsumerBuilder consumerBuilder;
 
     private KafkaConsumer<String, String> kafkaConsumer;
     private ObjectMapper objectMapper;
@@ -39,8 +39,8 @@ public class FetchViewedProduct {
 
         objectMapper = CommonsUtil.getObjectMapper();
         List<ViewProductDto> list;
-        Properties properties = consumer.getProperties(UUID.randomUUID().toString());
-        kafkaConsumer = consumer.getKafkaConsumer(properties);
+        Properties properties = consumerBuilder.getProperties(UUID.randomUUID().toString());
+        kafkaConsumer = consumerBuilder.getKafkaConsumer(properties);
         list = fetchViewProduct(kafkaConsumer, environment.getProperty(CommonsUtil.VIEW_PRODUCT_TOPIC), customerId);
 
         return list;

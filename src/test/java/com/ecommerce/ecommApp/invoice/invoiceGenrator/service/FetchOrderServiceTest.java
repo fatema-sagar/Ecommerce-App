@@ -1,7 +1,7 @@
 package com.ecommerce.ecommApp.invoice.invoiceGenrator.service;
 
 import com.ecommerce.ecommApp.Objects;
-import com.ecommerce.ecommApp.commons.kafka.Consumer;
+import com.ecommerce.ecommApp.commons.kafka.ConsumerBuilder;
 import com.ecommerce.ecommApp.commons.pojo.notification.OrderDetails;
 import com.ecommerce.ecommApp.commons.pojo.orders.OrdersDTO;
 import com.ecommerce.ecommApp.invoice.invoiceGenerator.service.FetchOrderService;
@@ -20,20 +20,14 @@ import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.junit.*;
 import org.junit.internal.runners.statements.FailOnTimeout;
-import org.junit.rules.RuleChain;
-import org.junit.rules.TestRule;
-import org.junit.rules.TestWatcher;
 import org.junit.rules.Timeout;
 import org.junit.runner.Description;
 import org.junit.runner.RunWith;
-import org.junit.runner.notification.Failure;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.Statement;
-import org.junit.runners.model.TestTimedOutException;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.core.env.Environment;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.test.rule.EmbeddedKafkaRule;
@@ -64,7 +58,7 @@ public class FetchOrderServiceTest {
     private OrderServices orderServices;
 
     @Mock
-    private Consumer consumer;
+    private ConsumerBuilder consumerBuilder;
 
     private Producer<String, String> producer;
     private static final String TEST_TOPIC = "testTopic";
@@ -102,7 +96,7 @@ public class FetchOrderServiceTest {
         OrderDetails orderDetails = objects.getOrderDetails();
         this.producer = configureProducer();
         producer.send(new ProducerRecord<>(TEST_TOPIC, "123", objectMapper.writeValueAsString(orderDetails)));
-        when(consumer.getKafkaConsumer(any())).thenReturn(getKafkaConsumer());
+        when(consumerBuilder.getKafkaConsumer(any())).thenReturn(getKafkaConsumer());
 
     }
 
@@ -116,7 +110,7 @@ public class FetchOrderServiceTest {
 
         OrdersDTO ordersDTO = objects.getOrderDto();
         when(environment.getProperty(anyString())).thenReturn(TEST_TOPIC);
-        when(consumer.getProperties(anyString())).thenReturn(mock(Properties.class));
+        when(consumerBuilder.getProperties(anyString())).thenReturn(mock(Properties.class));
         when(orderServices.getOrderDetails(any())).thenReturn(ordersDTO);
         fetchOrderService.fetchOrder();
 

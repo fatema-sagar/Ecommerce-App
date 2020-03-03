@@ -1,14 +1,13 @@
 package com.ecommerce.ecommApp.invoice.invoiceGenerator.service;
 
 import com.ecommerce.ecommApp.commons.Util.CommonsUtil;
-import com.ecommerce.ecommApp.commons.kafka.Consumer;
+import com.ecommerce.ecommApp.commons.kafka.ConsumerBuilder;
 import com.ecommerce.ecommApp.commons.pojo.notification.OrderDetails;
 import com.ecommerce.ecommApp.commons.pojo.orders.OrdersDTO;
 import com.ecommerce.ecommApp.invoice.invoiceGenerator.pdfUtils.Utils;
 import com.ecommerce.ecommApp.orders.services.OrderServices;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sendgrid.Response;
 import javassist.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -25,7 +24,7 @@ import java.util.Properties;
 @Service
 public class FetchOrderService {
 
-    private Consumer consumer;
+    private ConsumerBuilder consumerBuilder;
     private KafkaConsumer kafkaConsumer;
     private Environment environment;
     private ObjectMapper objectMapper;
@@ -34,16 +33,16 @@ public class FetchOrderService {
 
     /**
      * constructor for initialize the local variable
-     * @param consumer provide KafkaConsumer
+     * @param consumerBuilder provide KafkaConsumer
      * @param environment for access the application properties value
      * @param orderServices for getting the details of user order
      * @param invoiceGeneratorService for generate the invoice
      */
     @Autowired
-    public FetchOrderService(Consumer consumer, Environment environment, OrderServices orderServices,
+    public FetchOrderService(ConsumerBuilder consumerBuilder, Environment environment, OrderServices orderServices,
                              InvoiceGeneratorService invoiceGeneratorService) {
 
-        this.consumer = consumer;
+        this.consumerBuilder = consumerBuilder;
         this.environment = environment;
         this.objectMapper = CommonsUtil.getObjectMapper();
         this.orderServices = orderServices;
@@ -57,8 +56,8 @@ public class FetchOrderService {
      */
     public void fetchOrder() {
 
-        Properties properties = consumer.getProperties(Utils.GROUP_ID);
-        this.kafkaConsumer = consumer.getKafkaConsumer(properties);
+        Properties properties = consumerBuilder.getProperties(Utils.GROUP_ID);
+        this.kafkaConsumer = consumerBuilder.getKafkaConsumer(properties);
 
         log.info("Start the fetch service for consume the record from topic");
         kafkaConsumer.subscribe(Collections.singleton(

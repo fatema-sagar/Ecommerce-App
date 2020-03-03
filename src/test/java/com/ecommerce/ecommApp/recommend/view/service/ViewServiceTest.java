@@ -1,6 +1,6 @@
 package com.ecommerce.ecommApp.recommend.view.service;
 
-import com.ecommerce.ecommApp.commons.kafka.Producer;
+import com.ecommerce.ecommApp.commons.kafka.ProducerBuilder;
 import com.ecommerce.ecommApp.commons.pojo.ResponseMessage;
 import com.ecommerce.ecommApp.recommend.view.dto.ViewProductDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -29,7 +29,7 @@ public class ViewServiceTest {
     private ViewService viewService;
 
     @Mock
-    private Producer producer;
+    private ProducerBuilder producerBuilder;
 
     @Mock
     private Environment environment;
@@ -51,14 +51,14 @@ public class ViewServiceTest {
         KafkaProducer<String, String> kafkaProducer = mock(KafkaProducer.class);
 
         when(objectMapper.writeValueAsString(any())).thenReturn("hello");
-        when(producer.getProducerConfigs()).thenReturn(properties);
-        when(producer.getKafkaProducer(any())).thenReturn(kafkaProducer);
+        when(producerBuilder.getProducerConfigs()).thenReturn(properties);
+        when(producerBuilder.getKafkaProducer(any())).thenReturn(kafkaProducer);
 
         ResponseMessage response = viewService.viewProduct(viewProductDto);
 
         assertEquals(HttpStatus.OK, response.getHttpStatus());
-        verify(producer, times(1)).getProducerConfigs();
-        verify(producer, times(1)).getKafkaProducer(any());
+        verify(producerBuilder, times(1)).getProducerConfigs();
+        verify(producerBuilder, times(1)).getKafkaProducer(any());
     }
 
     @Test(expected = RuntimeException.class)

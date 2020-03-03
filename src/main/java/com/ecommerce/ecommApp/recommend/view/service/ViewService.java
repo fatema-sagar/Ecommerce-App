@@ -1,7 +1,7 @@
 package com.ecommerce.ecommApp.recommend.view.service;
 
 import com.ecommerce.ecommApp.commons.Util.CommonsUtil;
-import com.ecommerce.ecommApp.commons.kafka.Producer;
+import com.ecommerce.ecommApp.commons.kafka.ProducerBuilder;
 import com.ecommerce.ecommApp.commons.pojo.ResponseMessage;
 import com.ecommerce.ecommApp.recommend.view.dto.ViewProductDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -20,20 +20,20 @@ import java.util.Properties;
 @Service
 public class ViewService {
 
-    private Producer producer;
+    private ProducerBuilder producerBuilder;
     private String viewTopic;
     private ObjectMapper objectMapper;
     private Environment environment;
 
     /**
      * constructor for initialize the loca variable
-     * @param producer object of producer which provide the kafka producer
+     * @param producerBuilder object of producer which provide the kafka producer
      * @param environment Object of environment for access the value of application properties
      */
     @Autowired
-    public ViewService(Producer producer, Environment environment) {
+    public ViewService(ProducerBuilder producerBuilder, Environment environment) {
         this.environment = environment;
-        this.producer = producer;
+        this.producerBuilder = producerBuilder;
         this.viewTopic = environment.getProperty(CommonsUtil.VIEW_PRODUCT_TOPIC);
         this.objectMapper = CommonsUtil.getObjectMapper();
     }
@@ -48,9 +48,9 @@ public class ViewService {
         try {
 
             String data = objectMapper.writeValueAsString(viewProductDto);
-            Properties properties = producer.getProducerConfigs();
-            KafkaProducer kafkaProducer = producer.getKafkaProducer(properties);
-            producer.producerRecord(data, viewTopic, kafkaProducer);
+            Properties properties = producerBuilder.getProducerConfigs();
+            KafkaProducer kafkaProducer = producerBuilder.getKafkaProducer(properties);
+            producerBuilder.producerRecord(data, viewTopic, kafkaProducer);
 
         } catch (JsonProcessingException e) {
 

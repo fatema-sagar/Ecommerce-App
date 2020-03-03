@@ -1,7 +1,7 @@
 package com.ecommerce.ecommApp.recommend.view.service;
 
 import com.ecommerce.ecommApp.Objects;
-import com.ecommerce.ecommApp.commons.kafka.Consumer;
+import com.ecommerce.ecommApp.commons.kafka.ConsumerBuilder;
 import com.ecommerce.ecommApp.recommend.view.dto.ViewProductDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -40,7 +40,7 @@ public class FetchViewedProductTest {
     private FetchViewedProduct fetchViewedProduct;
 
     @Mock
-    private Consumer consumer;
+    private ConsumerBuilder consumerBuilder;
 
     @Mock
     private Environment environment;
@@ -83,8 +83,8 @@ public class FetchViewedProductTest {
     public void testKafkaConsumer() {
 
         when(environment.getProperty(anyString())).thenReturn(TEST_TOPIC);
-        when(consumer.getProperties(anyString())).thenReturn(properties);
-        when(consumer.getKafkaConsumer(any())).thenReturn(kafkaConsumer);
+        when(consumerBuilder.getProperties(anyString())).thenReturn(properties);
+        when(consumerBuilder.getKafkaConsumer(any())).thenReturn(kafkaConsumer);
         List<ViewProductDto> viewProduct = fetchViewedProduct.getViewProduct("1");
 
         assertTrue(viewProduct.size() > 0);

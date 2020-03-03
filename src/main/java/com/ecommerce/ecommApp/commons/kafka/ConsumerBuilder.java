@@ -17,12 +17,16 @@ import java.util.Properties;
 
 @Slf4j
 @Component
-public class Consumer {
+public class ConsumerBuilder {
 
     @Autowired
     private Environment environment;
 
-    // get the consumer properties
+    /**
+     * used for getting the consumer configuration
+     * @param groupId group id for consumer group
+     * @return properties object which contain the configuration
+     */
     public Properties getProperties(String groupId) {
         Properties properties = new Properties();
         properties.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, environment.getProperty(CommonsUtil.KAFKA_BOOTSTRAP_SERVERS));
@@ -33,16 +37,29 @@ public class Consumer {
         return properties;
     }
 
+    /**
+     * used to create the kafka consumer
+     * @param properties consumer configuration
+     * @return object of kafka consumer
+     */
     public KafkaConsumer getKafkaConsumer(Properties properties) {
         KafkaConsumer<String, String> kafkaConsumer = new KafkaConsumer<>(properties);
         return kafkaConsumer;
     }
 
+    /**
+     * close the kafka consumer
+     * @param kafkaConsumer object of kafka consumer which we have to close
+     */
     public void closeConsumer(KafkaConsumer<String, String> kafkaConsumer) {
         kafkaConsumer.close();
     }
 
-    // subscribe the topic and get the data
+    /**
+     * used for subscribe and print the record
+     * @param kafkaConsumer object of kafka consumer
+     * @param topic topic name
+     */
     public void printData(KafkaConsumer kafkaConsumer, String topic) {
 
         // subscribe the topic
