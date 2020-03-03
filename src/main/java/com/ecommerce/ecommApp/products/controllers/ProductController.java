@@ -32,7 +32,7 @@ public class ProductController {
     @RequestMapping(method = RequestMethod.POST)
     private ResponseEntity<Object> addProduct(@RequestBody Product product) {
         try {
-            System.out.println("hello");
+            logger.info("Adding the new product to the db... {} ", product);
             return new ResponseEntity<Object>(productService.createProduct(product), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>("Unable to add product to the db.."+ e.getMessage(), HttpStatus.BAD_REQUEST);
@@ -42,6 +42,7 @@ public class ProductController {
     @RequestMapping(method = RequestMethod.PUT)
     private ResponseEntity<Object> updateProduct(@RequestBody Product product) {
         try {
+            logger.info("Updating the added product to the db... {} ", product);
             return new ResponseEntity<>(productService.updateProduct(product), HttpStatus.OK);
         } catch (ElementNotFoundException e) {
             return new ResponseEntity<>("Unable to update the product details" + e.getMessage(), HttpStatus.BAD_REQUEST);
@@ -51,6 +52,7 @@ public class ProductController {
     @RequestMapping(path = "/increaseProduct", method = RequestMethod.PUT)
     private ResponseEntity<Object> reStockProducts(@RequestBody Product product) {
         try {
+            logger.info("Restocking the product {} in progress", product);
             return new ResponseEntity<>(productService.increaseProductCount(product), HttpStatus.OK);
         } catch (ElementNotFoundException e) {
             return new ResponseEntity<>("Unable to increase the quantity of existing product." + e.getMessage(), HttpStatus.BAD_REQUEST);
@@ -82,7 +84,6 @@ public class ProductController {
     private ResponseEntity<Object> getByProductId(@PathVariable long productId) {
         try {
             logger.info("Fetching element {} from Products.", productId);
-
             return new ResponseEntity(productService.getProduct(productId), HttpStatus.OK);
         } catch (ElementNotFoundException | InterruptedException e) {
             return new ResponseEntity("ProductId not found" + e.getMessage(), HttpStatus.BAD_REQUEST);
