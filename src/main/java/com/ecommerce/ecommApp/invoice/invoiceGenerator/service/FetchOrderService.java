@@ -8,6 +8,7 @@ import com.ecommerce.ecommApp.invoice.invoiceGenerator.pdfUtils.Utils;
 import com.ecommerce.ecommApp.orders.services.OrderServices;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sendgrid.Response;
 import javassist.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -33,9 +34,10 @@ public class FetchOrderService {
 
     /**
      * constructor for initialize the local variable
-     * @param consumerBuilder provide KafkaConsumer
-     * @param environment for access the application properties value
-     * @param orderServices for getting the details of user order
+     *
+     * @param consumerBuilder         provide KafkaConsumer
+     * @param environment             for access the application properties value
+     * @param orderServices           for getting the details of user order
      * @param invoiceGeneratorService for generate the invoice
      */
     @Autowired
@@ -75,19 +77,16 @@ public class FetchOrderService {
 
                         OrderDetails orderDetails = objectMapper.readValue(record.value(), OrderDetails.class);
                         OrdersDTO ordersDTO = orderServices.getOrderDetails(orderDetails.getOrderID());
-                            invoiceGeneratorService.invoiceGenerate(ordersDTO);
-                        log.info("Invoice send for customerId {} with productId {}", ordersDTO.getCustomerID(),
-                                ordersDTO.getProductID());
+                        Response response = invoiceGeneratorService.invoiceGenerate(ordersDTO);
+                        log.info("Invoice for customerId {} with productId {} and sending status code {}", ordersDTO.getCustomerID(),
+                                ordersDTO.getProductID(), response.getStatusCode());
 
                     } catch (JsonProcessingException e) {
-
                         log.error("JsonProcessingError : " + e.getCause());
-                        e.printStackTrace();
-
+                        log.error("Exception message : {}", e.getMessage());
                     } catch (NotFoundException e) {
-
-                        log.error("Order not found : " + e.getCause() + "\n Message : " + e.getMessage());
-                        e.printStackTrace();
+                        log.error("Order not found with reason {} :  " +
+                                "\n and Exception message : {}", e.getCause(), e.getMessage());
                     }
 
                 });

@@ -31,6 +31,7 @@ public class PdfGenerateService {
 
     /**
      * constructor for initialize the variable
+     *
      * @param headerFooterService object for initialize the local variable
      */
     @Autowired
@@ -41,13 +42,14 @@ public class PdfGenerateService {
 
     /**
      * method for generate the invoice in pdf format
+     *
      * @param invoiceFormatDto details of invoice for make the document
      * @return file path
      */
     public String generatePdf(InvoiceFormatDto invoiceFormatDto) {
         String filePath = null;
         try {
-            if(!Files.exists(Paths.get(Utils.INVOICE_FOLDER)))
+            if (!Files.exists(Paths.get(Utils.INVOICE_FOLDER)))
                 Files.createDirectories(Paths.get(Utils.INVOICE_FOLDER));
 
             filePath = Utils.INVOICE_FOLDER + invoiceFormatDto.getCustomerName() +
@@ -58,21 +60,26 @@ public class PdfGenerateService {
                     new FileOutputStream(
                             new File(filePath)));
 
-        } catch (IOException | DocumentException e) {
+            headerFooterService.setHeader(invoiceFormatDto.getTitle());
+            pdfWriter.setPageEvent(headerFooterService);
 
-            log.info("Exception occur with pid  {} and message {} and Cause is : {}", invoiceFormatDto.getInvoiceId()
-                    , e.getMessage(), e.getCause());
-            throw new RuntimeException("Exception : " + e.getMessage() + " Cause : " + e.getCause());
-        }
-
-        headerFooterService.setHeader(invoiceFormatDto.getTitle());
-        pdfWriter.setPageEvent(headerFooterService);
-
-        document.open();
+            document.open();
             this.addMetaData(document, Utils.PDF_METADATA);
             this.addContent(document, invoiceFormatDto);
 
-        document.close();
+            document.close();
+
+        } catch (IOException e) {
+            filePath = null;
+            log.error("Exception for creating the file");
+            log.error("Exception occur with pid  {} and message {} and Cause is : {}", invoiceFormatDto.getInvoiceId()
+                    , e.getMessage(), e.getCause());
+        } catch (DocumentException e) {
+            filePath = null;
+            log.error("Exception with creation the document");
+            log.error("Exception occur with pid  {} and message {} and Cause is : {}", invoiceFormatDto.getInvoiceId()
+                    , e.getMessage(), e.getCause());
+        }
 
         return filePath;
 
@@ -80,8 +87,9 @@ public class PdfGenerateService {
 
     /**
      * method for add the meta data in pdf
+     *
      * @param document object of document for add the meta data
-     * @param details array of details what we have to add in document
+     * @param details  array of details what we have to add in document
      */
 
     private void addMetaData(Document document, String[] details) {
@@ -95,10 +103,11 @@ public class PdfGenerateService {
 
     /**
      * method for add the content in document
-     * @param document object for add the content of invoice
+     *
+     * @param document         object for add the content of invoice
      * @param invoiceFormatDto object of invoice details
      */
-    private void addContent(Document document, InvoiceFormatDto invoiceFormatDto)  {
+    private void addContent(Document document, InvoiceFormatDto invoiceFormatDto) {
 
         try {
 
@@ -110,13 +119,15 @@ public class PdfGenerateService {
 
         } catch (DocumentException e) {
             log.info("Document exception for add the content with PID {}", invoiceFormatDto.getInvoiceId());
-            throw new DocumentExceptionHandle("Document Exception : " + e.getMessage() + "Cause : " + e.getCause());
+            log.error("Cause of exception {}", e.getCause());
+            log.error("Exception with message {}", e.getMessage());
         }
 
     }
 
     /**
      * method for generate the paragraph of invoice details
+     *
      * @param invoiceDetails object of details of invoice
      * @return object of Paragraph which contain details of invoice
      */
@@ -135,6 +146,7 @@ public class PdfGenerateService {
 
     /**
      * method for generate the paragraph of vendor details
+     *
      * @param soldBy details of vendor
      * @return object of Paragraph which contain the details of vendor
      */
@@ -151,6 +163,7 @@ public class PdfGenerateService {
 
     /**
      * method for add the billing and shipping address  of user
+     *
      * @param invoiceFormatDto contain the details of user
      * @return object of paragraph which contain the addresses of user
      */
@@ -180,6 +193,7 @@ public class PdfGenerateService {
 
     /**
      * method for add the billing address
+     *
      * @param billingAddress details of billing address
      * @return object of paragraph which contain the billing address of user
      */
@@ -195,6 +209,7 @@ public class PdfGenerateService {
 
     /**
      * method for add the shipping address
+     *
      * @param shippingAddress details of shipping address
      * @return object of paragraph which contain the shipping address of user
      */
@@ -210,6 +225,7 @@ public class PdfGenerateService {
 
     /**
      * method for getting the product details
+     *
      * @param invoiceDetails contains the details of product
      * @return object of paragraph which contain the details of product
      */
@@ -225,6 +241,7 @@ public class PdfGenerateService {
 
     /**
      * method for create the product table
+     *
      * @param invoiceDetails contains the details of object
      * @return object of PdfTable which contain the details of product
      */
@@ -240,13 +257,14 @@ public class PdfGenerateService {
 
     /**
      * method for add the header on table
-     * @param table object of PdfTable for adding the header
+     *
+     * @param table       object of PdfTable for adding the header
      * @param headerArray details of header
      */
     private void addHeaderInTable(PdfPTable table, String[] headerArray) {
 
         PdfPCell cell = null;
-        for (String header: headerArray) {
+        for (String header : headerArray) {
             cell = new PdfPCell(new Phrase(header, Utils.NORMAL_FONT));
             cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
@@ -257,7 +275,8 @@ public class PdfGenerateService {
 
     /**
      * this method for adding the details of product in table
-     * @param table object for adding the details of product
+     *
+     * @param table          object for adding the details of product
      * @param invoiceDetails contains the details of product
      */
     private void addDataInTable(PdfPTable table, InvoiceDetails invoiceDetails) {
@@ -272,6 +291,7 @@ public class PdfGenerateService {
 
     /**
      * method for convert amount in words
+     *
      * @param invoiceFormatDto contains the details of product
      * @return object of paragraph which contain the amount in words
      */
@@ -291,6 +311,7 @@ public class PdfGenerateService {
 
     /**
      * method for return the object of paragraph for reusable purpose
+     *
      * @return object of blank paragraph
      */
     private Paragraph getParagraph() {

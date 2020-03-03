@@ -27,6 +27,7 @@ public class InvoiceGeneratorService {
 
     /**
      * constructor for initialize the local variable
+     *
      * @param pdfGenerateService
      * @param orderDtoToInvoiceFormat
      * @param customerService
@@ -45,9 +46,10 @@ public class InvoiceGeneratorService {
 
     /**
      * method for generate the invoice in pdf format
+     *
      * @param ordersDTO contain the details of order
      */
-    public Response invoiceGenerate(OrdersDTO ordersDTO)  {
+    public Response invoiceGenerate(OrdersDTO ordersDTO) {
 
         InvoiceFormatDto invoiceFormatDto = toInvoiceFormat.convertToInvoiceFormatDto(ordersDTO);
 
@@ -55,8 +57,8 @@ public class InvoiceGeneratorService {
                 invoiceFormatDto.getInvoiceDetails().getProductId());
 
         String filePath = pdfGenerateService.generatePdf(invoiceFormatDto);
-        log.info("Generate invoice for customer id {} with pid {}", invoiceFormatDto.getCustomerId(),
-                invoiceFormatDto.getInvoiceDetails().getProductId());
+        log.info("Generate invoice for customer id {} with pid {} and file path {}", invoiceFormatDto.getCustomerId(),
+                invoiceFormatDto.getInvoiceDetails().getProductId(), filePath);
 
         Response response = sendInvoiceService.sendInvoice(getDto(filePath, invoiceFormatDto.getCustomerId()));
         log.info("Send invoice for customerId {} with status code {}", invoiceFormatDto.getCustomerId(),
@@ -67,29 +69,28 @@ public class InvoiceGeneratorService {
 
     /**
      * method for creating the object SendInvoiceDto which contain the details to be send
-     * @param filePath file path of invoice
+     *
+     * @param filePath   file path of invoice
      * @param customerId unique id of user
      * @return object of SendInvoiceDto contains message, file, email of sender, email of recipient  etc...
      */
-    private SendInvoiceDto getDto(String filePath, Long customerId)  {
+    private SendInvoiceDto getDto(String filePath, Long customerId) {
 
         CustomerDto customer = null;
+        SendInvoiceDto sendInvoiceDto = new SendInvoiceDto();
         try {
             customer = customerService.getCustomerDetails(customerId);
+            sendInvoiceDto.setFile(new File(filePath));
+            sendInvoiceDto.setContentMessage(SendUtils.CONTENT_MESSAGE);
+            sendInvoiceDto.setCustomerName(customer.getName());
+            sendInvoiceDto.setSubject(SendUtils.SUBJECT);
+            sendInvoiceDto.setTo(customer.getEmail());
 
         } catch (NotFoundException e) {
-            log.info("Customer not found with cid : {}", customerId);
-            e.printStackTrace();
-            throw new RuntimeException("Customer not found exception :  " + e.getMessage() + "Cause : " + e.getCause());
+            sendInvoiceDto = null;
+            log.error("Customer not found with cid : {}", customerId);
+            log.error("Customer not fount with message {} and cause {}", e.getMessage(), e.getCause());
         }
-
-        SendInvoiceDto sendInvoiceDto = new SendInvoiceDto();
-
-        sendInvoiceDto.setContentMessage(SendUtils.CONTENT_MESSAGE);
-        sendInvoiceDto.setCustomerName(customer.getName());
-        sendInvoiceDto.setSubject(SendUtils.SUBJECT);
-        sendInvoiceDto.setFile(new File(filePath));
-        sendInvoiceDto.setTo(customer.getEmail());
         return sendInvoiceDto;
     }
 }

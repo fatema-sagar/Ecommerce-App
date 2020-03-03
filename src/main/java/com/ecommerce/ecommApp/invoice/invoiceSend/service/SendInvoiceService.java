@@ -13,6 +13,7 @@ import com.sendgrid.helpers.mail.objects.Content;
 import com.sendgrid.helpers.mail.objects.Email;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -28,11 +29,18 @@ public class SendInvoiceService {
 
     /**
      * this method send the invoice to user email
+     *
      * @param sendInvoiceDto the invoice details send to be user
      * @return Response after send the invoice to user
      */
+    public Response sendInvoice(SendInvoiceDto sendInvoiceDto) {
 
-    public Response sendInvoice(SendInvoiceDto sendInvoiceDto)  {
+        Response response = new Response();
+
+        if(sendInvoiceDto == null) {
+            response.setStatusCode(404);
+            return response;
+        }
 
         Email from = new Email(SendUtils.VENDOR_EMAIL, SendUtils.VENDOR_NAME);
         Email to = new Email(sendInvoiceDto.getTo(), sendInvoiceDto.getCustomerName());
@@ -47,7 +55,6 @@ public class SendInvoiceService {
 
         request.setMethod(Method.POST);
         request.setEndpoint(SendUtils.END_POINT);
-        Response response = null;
 
         try {
 
@@ -55,8 +62,8 @@ public class SendInvoiceService {
             response = sendGridAPI.api(request);
 
         } catch (IOException e) {
-            e.printStackTrace();
-            throw  new RuntimeException("Exception with build or send the mail with message : " + e.getMessage());
+            log.error("Exception with build or send the mail with message : {}", e.getMessage());
+            log.error("Exception with cause : ", e.getCause());
         }
 
 
@@ -67,10 +74,11 @@ public class SendInvoiceService {
 
     /**
      * this method create object of attachment file
+     *
      * @param file the file to be attach with the object of attachment
      * @return the object of Attachment
      */
-    private Attachments getAttachments(File file)  {
+    private Attachments getAttachments(File file) {
 
         Attachments attachment = new Attachments();
 
@@ -80,9 +88,8 @@ public class SendInvoiceService {
             attachment.setFilename(SendUtils.FILE_NAME + SendUtils.FILE_EXTENSION);
 
         } catch (IOException e) {
-            log.info("File not found for attaching the customer invoice ,file path is  : {}", file.getPath());
-            e.printStackTrace();
-            throw  new RuntimeException("File not fount exception " + e.getMessage() + " Cause : " + e.getCause());
+            log.error("File not found for attaching the customer invoice ,file path is  : {}", file.getPath());
+            log.error("File not found or unable to convert to bytes with exception message {}  Cause : {}", e.getMessage(), e.getCause());
         }
 
         return attachment;
@@ -90,9 +97,9 @@ public class SendInvoiceService {
 
     /**
      * method convert bytes to Base64 encoder
+     *
      * @param input array of bytes for convert Base64 encoder
      * @return encoded byte to string
-
      */
     private String convertFileToBase64(byte[] input) {
         return Base64.getEncoder().encodeToString(input);
