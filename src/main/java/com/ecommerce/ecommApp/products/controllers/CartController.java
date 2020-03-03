@@ -19,6 +19,7 @@ import java.util.List;
  * @Author Krishna
  * This RestController will handle all the endpoints requests starting with /carts.
  */
+@RequestMapping("/carts")
 @RestController
 public class CartController {
 
@@ -31,7 +32,7 @@ public class CartController {
      *
      * @return : Object of ResponseMessage class with a proper HTTP request status
      */
-    @RequestMapping(value = "/carts", method = RequestMethod.POST)
+    @RequestMapping(method = RequestMethod.POST)
     private ResponseEntity<Object> addToCart(@RequestBody CartItem cartItem) {
         try {
             Cart cart = cartService.addToCart(cartItem);
@@ -47,7 +48,7 @@ public class CartController {
      *
      * @return : Object of ResponseMessage class with a proper HTTP request status
      */
-    @RequestMapping(value = "/carts", method = RequestMethod.DELETE)
+    @RequestMapping(method = RequestMethod.DELETE)
     private ResponseEntity<Object> deleteFromCart(@RequestParam Long customer_id, @RequestParam Long product_id) {
         try {
             CartIdentity cartIdentity = new CartIdentity(customer_id, product_id);
@@ -65,7 +66,7 @@ public class CartController {
      * It expects a customer id as a path variable in the url.
      */
 
-    @RequestMapping(value = "/carts/{customerId}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{customerId}", method = RequestMethod.GET)
     private ResponseEntity<Object> getCustomerCart(@PathVariable Long customerId) {
         try {
             List<Cart> fetchedCart = cartService.getCart(customerId);
@@ -82,7 +83,7 @@ public class CartController {
      *
      * @return : Object of ResponseMessage class with a proper HTTP request status
      */
-    @RequestMapping(value = "/carts/increaseProduct", method = RequestMethod.PUT)
+    @RequestMapping(value = "/increaseProduct", method = RequestMethod.PUT)
     private ResponseEntity<Object> updateCustomerCart(@RequestBody CartItem updateCart) {
         try {
             Cart cart = cartService.updateCart(updateCart);
@@ -101,7 +102,7 @@ public class CartController {
      * @param updateCart
      * @return
      */
-    @RequestMapping(value = "/carts/decreaseProduct", method = RequestMethod.PUT)
+    @RequestMapping(value = "/decreaseProduct", method = RequestMethod.PUT)
     private ResponseEntity<Object> decreaseProductInCart(@RequestBody CartItem updateCart) {
         try {
             Cart cart = cartService.decreaseProducts(updateCart);
@@ -125,7 +126,7 @@ public class CartController {
         try {
             Orders order = cartService.checkoutCart(productId, customerId);
             return new ResponseEntity<>(new ResponseMessage("cartItem successfully checked out and Order successfully placed" + order,
-                    "CHECKEDOUT"), HttpStatus.OK);
+                    "CHECKOUT"), HttpStatus.OK);
         } catch (Exception ex) {
             return new ResponseEntity<>(new ResponseMessage("order not placed for customerId" + customerId
                     +" due to : " + ex.getMessage()
