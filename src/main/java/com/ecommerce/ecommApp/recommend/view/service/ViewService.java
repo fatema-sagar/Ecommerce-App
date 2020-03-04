@@ -54,8 +54,10 @@ public class ViewService {
 
         } catch (JsonProcessingException e) {
 
-            log.error("JsonProcessingException : " + e.getMessage());
-            throw new RuntimeException("Object convert exception  " + e.getOriginalMessage());
+            log.error("Unable to save viewed product");
+            log.error("JsonProcessingException : {}",e.getMessage());
+            log.error("Exception cause : ", e.getCause());
+            return new ResponseMessage(HttpStatus.EXPECTATION_FAILED, "Unable to save view product");
 
         }
         return new ResponseMessage(HttpStatus.OK, "Saved view product");

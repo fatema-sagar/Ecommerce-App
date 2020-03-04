@@ -3,6 +3,7 @@ package com.ecommerce.ecommApp.recommend.recommendation.controller;
 import com.ecommerce.ecommApp.Objects;
 import com.ecommerce.ecommApp.commons.Util.CommonsUtil;
 import com.ecommerce.ecommApp.commons.pojo.ResponseMessage;
+import com.ecommerce.ecommApp.commons.pojo.dto.ProductDto;
 import com.ecommerce.ecommApp.commons.pojo.products.Product;
 import com.ecommerce.ecommApp.recommend.recommendation.service.RecommendationService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -63,16 +64,15 @@ public class RecommendationControllerTest {
     @Test
     public void fetchRecommendationTest() throws Exception {
 
-        Product product = objects.getProduct();
-        Set<Product> products = new HashSet<>();
-        products.add(product);
+        ProductDto productDto = objects.getProductDto();
+        Set<ProductDto> products = new HashSet<>();
+        products.add(productDto);
 
         when(recommendationService.fetchRecommendedProduct(anyLong())).thenReturn(products);
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get(CommonsUtil.RECOMMENDATION + CommonsUtil.FETCH_RECOMMENDATION)
+                .get(CommonsUtil.RECOMMENDATION + "/1")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .param("id", "1")
                 .characterEncoding(UTF_8);
 
         MvcResult result = mockMvc
@@ -90,9 +90,8 @@ public class RecommendationControllerTest {
     public void fetchRecommendationWrongMethodTest() throws Exception {
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .post(CommonsUtil.RECOMMENDATION + CommonsUtil.FETCH_RECOMMENDATION)
+                .post(CommonsUtil.RECOMMENDATION + "/1")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .param("id", "1")
                 .characterEncoding(UTF_8);
 
         MvcResult result = mockMvc
@@ -108,9 +107,8 @@ public class RecommendationControllerTest {
     public void fetchRecommendationParamsTest_1() throws Exception {
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get(CommonsUtil.RECOMMENDATION + CommonsUtil.FETCH_RECOMMENDATION)
+                .get(CommonsUtil.RECOMMENDATION + "/abc")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .param("id", "abc")
                 .characterEncoding(UTF_8);
 
         MvcResult result = mockMvc
@@ -126,7 +124,7 @@ public class RecommendationControllerTest {
     public void fetchRecommendationParamsTest_2() throws Exception {
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get(CommonsUtil.RECOMMENDATION + CommonsUtil.FETCH_RECOMMENDATION)
+                .get(CommonsUtil.RECOMMENDATION)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .characterEncoding(UTF_8);
 
@@ -135,7 +133,7 @@ public class RecommendationControllerTest {
                 .andExpect(status().is4xxClientError())
                 .andReturn();
 
-        assertEquals(400, result.getResponse().getStatus());
+        assertEquals(404, result.getResponse().getStatus());
 
     }
 }

@@ -19,6 +19,7 @@ import org.springframework.http.HttpStatus;
 import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -34,8 +35,6 @@ public class ViewServiceTest {
     @Mock
     private Environment environment;
 
-    @Mock
-    private ObjectMapper objectMapper;
 
 
     @Before
@@ -44,28 +43,19 @@ public class ViewServiceTest {
     }
 
     @Test
-    public void viewProductTest() throws JsonProcessingException {
+    public void viewProductTest() {
 
         ViewProductDto viewProductDto = mock(ViewProductDto.class);
         Properties properties = mock(Properties.class);
         KafkaProducer<String, String> kafkaProducer = mock(KafkaProducer.class);
 
-        when(objectMapper.writeValueAsString(any())).thenReturn("hello");
         when(producerBuilder.getProducerConfigs()).thenReturn(properties);
         when(producerBuilder.getKafkaProducer(any())).thenReturn(kafkaProducer);
 
         ResponseMessage response = viewService.viewProduct(viewProductDto);
 
         assertEquals(HttpStatus.OK, response.getHttpStatus());
-        verify(producerBuilder, times(1)).getProducerConfigs();
         verify(producerBuilder, times(1)).getKafkaProducer(any());
-    }
-
-    @Test(expected = RuntimeException.class)
-    public void viewProductExceptionTest() throws JsonProcessingException {
-
-        when(objectMapper.writeValueAsString(any())).thenThrow(JsonProcessingException.class);
-        viewService.viewProduct(null);
     }
 
 }

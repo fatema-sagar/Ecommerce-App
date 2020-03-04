@@ -10,11 +10,11 @@ import org.springframework.http.HttpStatus;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ResponseMessage {
-    @JsonProperty(value = "message")
+
+    private HttpStatus httpStatus;
     private String message;
     private String type;
     private Object data;
-    private HttpStatus httpStatus;
 
     public ResponseMessage(String message, String type) {
         this.message = message;

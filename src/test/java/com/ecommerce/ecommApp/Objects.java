@@ -1,6 +1,7 @@
 package com.ecommerce.ecommApp;
 
 import com.ecommerce.ecommApp.commons.pojo.customer.CustomerDto;
+import com.ecommerce.ecommApp.commons.pojo.dto.ProductDto;
 import com.ecommerce.ecommApp.commons.pojo.notification.OrderDetails;
 import com.ecommerce.ecommApp.commons.pojo.orders.OrdersDTO;
 import com.ecommerce.ecommApp.commons.pojo.products.Product;
@@ -131,5 +132,20 @@ public class Objects {
         orderDetails.setCustomerDto(getCustomerDto());
         orderDetails.setMode(list);
         return orderDetails;
+    }
+
+    public ProductDto getProductDto() {
+        ProductDto productDto = new ProductDto();
+
+        productDto.setBrand("puma");
+        productDto.setCategory("t-shirt");
+        productDto.setImage("dummy");
+        productDto.setName("black t-shirt");
+        productDto.setPrice(100);
+        productDto.setProductDescription("black fit t-shirt");
+        productDto.setSize("M");
+        productDto.setProductId(1L);
+        productDto.setQuantity(2);
+        return productDto;
     }
 }

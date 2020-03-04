@@ -12,7 +12,10 @@ import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
-import org.junit.*;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.ClassRule;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -58,7 +61,7 @@ public class FetchViewedProductTest {
             new EmbeddedKafkaRule(1, true, TEST_TOPIC);
 
     @Before
-    public void setUp() throws JsonProcessingException {
+    public void setUp() {
 
         MockitoAnnotations.initMocks(this);
 
@@ -69,7 +72,6 @@ public class FetchViewedProductTest {
         this.producer = configureProducer();
 
         viewProductDto = objects.getViewProductDto();
-        producer.send(new ProducerRecord<>(TEST_TOPIC, "123", objectMapper.writeValueAsString(viewProductDto)));
     }
 
     @After
@@ -80,8 +82,9 @@ public class FetchViewedProductTest {
 
 
     @Test
-    public void testKafkaConsumer() {
+    public void testKafkaConsumer() throws JsonProcessingException {
 
+        producer.send(new ProducerRecord<>(TEST_TOPIC, "123", objectMapper.writeValueAsString(viewProductDto)));
         when(environment.getProperty(anyString())).thenReturn(TEST_TOPIC);
         when(consumerBuilder.getProperties(anyString())).thenReturn(properties);
         when(consumerBuilder.getKafkaConsumer(any())).thenReturn(kafkaConsumer);
@@ -89,6 +92,19 @@ public class FetchViewedProductTest {
 
         assertTrue(viewProduct.size() > 0);
         assertEquals(viewProductDto.getProductId(), viewProduct.get(0).getProductId());
+
+    }
+
+    @Test
+    public void testRecordParseException() throws JsonProcessingException {
+
+        producer.send(new ProducerRecord<>(TEST_TOPIC, "123", objectMapper.writeValueAsString("wrong input")));
+        when(environment.getProperty(anyString())).thenReturn(TEST_TOPIC);
+        when(consumerBuilder.getProperties(anyString())).thenReturn(properties);
+        when(consumerBuilder.getKafkaConsumer(any())).thenReturn(kafkaConsumer);
+        List<ViewProductDto> viewProduct = fetchViewedProduct.getViewProduct("1");
+
+        assertTrue(viewProduct.size() == 0);
 
     }
 

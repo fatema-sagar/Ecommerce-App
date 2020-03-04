@@ -57,19 +57,17 @@ public class InvoiceGeneratorServiceTest {
 
         when(orderDtoToInvoiceFormat.convertToInvoiceFormatDto(any())).thenReturn(invoiceFormatDto);
         when(pdfGenerateService.generatePdf(any())).thenReturn(filePath);
-        when(sendInvoiceService.sendInvoice(any())).thenReturn(new Response());
         when(customerService.getCustomerDetails(anyLong())).thenReturn(customerDto);
+        when(sendInvoiceService.sendInvoice(any())).thenReturn(new Response());
 
         invoiceGeneratorService.invoiceGenerate(any());
 
-        verify(orderDtoToInvoiceFormat, times(1)).convertToInvoiceFormatDto(any());
-        verify(pdfGenerateService, times(1)).generatePdf(any());
         verify(customerService, times(1)).getCustomerDetails(anyLong());
         verify(sendInvoiceService, times(1)).sendInvoice(any());
 
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test
     public void invoiceGenerateExceptionTest() throws NotFoundException {
 
         InvoiceFormatDto invoiceFormatDto = objects.getInvoiceFormatDto();
@@ -78,13 +76,12 @@ public class InvoiceGeneratorServiceTest {
         when(orderDtoToInvoiceFormat.convertToInvoiceFormatDto(any())).thenReturn(invoiceFormatDto);
         when(pdfGenerateService.generatePdf(any())).thenReturn(filePath);
         when(customerService.getCustomerDetails(anyLong())).thenThrow(NotFoundException.class);
+        when(sendInvoiceService.sendInvoice(any())).thenReturn(new Response());
 
         invoiceGeneratorService.invoiceGenerate(any());
 
-        verify(orderDtoToInvoiceFormat, times(1)).convertToInvoiceFormatDto(any());
-        verify(pdfGenerateService, times(1)).generatePdf(any());
         verify(customerService, times(1)).getCustomerDetails(anyLong());
-        verify(sendInvoiceService, times(0)).sendInvoice(any());
+        verify(sendInvoiceService, times(1)).sendInvoice(any());
 
     }
 

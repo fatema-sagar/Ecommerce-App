@@ -9,6 +9,7 @@ import com.ecommerce.ecommApp.invoice.invoiceGenerator.service.InvoiceGeneratorS
 import com.ecommerce.ecommApp.orders.services.OrderServices;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sendgrid.Response;
 import io.netty.handler.timeout.TimeoutException;
 import javassist.NotFoundException;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
@@ -64,6 +65,7 @@ public class FetchOrderServiceTest {
     private static final String TEST_TOPIC = "testTopic";
     private Objects objects;
     private ObjectMapper objectMapper;
+    OrderDetails orderDetails;
     private static final int MIN_TIMEOUT = 5000;
 
 
@@ -93,9 +95,8 @@ public class FetchOrderServiceTest {
         MockitoAnnotations.initMocks(this);
         this.objects = new Objects();
         this.objectMapper = new ObjectMapper();
-        OrderDetails orderDetails = objects.getOrderDetails();
+        this.orderDetails = objects.getOrderDetails();
         this.producer = configureProducer();
-        producer.send(new ProducerRecord<>(TEST_TOPIC, "123", objectMapper.writeValueAsString(orderDetails)));
         when(consumerBuilder.getKafkaConsumer(any())).thenReturn(getKafkaConsumer());
 
     }
@@ -105,14 +106,47 @@ public class FetchOrderServiceTest {
         this.producer.close();
     }
 
-    @Test(expected = RuntimeException.class)
-    public void testFetchOrders() throws NotFoundException, TimeoutException {
+    @Test
+    public void testFetchOrders() throws NotFoundException, JsonProcessingException {
+
+        Response response = new Response();
+        response.setStatusCode(200);
+
+        producer.send(new ProducerRecord<>(TEST_TOPIC, "123", objectMapper.writeValueAsString(orderDetails)));
 
         OrdersDTO ordersDTO = objects.getOrderDto();
         when(environment.getProperty(anyString())).thenReturn(TEST_TOPIC);
         when(consumerBuilder.getProperties(anyString())).thenReturn(mock(Properties.class));
         when(orderServices.getOrderDetails(any())).thenReturn(ordersDTO);
+        when(invoiceGeneratorService.invoiceGenerate(any())).thenReturn(response);
         fetchOrderService.fetchOrder();
+
+    }
+
+    @Test
+    public void testDtoParseException() throws JsonProcessingException {
+
+        producer.send(new ProducerRecord<>(TEST_TOPIC, "123", objectMapper.writeValueAsString("orderDetails")));
+
+        when(environment.getProperty(anyString())).thenReturn(TEST_TOPIC);
+        when(consumerBuilder.getProperties(anyString())).thenReturn(mock(Properties.class));
+        fetchOrderService.fetchOrder();
+
+        verify(invoiceGeneratorService, times(0)).invoiceGenerate(any());
+
+    }
+
+    @Test
+    public void testOrderNotFoundException() throws JsonProcessingException, NotFoundException {
+
+        producer.send(new ProducerRecord<>(TEST_TOPIC, "123", objectMapper.writeValueAsString(orderDetails)));
+
+        when(environment.getProperty(anyString())).thenReturn(TEST_TOPIC);
+        when(consumerBuilder.getProperties(anyString())).thenReturn(mock(Properties.class));
+        when(orderServices.getOrderDetails(anyString())).thenThrow(NotFoundException.class);
+        fetchOrderService.fetchOrder();
+
+        verify(invoiceGeneratorService, times(0)).invoiceGenerate(any());
 
     }
 
