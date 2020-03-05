@@ -1,6 +1,6 @@
 package com.ecommerce.ecommApp.kafka;
 
-import com.ecommerce.ecommApp.commons.kafka.Producer;
+import com.ecommerce.ecommApp.commons.kafka.ProducerBuilder;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -25,10 +25,10 @@ import static org.junit.Assert.assertNotNull;
 
 @RunWith(MockitoJUnitRunner.class)
 @EmbeddedKafka(partitions = 1, topics = {"testTopic"})
-public class ProducerTest {
+public class ProducerBuilderTest {
 
     private static String TEST_TOPIC = "testTopic";;
-    private Producer producer;
+    private ProducerBuilder producerBuilder;
 
     @ClassRule
     public static EmbeddedKafkaRule embeddedKafkaRule =
@@ -36,7 +36,7 @@ public class ProducerTest {
 
     @Before
     public void setUp() {
-        producer = new Producer();
+        producerBuilder = new ProducerBuilder();
     }
 
 
@@ -45,14 +45,14 @@ public class ProducerTest {
         Consumer<String, String> consumer = configureConsumer();
         KafkaProducer<String, String> kafkaProducer = configureProducer();
 
-        producer.producerRecord("my-test-value", TEST_TOPIC, kafkaProducer);
+        producerBuilder.producerRecord("my-test-value", TEST_TOPIC, kafkaProducer);
 
         ConsumerRecord<String, String> singleRecord = KafkaTestUtils.getSingleRecord(consumer, TEST_TOPIC);
         assertNotNull(singleRecord);
         assertEquals("my-test-value", singleRecord.value());
 
         consumer.close();
-        producer.closeProducer(kafkaProducer);
+        producerBuilder.closeProducer(kafkaProducer);
     }
 
     private Consumer<String, String> configureConsumer() {
@@ -68,7 +68,7 @@ public class ProducerTest {
         Map<String, Object> producerProps = new HashMap<>(KafkaTestUtils.producerProps(embeddedKafkaRule.getEmbeddedKafka()));
         Properties properties = new Properties();
         properties.putAll(producerProps);
-        return producer.getKafkaProducer(properties);
+        return producerBuilder.getKafkaProducer(properties);
     }
 }
 

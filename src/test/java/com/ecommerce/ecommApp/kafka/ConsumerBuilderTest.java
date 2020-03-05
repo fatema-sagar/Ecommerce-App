@@ -1,6 +1,6 @@
 package com.ecommerce.ecommApp.kafka;
 
-import com.ecommerce.ecommApp.commons.kafka.Consumer;
+import com.ecommerce.ecommApp.commons.kafka.ConsumerBuilder;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -24,10 +24,10 @@ import java.util.Properties;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-public class ConsumerTest {
+public class ConsumerBuilderTest {
 
     private static final String TEST_TOPIC = "testTopic";
-    private Consumer consumer;
+    private ConsumerBuilder consumerBuilder;
 
 
     @ClassRule
@@ -36,7 +36,7 @@ public class ConsumerTest {
 
     @Before
     public void setUp() {
-        this.consumer = new Consumer();
+        this.consumerBuilder = new ConsumerBuilder();
     }
 
     @Test
@@ -51,7 +51,7 @@ public class ConsumerTest {
         assertNotNull(singleRecord);
         assertEquals("my-test-value", singleRecord.value());
 
-        consumer.closeConsumer(kafkaConsumer);
+        consumerBuilder.closeConsumer(kafkaConsumer);
         producer.close();
     }
 
@@ -61,7 +61,7 @@ public class ConsumerTest {
         Properties properties = new Properties();
         properties.putAll(consumerProps);
         properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
-        KafkaConsumer<String, String> consumer = this.consumer.getKafkaConsumer(properties);
+        KafkaConsumer<String, String> consumer = this.consumerBuilder.getKafkaConsumer(properties);
         consumer.subscribe(Collections.singleton(TEST_TOPIC));
         return consumer;
     }

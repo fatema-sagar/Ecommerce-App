@@ -7,7 +7,9 @@ import com.ecommerce.ecommApp.notifications.services.OrderCancelledService;
 import com.ecommerce.ecommApp.notifications.services.OrderPlacedService;
 import com.ecommerce.ecommApp.notifications.services.OrderStatusService;
 import com.ecommerce.ecommApp.notifications.services.UserRegisteredService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.twilio.Twilio;
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
@@ -71,6 +73,11 @@ public class EcommAppApplication {
     @Bean
     public WebClient.Builder getWebClientBuilder() {
         return WebClient.builder();
+    }
+
+    @Bean
+    public ModelMapper getModelMapper() {
+        return new ModelMapper();
     }
 
 }

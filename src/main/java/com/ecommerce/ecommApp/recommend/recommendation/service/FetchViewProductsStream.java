@@ -121,7 +121,7 @@ public class FetchViewProductsStream {
             ViewProductDto viewProductDto = objectMapper.readValue(value, ViewProductDto.class);
             return viewProductDto.getProductId();
         } catch (JsonProcessingException e) {
-            throw new RuntimeException("JsonProcessingException : " + e.getOriginalMessage());
+            throw new RuntimeException("JsonProcessingException : " + e.getMessage());
         }
     }
 
@@ -140,7 +140,7 @@ public class FetchViewProductsStream {
             }
             return false;
         } catch (JsonProcessingException e) {
-            throw new RuntimeException("Json processing exception " + e.getOriginalMessage() + "\nCause " + e.getCause());
+            throw new RuntimeException("Json processing exception " + e.getMessage() + "\nCause " + e.getCause());
         }
     }
 }

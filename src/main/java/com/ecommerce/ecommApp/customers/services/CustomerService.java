@@ -2,7 +2,7 @@ package com.ecommerce.ecommApp.customers.services;
 
 import com.ecommerce.ecommApp.commons.Util.CommonsUtil;
 import com.ecommerce.ecommApp.commons.enums.NotificationType;
-import com.ecommerce.ecommApp.commons.kafka.Producer;
+import com.ecommerce.ecommApp.commons.kafka.ProducerBuilder;
 import com.ecommerce.ecommApp.commons.pojo.customer.CustomerDto;
 import com.ecommerce.ecommApp.commons.pojo.notification.UserRegistered;
 import com.ecommerce.ecommApp.customers.dto.RegistrationDto;
@@ -27,7 +27,7 @@ import java.util.*;
 public class CustomerService {
 
     private CustomerRepository customerRepository;
-    private Producer producer;
+    private ProducerBuilder producerBuilder;
     private CustomerUtil customerUtil;
     private PasswordEncoder passwordEncoder;
     private CustomerAddressRepository customerAddressRepository;
@@ -35,9 +35,9 @@ public class CustomerService {
 
     @Autowired
     private CustomerService(CustomerRepository customerRepository, PasswordEncoder passwordEncoder,
-                            Producer producer, Environment environment, CustomerAddressRepository addressRepository) {
+                            ProducerBuilder producerBuilder, Environment environment, CustomerAddressRepository addressRepository) {
         this.customerRepository = customerRepository;
-        this.producer = producer;
+        this.producerBuilder = producerBuilder;
         this.customerUtil = new CustomerUtil();
         this.passwordEncoder = passwordEncoder;
         this.customerAddressRepository = addressRepository;
@@ -125,11 +125,11 @@ public class CustomerService {
         userRegistered.getMode().add(NotificationType.EMAIL.toString());
         userRegistered.setCustomerDto(customerDto);
         try {
-            Properties props = producer.getProducerConfigs();
-            KafkaProducer<String, String > kafkaProducer= producer.getKafkaProducer(props);
-            producer.producerRecord(objectMapper.writeValueAsString(userRegistered),
+            Properties props = producerBuilder.getProducerConfigs();
+            KafkaProducer<String, String > kafkaProducer= producerBuilder.getKafkaProducer(props);
+            producerBuilder.producerRecord(objectMapper.writeValueAsString(userRegistered),
                     environment.getRequiredProperty(CommonsUtil.NOTIFICATION_REGISTERED_TOPIC),kafkaProducer);
-            producer.closeProducer(kafkaProducer);
+            producerBuilder.closeProducer(kafkaProducer);
         } catch (IOException ignored) {
         }
     }

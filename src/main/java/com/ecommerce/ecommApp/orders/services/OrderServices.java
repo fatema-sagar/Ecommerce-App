@@ -1,6 +1,6 @@
 package com.ecommerce.ecommApp.orders.services;
 
-import com.ecommerce.ecommApp.commons.kafka.Producer;
+import com.ecommerce.ecommApp.commons.kafka.ProducerBuilder;
 import com.ecommerce.ecommApp.commons.Util.CommonsUtil;
 import com.ecommerce.ecommApp.commons.Util.Communication;
 import com.ecommerce.ecommApp.commons.enums.NotificationType;
@@ -43,7 +43,7 @@ public class OrderServices {
     private Environment environment;
 
     @Autowired
-    private Producer producer;
+    private ProducerBuilder producerBuilder;
 
     @Autowired
     private HttpServletRequest httpServletRequest;
@@ -139,11 +139,11 @@ public class OrderServices {
                 (Communication.sendGetRequest("http://" + Communication.getApplicationAddress() + "/customer/" + order.getCustomerID(),token)
                         , CustomerDto.class);
         OrderDetails orderDetails = createOrderPlacedInstance(modes, order, customer);
-        Properties props = producer.getProducerConfigs();
-        KafkaProducer<String, String > kafkaProducer= producer.getKafkaProducer(props);
-        producer.producerRecord(objectMapper.writeValueAsString(orderDetails),
+        Properties props = producerBuilder.getProducerConfigs();
+        KafkaProducer<String, String > kafkaProducer= producerBuilder.getKafkaProducer(props);
+        producerBuilder.producerRecord(objectMapper.writeValueAsString(orderDetails),
                 environment.getRequiredProperty(CommonsUtil.NOTIFICATION_ORDER_PLACED_TOPIC),kafkaProducer);
-        producer.closeProducer(kafkaProducer);
+        producerBuilder.closeProducer(kafkaProducer);
     }
 
     /**

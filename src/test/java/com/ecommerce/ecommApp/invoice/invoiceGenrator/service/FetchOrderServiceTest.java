@@ -1,7 +1,7 @@
 package com.ecommerce.ecommApp.invoice.invoiceGenrator.service;
 
 import com.ecommerce.ecommApp.Objects;
-import com.ecommerce.ecommApp.commons.kafka.Consumer;
+import com.ecommerce.ecommApp.commons.kafka.ConsumerBuilder;
 import com.ecommerce.ecommApp.commons.pojo.notification.OrderDetails;
 import com.ecommerce.ecommApp.commons.pojo.orders.OrdersDTO;
 import com.ecommerce.ecommApp.invoice.invoiceGenerator.service.FetchOrderService;
@@ -9,6 +9,7 @@ import com.ecommerce.ecommApp.invoice.invoiceGenerator.service.InvoiceGeneratorS
 import com.ecommerce.ecommApp.orders.services.OrderServices;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sendgrid.Response;
 import io.netty.handler.timeout.TimeoutException;
 import javassist.NotFoundException;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
@@ -20,20 +21,14 @@ import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.junit.*;
 import org.junit.internal.runners.statements.FailOnTimeout;
-import org.junit.rules.RuleChain;
-import org.junit.rules.TestRule;
-import org.junit.rules.TestWatcher;
 import org.junit.rules.Timeout;
 import org.junit.runner.Description;
 import org.junit.runner.RunWith;
-import org.junit.runner.notification.Failure;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.Statement;
-import org.junit.runners.model.TestTimedOutException;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.core.env.Environment;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.test.rule.EmbeddedKafkaRule;
@@ -64,12 +59,13 @@ public class FetchOrderServiceTest {
     private OrderServices orderServices;
 
     @Mock
-    private Consumer consumer;
+    private ConsumerBuilder consumerBuilder;
 
     private Producer<String, String> producer;
     private static final String TEST_TOPIC = "testTopic";
     private Objects objects;
     private ObjectMapper objectMapper;
+    OrderDetails orderDetails;
     private static final int MIN_TIMEOUT = 5000;
 
 
@@ -99,10 +95,9 @@ public class FetchOrderServiceTest {
         MockitoAnnotations.initMocks(this);
         this.objects = new Objects();
         this.objectMapper = new ObjectMapper();
-        OrderDetails orderDetails = objects.getOrderDetails();
+        this.orderDetails = objects.getOrderDetails();
         this.producer = configureProducer();
-        producer.send(new ProducerRecord<>(TEST_TOPIC, "123", objectMapper.writeValueAsString(orderDetails)));
-        when(consumer.getKafkaConsumer(any())).thenReturn(getKafkaConsumer());
+        when(consumerBuilder.getKafkaConsumer(any())).thenReturn(getKafkaConsumer());
 
     }
 
@@ -111,14 +106,47 @@ public class FetchOrderServiceTest {
         this.producer.close();
     }
 
-    @Test(expected = RuntimeException.class)
-    public void testFetchOrders() throws NotFoundException, TimeoutException {
+    @Test
+    public void testFetchOrders() throws NotFoundException, JsonProcessingException {
+
+        Response response = new Response();
+        response.setStatusCode(200);
+
+        producer.send(new ProducerRecord<>(TEST_TOPIC, "123", objectMapper.writeValueAsString(orderDetails)));
 
         OrdersDTO ordersDTO = objects.getOrderDto();
         when(environment.getProperty(anyString())).thenReturn(TEST_TOPIC);
-        when(consumer.getProperties(anyString())).thenReturn(mock(Properties.class));
+        when(consumerBuilder.getProperties(anyString())).thenReturn(mock(Properties.class));
         when(orderServices.getOrderDetails(any())).thenReturn(ordersDTO);
+        when(invoiceGeneratorService.invoiceGenerate(any())).thenReturn(response);
         fetchOrderService.fetchOrder();
+
+    }
+
+    @Test
+    public void testDtoParseException() throws JsonProcessingException {
+
+        producer.send(new ProducerRecord<>(TEST_TOPIC, "123", objectMapper.writeValueAsString("orderDetails")));
+
+        when(environment.getProperty(anyString())).thenReturn(TEST_TOPIC);
+        when(consumerBuilder.getProperties(anyString())).thenReturn(mock(Properties.class));
+        fetchOrderService.fetchOrder();
+
+        verify(invoiceGeneratorService, times(0)).invoiceGenerate(any());
+
+    }
+
+    @Test
+    public void testOrderNotFoundException() throws JsonProcessingException, NotFoundException {
+
+        producer.send(new ProducerRecord<>(TEST_TOPIC, "123", objectMapper.writeValueAsString(orderDetails)));
+
+        when(environment.getProperty(anyString())).thenReturn(TEST_TOPIC);
+        when(consumerBuilder.getProperties(anyString())).thenReturn(mock(Properties.class));
+        when(orderServices.getOrderDetails(anyString())).thenThrow(NotFoundException.class);
+        fetchOrderService.fetchOrder();
+
+        verify(invoiceGeneratorService, times(0)).invoiceGenerate(any());
 
     }
 

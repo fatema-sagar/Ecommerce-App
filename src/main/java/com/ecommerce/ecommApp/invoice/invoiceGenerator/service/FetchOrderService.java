@@ -1,7 +1,7 @@
 package com.ecommerce.ecommApp.invoice.invoiceGenerator.service;
 
 import com.ecommerce.ecommApp.commons.Util.CommonsUtil;
-import com.ecommerce.ecommApp.commons.kafka.Consumer;
+import com.ecommerce.ecommApp.commons.kafka.ConsumerBuilder;
 import com.ecommerce.ecommApp.commons.pojo.notification.OrderDetails;
 import com.ecommerce.ecommApp.commons.pojo.orders.OrdersDTO;
 import com.ecommerce.ecommApp.invoice.invoiceGenerator.pdfUtils.Utils;
@@ -25,7 +25,7 @@ import java.util.Properties;
 @Service
 public class FetchOrderService {
 
-    private Consumer consumer;
+    private ConsumerBuilder consumerBuilder;
     private KafkaConsumer kafkaConsumer;
     private Environment environment;
     private ObjectMapper objectMapper;
@@ -34,16 +34,17 @@ public class FetchOrderService {
 
     /**
      * constructor for initialize the local variable
-     * @param consumer provide KafkaConsumer
-     * @param environment for access the application properties value
-     * @param orderServices for getting the details of user order
+     *
+     * @param consumerBuilder         provide KafkaConsumer
+     * @param environment             for access the application properties value
+     * @param orderServices           for getting the details of user order
      * @param invoiceGeneratorService for generate the invoice
      */
     @Autowired
-    public FetchOrderService(Consumer consumer, Environment environment, OrderServices orderServices,
+    public FetchOrderService(ConsumerBuilder consumerBuilder, Environment environment, OrderServices orderServices,
                              InvoiceGeneratorService invoiceGeneratorService) {
 
-        this.consumer = consumer;
+        this.consumerBuilder = consumerBuilder;
         this.environment = environment;
         this.objectMapper = CommonsUtil.getObjectMapper();
         this.orderServices = orderServices;
@@ -57,8 +58,8 @@ public class FetchOrderService {
      */
     public void fetchOrder() {
 
-        Properties properties = consumer.getProperties(Utils.GROUP_ID);
-        this.kafkaConsumer = consumer.getKafkaConsumer(properties);
+        Properties properties = consumerBuilder.getProperties(Utils.GROUP_ID);
+        this.kafkaConsumer = consumerBuilder.getKafkaConsumer(properties);
 
         log.info("Start the fetch service for consume the record from topic");
         kafkaConsumer.subscribe(Collections.singleton(
@@ -76,19 +77,16 @@ public class FetchOrderService {
 
                         OrderDetails orderDetails = objectMapper.readValue(record.value(), OrderDetails.class);
                         OrdersDTO ordersDTO = orderServices.getOrderDetails(orderDetails.getOrderID());
-                            invoiceGeneratorService.invoiceGenerate(ordersDTO);
-                        log.info("Invoice send for customerId {} with productId {}", ordersDTO.getCustomerID(),
-                                ordersDTO.getProductID());
+                        Response response = invoiceGeneratorService.invoiceGenerate(ordersDTO);
+                        log.info("Invoice for customerId {} with productId {} and sending status code {}", ordersDTO.getCustomerID(),
+                                ordersDTO.getProductID(), response.getStatusCode());
 
                     } catch (JsonProcessingException e) {
-
                         log.error("JsonProcessingError : " + e.getCause());
-                        e.printStackTrace();
-
+                        log.error("Exception message : {}", e.getMessage());
                     } catch (NotFoundException e) {
-
-                        log.error("Order not found : " + e.getCause() + "\n Message : " + e.getMessage());
-                        e.printStackTrace();
+                        log.error("Order not found with reason {} :  " +
+                                "\n and Exception message : {}", e.getCause(), e.getMessage());
                     }
 
                 });
