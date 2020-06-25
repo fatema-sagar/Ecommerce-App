@@ -34,10 +34,10 @@ import static org.mockito.Mockito.when;
 
 
 @RunWith(MockitoJUnitRunner.class)
-public class FetchViewProductsStreamTest {
+public class FetchViewProductsStreamImplTest {
 
     @InjectMocks
-    private FetchViewProductsStream fetchViewProductsStream;
+    private FetchViewProductsStreamImpl fetchViewProductsStreamImpl;
 
     @Mock
     private Environment environment;
@@ -64,7 +64,7 @@ public class FetchViewProductsStreamTest {
 
         when(environment.getProperty(anyString())).thenReturn(INPUT_TOPIC);
 
-        this.topology = fetchViewProductsStream.createTopology(productIds, 1L);
+        this.topology = fetchViewProductsStreamImpl.createTopology(productIds, 1L);
         this.testDriver = new TopologyTestDriver(topology, properties);
 
         this.factory = new ConsumerRecordFactory<>(INPUT_TOPIC, new LongSerializer(), new StringSerializer());

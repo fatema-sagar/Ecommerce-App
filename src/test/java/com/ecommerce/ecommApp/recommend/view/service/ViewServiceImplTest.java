@@ -3,8 +3,6 @@ package com.ecommerce.ecommApp.recommend.view.service;
 import com.ecommerce.ecommApp.commons.kafka.ProducerBuilder;
 import com.ecommerce.ecommApp.commons.pojo.ResponseMessage;
 import com.ecommerce.ecommApp.recommend.view.dto.ViewProductDto;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,10 +22,10 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ViewServiceTest {
+public class ViewServiceImplTest {
 
     @InjectMocks
-    private ViewService viewService;
+    private ViewServiceImpl viewServiceImpl;
 
     @Mock
     private ProducerBuilder producerBuilder;
@@ -52,7 +50,7 @@ public class ViewServiceTest {
         when(producerBuilder.getProducerConfigs()).thenReturn(properties);
         when(producerBuilder.getKafkaProducer(any())).thenReturn(kafkaProducer);
 
-        ResponseMessage response = viewService.viewProduct(viewProductDto);
+        ResponseMessage response = viewServiceImpl.viewProduct(viewProductDto);
 
         assertEquals(HttpStatus.OK, response.getHttpStatus());
         verify(producerBuilder, times(1)).getKafkaProducer(any());

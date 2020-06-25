@@ -4,7 +4,7 @@ import com.ecommerce.ecommApp.Objects;
 import com.ecommerce.ecommApp.commons.Util.CommonsUtil;
 import com.ecommerce.ecommApp.commons.pojo.ResponseMessage;
 import com.ecommerce.ecommApp.recommend.view.dto.ViewProductDto;
-import com.ecommerce.ecommApp.recommend.view.service.ViewService;
+import com.ecommerce.ecommApp.recommend.view.service.ViewServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
@@ -35,7 +35,7 @@ public class ViewControllerTest {
     private ViewController viewController;
 
     @Mock
-    private ViewService viewService;
+    private ViewServiceImpl viewServiceImpl;
 
     @Autowired
     private MockMvc mockMvc;
@@ -61,7 +61,7 @@ public class ViewControllerTest {
         ViewProductDto viewProductDto = objects.getViewProductDto();
         ResponseMessage ResponseMessage = new ResponseMessage(HttpStatus.OK, "Successfully viewed");
 
-        when(viewService.viewProduct(any())).thenReturn(ResponseMessage);
+        when(viewServiceImpl.viewProduct(any())).thenReturn(ResponseMessage);
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .post(CommonsUtil.VIEWED + CommonsUtil.VIEW_PRODUCT)

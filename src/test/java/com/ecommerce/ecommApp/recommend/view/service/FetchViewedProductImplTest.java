@@ -37,10 +37,10 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 @EmbeddedKafka(partitions = 1, topics = {"view_topic"})
-public class FetchViewedProductTest {
+public class FetchViewedProductImplTest {
 
     @InjectMocks
-    private FetchViewedProduct fetchViewedProduct;
+    private FetchViewedProductImpl fetchViewedProductImpl;
 
     @Mock
     private ConsumerBuilder consumerBuilder;
@@ -88,7 +88,7 @@ public class FetchViewedProductTest {
         when(environment.getProperty(anyString())).thenReturn(TEST_TOPIC);
         when(consumerBuilder.getProperties(anyString())).thenReturn(properties);
         when(consumerBuilder.getKafkaConsumer(any())).thenReturn(kafkaConsumer);
-        List<ViewProductDto> viewProduct = fetchViewedProduct.getViewProduct("1");
+        List<ViewProductDto> viewProduct = fetchViewedProductImpl.getViewProduct("1");
 
         assertTrue(viewProduct.size() > 0);
         assertEquals(viewProductDto.getProductId(), viewProduct.get(0).getProductId());
@@ -102,7 +102,7 @@ public class FetchViewedProductTest {
         when(environment.getProperty(anyString())).thenReturn(TEST_TOPIC);
         when(consumerBuilder.getProperties(anyString())).thenReturn(properties);
         when(consumerBuilder.getKafkaConsumer(any())).thenReturn(kafkaConsumer);
-        List<ViewProductDto> viewProduct = fetchViewedProduct.getViewProduct("1");
+        List<ViewProductDto> viewProduct = fetchViewedProductImpl.getViewProduct("1");
 
         assertTrue(viewProduct.size() == 0);
 

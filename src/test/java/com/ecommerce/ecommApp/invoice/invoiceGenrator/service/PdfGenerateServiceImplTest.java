@@ -3,13 +3,12 @@ package com.ecommerce.ecommApp.invoice.invoiceGenrator.service;
 import com.ecommerce.ecommApp.Objects;
 import com.ecommerce.ecommApp.invoice.invoiceGenerator.dto.InvoiceFormatDto;
 import com.ecommerce.ecommApp.invoice.invoiceGenerator.pdfUtils.Utils;
-import com.ecommerce.ecommApp.invoice.invoiceGenerator.service.HeaderFooterService;
-import com.ecommerce.ecommApp.invoice.invoiceGenerator.service.PdfGenerateService;
+import com.ecommerce.ecommApp.invoice.invoiceGenerator.service.HeaderFooterServiceImpl;
+import com.ecommerce.ecommApp.invoice.invoiceGenerator.service.PdfGenerateServiceImpl;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -20,13 +19,13 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
-public class PdfGenerateServiceTest {
+public class PdfGenerateServiceImplTest {
 
     @InjectMocks
-    private PdfGenerateService pdfGenerateService;
+    private PdfGenerateServiceImpl pdfGenerateServiceImpl;
 
     @Spy
-    private HeaderFooterService headerFooterService;
+    private HeaderFooterServiceImpl headerFooterServiceImpl;
 
     private Objects objects;
 
@@ -41,9 +40,9 @@ public class PdfGenerateServiceTest {
 
         InvoiceFormatDto invoiceFormatDto = objects.getInvoiceFormatDto();
 
-        String filePath = pdfGenerateService.generatePdf(invoiceFormatDto);
+        String filePath = pdfGenerateServiceImpl.generatePdf(invoiceFormatDto);
         assertEquals(Utils.INVOICE_FOLDER + invoiceFormatDto.getCustomerName() +
                 invoiceFormatDto.getInvoiceDetails().getProductId() + Utils.PDF_EXTENSION, filePath);
-        verify(headerFooterService, times(1)).setHeader(anyString());
+        verify(headerFooterServiceImpl, times(1)).setHeader(anyString());
     }
 }

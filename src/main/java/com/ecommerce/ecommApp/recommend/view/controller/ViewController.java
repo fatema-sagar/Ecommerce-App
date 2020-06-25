@@ -3,7 +3,7 @@ package com.ecommerce.ecommApp.recommend.view.controller;
 import com.ecommerce.ecommApp.commons.Util.CommonsUtil;
 import com.ecommerce.ecommApp.commons.pojo.ResponseMessage;
 import com.ecommerce.ecommApp.recommend.view.dto.ViewProductDto;
-import com.ecommerce.ecommApp.recommend.view.service.ViewService;
+import com.ecommerce.ecommApp.recommend.view.service.ViewServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +19,7 @@ import javax.validation.Valid;
 public class ViewController {
 
     @Autowired
-    private ViewService viewService;
+    private ViewServiceImpl viewServiceImpl;
 
     /**
      * post api for store the view product for same user
@@ -30,7 +30,7 @@ public class ViewController {
     public ResponseEntity<ResponseMessage> viewProduct(@Valid  @RequestBody ViewProductDto viewProductDto) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new ResponseMessage(HttpStatus.OK,
-                        "ok",viewService.viewProduct(viewProductDto)));
+                        "ok", viewServiceImpl.viewProduct(viewProductDto)));
     }
 
 }

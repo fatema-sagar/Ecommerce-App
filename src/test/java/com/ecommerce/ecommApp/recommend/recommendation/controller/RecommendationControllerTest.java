@@ -5,7 +5,7 @@ import com.ecommerce.ecommApp.commons.Util.CommonsUtil;
 import com.ecommerce.ecommApp.commons.pojo.ResponseMessage;
 import com.ecommerce.ecommApp.commons.pojo.dto.ProductDto;
 import com.ecommerce.ecommApp.commons.pojo.products.Product;
-import com.ecommerce.ecommApp.recommend.recommendation.service.RecommendationService;
+import com.ecommerce.ecommApp.recommend.recommendation.service.RecommendationServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
@@ -41,7 +41,7 @@ public class RecommendationControllerTest {
     private RecommendationController recommendationController;
 
     @Mock
-    private RecommendationService recommendationService;
+    private RecommendationServiceImpl recommendationServiceImpl;
 
     @Autowired
     private MockMvc mockMvc;
@@ -68,7 +68,7 @@ public class RecommendationControllerTest {
         Set<ProductDto> products = new HashSet<>();
         products.add(productDto);
 
-        when(recommendationService.fetchRecommendedProduct(anyLong())).thenReturn(products);
+        when(recommendationServiceImpl.fetchRecommendedProduct(anyLong())).thenReturn(products);
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get(CommonsUtil.RECOMMENDATION + "/1")

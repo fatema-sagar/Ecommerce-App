@@ -5,9 +5,9 @@ import com.ecommerce.ecommApp.commons.pojo.customer.CustomerDto;
 import com.ecommerce.ecommApp.customers.services.CustomerService;
 import com.ecommerce.ecommApp.invoice.invoiceGenerator.converter.OrderDtoToInvoiceFormat;
 import com.ecommerce.ecommApp.invoice.invoiceGenerator.dto.InvoiceFormatDto;
-import com.ecommerce.ecommApp.invoice.invoiceGenerator.service.InvoiceGeneratorService;
-import com.ecommerce.ecommApp.invoice.invoiceGenerator.service.PdfGenerateService;
-import com.ecommerce.ecommApp.invoice.invoiceSend.service.SendInvoiceService;
+import com.ecommerce.ecommApp.invoice.invoiceGenerator.service.InvoiceGeneratorServiceImpl;
+import com.ecommerce.ecommApp.invoice.invoiceGenerator.service.PdfGenerateServiceImpl;
+import com.ecommerce.ecommApp.invoice.invoiceSend.service.SendInvoiceServiceImpl;
 import com.sendgrid.Response;
 import javassist.NotFoundException;
 import org.junit.Before;
@@ -23,13 +23,13 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
-public class InvoiceGeneratorServiceTest {
+public class InvoiceGeneratorServiceImplTest {
 
     @InjectMocks
-    private InvoiceGeneratorService invoiceGeneratorService;
+    private InvoiceGeneratorServiceImpl invoiceGeneratorServiceImpl;
 
     @Mock
-    private PdfGenerateService pdfGenerateService;
+    private PdfGenerateServiceImpl pdfGenerateServiceImpl;
 
     @Mock
     private OrderDtoToInvoiceFormat orderDtoToInvoiceFormat;
@@ -38,7 +38,7 @@ public class InvoiceGeneratorServiceTest {
     private CustomerService customerService;
 
     @Mock
-    private SendInvoiceService sendInvoiceService;
+    private SendInvoiceServiceImpl sendInvoiceServiceImpl;
 
     private Objects objects;
 
@@ -56,14 +56,14 @@ public class InvoiceGeneratorServiceTest {
         CustomerDto customerDto = objects.getCustomerDto();
 
         when(orderDtoToInvoiceFormat.convertToInvoiceFormatDto(any())).thenReturn(invoiceFormatDto);
-        when(pdfGenerateService.generatePdf(any())).thenReturn(filePath);
+        when(pdfGenerateServiceImpl.generatePdf(any())).thenReturn(filePath);
         when(customerService.getCustomerDetails(anyLong())).thenReturn(customerDto);
-        when(sendInvoiceService.sendInvoice(any())).thenReturn(new Response());
+        when(sendInvoiceServiceImpl.sendInvoice(any())).thenReturn(new Response());
 
-        invoiceGeneratorService.invoiceGenerate(any());
+        invoiceGeneratorServiceImpl.invoiceGenerate(any());
 
         verify(customerService, times(1)).getCustomerDetails(anyLong());
-        verify(sendInvoiceService, times(1)).sendInvoice(any());
+        verify(sendInvoiceServiceImpl, times(1)).sendInvoice(any());
 
     }
 
@@ -74,14 +74,14 @@ public class InvoiceGeneratorServiceTest {
         String filePath = objects.getFilePath();
 
         when(orderDtoToInvoiceFormat.convertToInvoiceFormatDto(any())).thenReturn(invoiceFormatDto);
-        when(pdfGenerateService.generatePdf(any())).thenReturn(filePath);
+        when(pdfGenerateServiceImpl.generatePdf(any())).thenReturn(filePath);
         when(customerService.getCustomerDetails(anyLong())).thenThrow(NotFoundException.class);
-        when(sendInvoiceService.sendInvoice(any())).thenReturn(new Response());
+        when(sendInvoiceServiceImpl.sendInvoice(any())).thenReturn(new Response());
 
-        invoiceGeneratorService.invoiceGenerate(any());
+        invoiceGeneratorServiceImpl.invoiceGenerate(any());
 
         verify(customerService, times(1)).getCustomerDetails(anyLong());
-        verify(sendInvoiceService, times(1)).sendInvoice(any());
+        verify(sendInvoiceServiceImpl, times(1)).sendInvoice(any());
 
     }
 

@@ -13,7 +13,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeToken;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -27,16 +26,16 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
-public class RecommendationServiceTest {
+public class RecommendationServiceImplTest {
 
     @InjectMocks
-    private RecommendationService recommendationService;
+    private RecommendationServiceImpl recommendationServiceImpl;
 
     @Mock
     private ProductService productService;
 
     @Mock
-    private FetchViewProductsStream viewProductsStream;
+    private FetchViewProductsStreamImpl viewProductsStream;
 
     @Mock
     private ModelMapper modelMapper;
@@ -65,7 +64,7 @@ public class RecommendationServiceTest {
         when(productService.getProduct(anyLong())).thenReturn(product);
         when(modelMapper.map(anySet(), any(Type.class))).thenReturn(productDtoSet);
 
-        Set<ProductDto> products = recommendationService.fetchRecommendedProduct(1L);
+        Set<ProductDto> products = recommendationServiceImpl.fetchRecommendedProduct(1L);
 
         verify(productService, times(1)).getProduct(anyLong());
         assertTrue(productDtoSet.size() == products.size());
@@ -80,7 +79,7 @@ public class RecommendationServiceTest {
         when(viewProductsStream.start(anyLong())).thenReturn(viewProductList);
         when(productService.getProduct(anyLong())).thenThrow(ElementNotFoundException.class);
 
-        Set<ProductDto> products = recommendationService.fetchRecommendedProduct(1L);
+        Set<ProductDto> products = recommendationServiceImpl.fetchRecommendedProduct(1L);
         assertTrue(products.size() == 0);
         verify(viewProductsStream, times(1)).start(anyLong());
 
@@ -95,7 +94,7 @@ public class RecommendationServiceTest {
         when(viewProductsStream.start(anyLong())).thenReturn(viewProductList);
         when(productService.getProduct(anyLong())).thenThrow(InterruptedException.class);
 
-        recommendationService.fetchRecommendedProduct(1L);
+        recommendationServiceImpl.fetchRecommendedProduct(1L);
 
         verify(productService, times(1)).getProduct(anyLong());
     }

@@ -2,12 +2,10 @@ package com.ecommerce.ecommApp;
 
 import com.ecommerce.ecommApp.commons.Util.CommonsUtil;
 import com.ecommerce.ecommApp.invoice.Invoice;
-import com.ecommerce.ecommApp.invoice.invoiceGenerator.service.FetchOrderService;
 import com.ecommerce.ecommApp.notifications.services.OrderCancelledService;
 import com.ecommerce.ecommApp.notifications.services.OrderPlacedService;
 import com.ecommerce.ecommApp.notifications.services.OrderStatusService;
 import com.ecommerce.ecommApp.notifications.services.UserRegisteredService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.twilio.Twilio;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;

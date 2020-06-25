@@ -3,7 +3,7 @@ package com.ecommerce.ecommApp.recommend.recommendation.controller;
 import com.ecommerce.ecommApp.commons.Util.CommonsUtil;
 import com.ecommerce.ecommApp.commons.pojo.ResponseMessage;
 import com.ecommerce.ecommApp.commons.pojo.dto.ProductDto;
-import com.ecommerce.ecommApp.recommend.recommendation.service.RecommendationService;
+import com.ecommerce.ecommApp.recommend.recommendation.service.RecommendationServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,7 +11,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Set;
 
@@ -20,7 +19,7 @@ import java.util.Set;
 public class RecommendationController {
 
     @Autowired
-    private RecommendationService recommendationService;
+    private RecommendationServiceImpl recommendationServiceImpl;
 
     /**
      * get api for fetching the recommended product
@@ -29,7 +28,7 @@ public class RecommendationController {
      */
     @GetMapping("/{id}")
     public ResponseEntity<ResponseMessage> fetchRecommendation(@PathVariable( value = "id") Long customerId) {
-        Set<ProductDto> products = recommendationService.fetchRecommendedProduct(customerId);
+        Set<ProductDto> products = recommendationServiceImpl.fetchRecommendedProduct(customerId);
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(HttpStatus.OK, "Recommended Product", products));
     }
 }

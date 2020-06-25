@@ -4,13 +4,12 @@ import com.ecommerce.ecommApp.Objects;
 import com.ecommerce.ecommApp.commons.kafka.ConsumerBuilder;
 import com.ecommerce.ecommApp.commons.pojo.notification.OrderDetails;
 import com.ecommerce.ecommApp.commons.pojo.orders.OrdersDTO;
-import com.ecommerce.ecommApp.invoice.invoiceGenerator.service.FetchOrderService;
-import com.ecommerce.ecommApp.invoice.invoiceGenerator.service.InvoiceGeneratorService;
+import com.ecommerce.ecommApp.invoice.invoiceGenerator.service.FetchOrderServiceImpl;
+import com.ecommerce.ecommApp.invoice.invoiceGenerator.service.InvoiceGeneratorServiceImpl;
 import com.ecommerce.ecommApp.orders.services.OrderServices;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sendgrid.Response;
-import io.netty.handler.timeout.TimeoutException;
 import javassist.NotFoundException;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -44,13 +43,13 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @RunWith(BlockJUnit4ClassRunner.class)
-public class FetchOrderServiceTest {
+public class FetchOrderServiceImplTest {
 
     @InjectMocks
-    private FetchOrderService fetchOrderService;
+    private FetchOrderServiceImpl fetchOrderServiceImpl;
 
     @Mock
-    private InvoiceGeneratorService invoiceGeneratorService;
+    private InvoiceGeneratorServiceImpl invoiceGeneratorServiceImpl;
 
     @Mock
     private Environment environment;
@@ -118,8 +117,8 @@ public class FetchOrderServiceTest {
         when(environment.getProperty(anyString())).thenReturn(TEST_TOPIC);
         when(consumerBuilder.getProperties(anyString())).thenReturn(mock(Properties.class));
         when(orderServices.getOrderDetails(any())).thenReturn(ordersDTO);
-        when(invoiceGeneratorService.invoiceGenerate(any())).thenReturn(response);
-        fetchOrderService.fetchOrder();
+        when(invoiceGeneratorServiceImpl.invoiceGenerate(any())).thenReturn(response);
+        fetchOrderServiceImpl.fetchOrder();
 
     }
 
@@ -130,9 +129,9 @@ public class FetchOrderServiceTest {
 
         when(environment.getProperty(anyString())).thenReturn(TEST_TOPIC);
         when(consumerBuilder.getProperties(anyString())).thenReturn(mock(Properties.class));
-        fetchOrderService.fetchOrder();
+        fetchOrderServiceImpl.fetchOrder();
 
-        verify(invoiceGeneratorService, times(0)).invoiceGenerate(any());
+        verify(invoiceGeneratorServiceImpl, times(0)).invoiceGenerate(any());
 
     }
 
@@ -144,9 +143,9 @@ public class FetchOrderServiceTest {
         when(environment.getProperty(anyString())).thenReturn(TEST_TOPIC);
         when(consumerBuilder.getProperties(anyString())).thenReturn(mock(Properties.class));
         when(orderServices.getOrderDetails(anyString())).thenThrow(NotFoundException.class);
-        fetchOrderService.fetchOrder();
+        fetchOrderServiceImpl.fetchOrder();
 
-        verify(invoiceGeneratorService, times(0)).invoiceGenerate(any());
+        verify(invoiceGeneratorServiceImpl, times(0)).invoiceGenerate(any());
 
     }
 

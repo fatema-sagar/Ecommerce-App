@@ -1,6 +1,6 @@
 package com.ecommerce.ecommApp.invoice;
 
-import com.ecommerce.ecommApp.invoice.invoiceGenerator.service.FetchOrderService;
+import com.ecommerce.ecommApp.invoice.invoiceGenerator.service.FetchOrderServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 public class Invoice extends Thread {
 
     @Autowired
-    private FetchOrderService fetchOrderService;
+    private FetchOrderServiceImpl fetchOrderServiceImpl;
 
     /**
      * override method for start the fetch service
@@ -21,7 +21,7 @@ public class Invoice extends Thread {
     @Override
     public void run() {
         log.info("Start the invoice service in background ------------ with name {}", this.getName());
-        fetchOrderService.fetchOrder();
+        fetchOrderServiceImpl.fetchOrder();
         log.info("Stop the fetch service due to some issue");
     }
 }
